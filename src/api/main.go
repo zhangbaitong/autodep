@@ -17,4 +17,8 @@ func main() {
 	http.HandleFunc("/useage", handlers.Useage)
 	http.HandleFunc("/v1/", handlers.API_V1)
 	http.ListenAndServe(":8080", nil)
+	err:=http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Println("Server start faild error:", err)
+	}
 }

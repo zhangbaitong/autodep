@@ -16,7 +16,7 @@ var err error
 
 func init() {
 	//Get the html template
-	useageTemplate, err = html.ParseFiles("/Users/zhangtao/Documents/repository/github/practice-golang/src/api/templates/useage.html")
+	useageTemplate, err = html.ParseFiles("templates/useage.html")
 	if err != nil {
 		panic(err)
 	}
