@@ -15,3 +15,7 @@ eg.shell,docker client and so on.
 3.It can run dep docker container for specical host.
 
 ...
+
+#Our plan
+
+see:[https://github.com/zhangbaitong/autodep/blob/master/docs/plan.md](plan)
