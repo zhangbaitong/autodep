@@ -6,6 +6,10 @@
 # Folders
 _obj
 _test
+bin/
+pkg/
+.DS_Store
+github.com
 
 # Architecture specific extensions/prefixes
 *.[568vq]
