@@ -6,16 +6,16 @@ git clone https://github.com/zhangbaitong/autodep.git
 
 #feature
 
-1.support http REST API for do some action.
+1. support http REST API for do some action.
 
-eg.shell,docker client and so on.
+	eg.shell,docker client and so on.
 
-2.support package for docker image Automatic.
+2. support package for docker image Automatic.
 
-3.It can run dep docker container for specical host.
+3. It can run dep docker container for specical host.
 
 ...
 
 #Our plan
 
-see:[https://github.com/zhangbaitong/autodep/blob/master/docs/plan.md](plan)
+see [https://github.com/zhangbaitong/autodep/blob/master/docs/plan.md](plan)
