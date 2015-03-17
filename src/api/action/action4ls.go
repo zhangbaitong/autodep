@@ -1,9 +1,16 @@
 package action
 
-import "github.com/codeskyblue/go-sh"
+import (
+	"fmt"
+	"github.com/codeskyblue/go-sh"
+)
 
 func Actionls() string {
-	sh.Command("echo", "hello\tworld").Command("cut", "-f2").Run()
-	sh.Command("ls").Run()
+	session := sh.NewSession()
+	session.ShowCMD = true
+	err := session.Call("ssh","117.78.19.76", "touch ","tt.aa")
+	if err != nil {
+		fmt.Println("Server start faild error:", err)
+	}
 	return "go-sh"
 }
