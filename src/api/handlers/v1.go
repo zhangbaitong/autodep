@@ -8,8 +8,8 @@ import (
 )
 
 type ACTION_V1 struct {
-	Action1 string
-	Action2 string
+	Action string
+                Result string
 }
 
 func init() {
@@ -28,10 +28,18 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			ret = action.Actionecho()
 		}
+	case "version":
+		{
+			ret = action.Actionversion()
+		}
+	case "ps":
+		{
+			ret = action.Actionps()
+		}
 	}
 	//fmt.Println("Action is ", actionName)
 	//do something with your logic
-	v1 := ACTION_V1{Action1: ret + "1", Action2: ret + "2"}
+	v1 := ACTION_V1{Action: actionName, Result: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	body, err := json.Marshal(v1)
 	if err != nil {
