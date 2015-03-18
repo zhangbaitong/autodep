@@ -19,3 +19,8 @@ git clone https://github.com/zhangbaitong/autodep.git
 #Our plan
 
 see [https://github.com/zhangbaitong/autodep/blob/master/docs/plan.md](plan)
+
+#Collaborators
+
+[https://github.com/show168](show168)
+[https://github.com/tomzhaogy](tomzhaogy)
