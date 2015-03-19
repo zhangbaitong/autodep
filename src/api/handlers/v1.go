@@ -7,43 +7,42 @@ import (
 	"net/http"
 )
 
-type ACTION_V1 struct {
-	Action string
-                Result string
-}
-
 func init() {
 	fmt.Println("access http://localhost:8080/useage for how to use this api.")
 }
 
 func API_V1(w http.ResponseWriter, r *http.Request) {
 	actionName := r.URL.Path[len("/v1/"):]
+	if err=r.ParseForm(); err != nil {
+                    fmt.Println("Server start faild error:", err)
+	}
+
+                strPostData:=r.FormValue("request")
+                var request common.RequestData
+                err := json.Unmarshal([]byte(strPostData), &request)
+	if  err != nil {
+                    fmt.Println("json data decode faild :", err)
+	}
 	var ret string
 	switch actionName {
-	case "ls":
-		{
-			ret = action.Actionls()
-		}
+	case "fig/create":
+                    {
+                        ret = action.FigCreate(&request)
+                    }
 	case "echo":
-		{
-			ret = action.Actionecho()
-		}
+                    {
+                        ret = action.Actionecho()
+                    }
 	case "version":
-		{
-			ret = action.Actionversion()
-		}
-	case "ps":
-		{
-			ret = action.Actionps()
-		}
+                    {
+                        ret = action.Actionversion()
+                    }
 	}
-	//fmt.Println("Action is ", actionName)
-	//do something with your logic
-	v1 := ACTION_V1{Action: actionName, Result: ret}
+	v1 := common.ACTION_V1{Action: actionName, Result: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	body, err := json.Marshal(v1)
-	if err != nil {
-		fmt.Println(err)
+	body, err1 := json.Marshal(v1)
+	if err1 != nil {
+		fmt.Println(err1)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
