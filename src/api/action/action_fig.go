@@ -5,7 +5,7 @@ import (
     "api/common"
 )
 
-func FigCreate(request common.RequestData) string {
+func FigCreate(request *common.RequestData) string {
     session := sh.NewSession()
     session.ShowCMD = true
     err := session.Call("ssh",request.ServerIP, "touch ","tt.aa")
