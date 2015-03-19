@@ -11,5 +11,5 @@ type RequestData struct
         ServerIP        string
         Port             int
         Method         string
-        Params         string
+        Params         interface{} 
 }
