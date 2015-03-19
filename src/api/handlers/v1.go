@@ -27,18 +27,18 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	}
 	var ret string
 	switch actionName {
-	case "fig/create":
-                    {
-                        ret = action.FigCreate(&request)
-                    }
-	case "echo":
-                    {
-                        ret = action.Actionecho()
-                    }
-	case "version":
-                    {
-                        ret = action.Actionversion()
-                    }
+                    case "fig/create":
+                                {
+                                    ret = action.FigCreate(&request)
+                                }
+                    case "echo":
+                                {
+                                    ret = action.Actionecho()
+                                }
+                    case "version":
+                                {
+                                    ret = action.Actionversion()
+                                }
 	}
 	v1 := common.ACTION_V1{Action: actionName, Result: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
