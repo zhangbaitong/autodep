@@ -20,7 +20,8 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 
                 strPostData:=r.FormValue("request")
                 fmt.Println(strPostData)
-                var request common.RequestData
+                //var request common.RequestData                
+                var request interface{}                 
                 err := json.Unmarshal([]byte(strPostData), &request)
 	if  err != nil {
                     fmt.Println("json data decode faild :", err)
