@@ -8,6 +8,7 @@ import (
 func FigCreate(request *common.RequestData) string {
     session := sh.NewSession()
     session.ShowCMD = true
+    fmt.Println("action.FigCreate:")
 /*
     err := session.Call("ssh",request.ServerIP, "touch ","tt.aa")
     if err != nil {
