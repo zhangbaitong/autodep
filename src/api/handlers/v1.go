@@ -19,6 +19,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	}
 
                 strPostData:=r.FormValue("request")
+                fmt.Println(strPostData)
                 var request common.RequestData
                 err := json.Unmarshal([]byte(strPostData), &request)
 	if  err != nil {
