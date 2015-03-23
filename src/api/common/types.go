@@ -1,8 +1,10 @@
 package common
 
-type ACTION_V1 struct {
-	Action string
-                Result string
+type Response struct {
+    Method string
+    Code int
+    Messgae string
+    Data string
 }
 
 type RequestData struct{

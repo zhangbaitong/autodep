@@ -13,7 +13,7 @@ func init() {
 }
 
 func API_V1(w http.ResponseWriter, r *http.Request) {
-	actionName := r.URL.Path[len("/v1/"):]
+	strMethod := r.URL.Path[len("/v1/"):]
 	if err=r.ParseForm(); err != nil {
                     fmt.Println("Server start faild error:", err)
 	}
@@ -30,7 +30,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
                 request, _ := req.(map[string]interface{})
                 common.DisplayJson(request)
 	var ret string
-	switch actionName {
+	switch strMethod {
                     case "fig/create":
                                 {
                                     ret = action.FigCreate(request)
@@ -44,7 +44,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
                                     ret = action.Actionversion()
                                 }
 	}
-	v1 := common.ACTION_V1{Action: actionName, Result: ret}
+	v1 := common.Response{Method: strMethod,Code:0,Messgae:"ok", Data: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	body, err1 := json.Marshal(v1)
 	if err1 != nil {
