@@ -19,17 +19,21 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	}
 
                 strPostData:=r.FormValue("request")
-                fmt.Println(strPostData)
-                var request common.RequestData                
-                err := json.Unmarshal([]byte(strPostData), &request)
+                //fmt.Println(strPostData)
+                //var request common.RequestData                
+                var req interface{} 
+                err := json.Unmarshal([]byte(strPostData), &req)               
 	if  err != nil {
                     fmt.Println("json data decode faild :", err)
 	}
+
+                request, _ := req.(map[string]interface{})
+                //common.DisplayJson(request)
 	var ret string
 	switch actionName {
                     case "fig/create":
                                 {
-                                    ret = action.FigCreate(&request)
+                                    ret = action.FigCreate(request)
                                 }
                     case "echo":
                                 {
