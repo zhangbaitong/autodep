@@ -5,11 +5,11 @@ type ACTION_V1 struct {
                 Result string
 }
 
-type RequestData struct
-{
+type RequestData struct{
         Version         string
         ServerIP        string
         Port             int
         Method         string
-        Params         interface{} 
+        Params         map[string]interface{}
 }
+
