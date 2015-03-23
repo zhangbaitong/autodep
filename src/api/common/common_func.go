@@ -54,6 +54,19 @@ func CreateRemotePath(strServerIP string,strPath string)(ret int,err string){
 
     return 0,"ok"
 }
+
+func ExecRemoteShell(strServerIP string,strShell string)(ret int,err string){
+    session := sh.NewSession()
+    session.ShowCMD = true    
+    err1:= session.Call("ssh",strServerIP, strShell)
+    if err1 != nil {
+        fmt.Println("exec remote shell faild error:", err1)
+        return 1,"exec remote shell faild error"
+    }
+
+    return 0,"ok"
+}
+
 func SaveFile(strFileName string,strData string)(ok bool){
     f, err := os.Create(strFileName)
     if err != nil {

@@ -28,7 +28,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	}
 
                 request, _ := req.(map[string]interface{})
-                //common.DisplayJson(request)
+                common.DisplayJson(request)
 	var ret string
 	switch actionName {
                     case "fig/create":

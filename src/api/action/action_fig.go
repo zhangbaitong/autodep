@@ -43,21 +43,47 @@ func fig_transfer(strServerIP string,params map[string]interface{})(ret bool,err
     }
 
     //传输文件到远程目录
-    strRemoteFile:=strServerIP+":"+strRemoteDir+strFileName
+    strRemoteFile:=strServerIP+":"+strRemoteDir+"/"+strFileName
     ret1,_=common.TransferFileSSH(strFileName,strRemoteFile)
     if(ret1>0){
        return false,"Transfer File faild!!!!"
     }
+
     //创建启动文件
     mapCommands,ok:=params["commands"].(map[string]interface{})
     if ok {
+        //创建远程目录
+        strRemoteDir=FIG_PATH+strProjectName+"/startup"
+        ret1,_:=common.CreateRemotePath(strServerIP,strRemoteDir)
+        if(ret1>0){
+           return false,"Create fig Remote Path faild!!!!"
+        }
+
         common.DisplayJson(mapCommands);
         for k, v := range mapCommands  {
             switch v2 := v.(type) {
             case string:
+
                 //保存启动文件
-                //传输远程文件
+                strStartFile:="start.sh"
+                ok=common.SaveFile(strStartFile,strFigData)
+                if !ok{
+                   return false,"save start file empty!!!!"
+                }
+
+                //传输文件到远程目录
+                strRemoteFile:=strServerIP+":"+strRemoteDir+"/"+strStartFile
+                ret1,_=common.TransferFileSSH(strStartFile,strRemoteFile)
+                if(ret1>0){
+                   return false,"Transfer File faild!!!!"
+                }
+
                 //执行远程脚本
+                ret1,_:=common.ExecRemoteShell(strServerIP,strRemoteFile)
+                if(ret1>0){
+                   return false,"Exec Remote Shell faild!!!!"
+                }
+
                 fmt.Println(k, "is string", v2)
             default:
                 fmt.Println(k, "is another type not handle yet")
@@ -83,9 +109,5 @@ func FigCreate(request map[string]interface{}) string {
         return "ok"
     }
     //common.DisplayJson(params)
-    err := session.Call("ssh",strServerIP, "touch ","tt.aa")
-    if err != nil {
-            fmt.Println("exec remote shell faild error:", err)
-    }
     return "faild"
 }
