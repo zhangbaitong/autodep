@@ -56,10 +56,22 @@ func ExecRemoteCMD(strServerIP string,strCMD string,strPath string)(ret int,err 
     return 0,"ok"
 }
 
-func ExecRemoteChmod(strServerIP string,strPrivilege,strFile string)(ret int,err string){
+func ExecRemoteChmod(strServerIP string,strPrivilege string,strFile string)(ret int,err string){
     session := sh.NewSession()
     session.ShowCMD = true    
     err1:= session.Call("ssh",strServerIP,"chmod",strPrivilege,strFile)
+    if err1 != nil {
+        fmt.Println("exec remote shell faild error:", err1)
+        return 1,"exec remote shell faild error"
+    }
+
+    return 0,"ok"
+}
+
+func ExecRemoteRM(strServerIP string,strFile string)(ret int,err string){
+    session := sh.NewSession()
+    session.ShowCMD = true    
+    err1:= session.Call("ssh",strServerIP,"rm","-rf",strFile)
     if err1 != nil {
         fmt.Println("exec remote shell faild error:", err1)
         return 1,"exec remote shell faild error"

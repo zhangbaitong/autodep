@@ -37,6 +37,9 @@ func fig_transfer(strServerIP string,params map[string]interface{})(ret bool,err
 
     //创建远程目录
     strRemoteDir=FIG_PATH+strProjectName
+    //删除远程目录
+    _,_=common.ExecRemoteRM(strServerIP,strRemoteDir)
+
     ret1,_:=common.ExecRemoteCMD(strServerIP,"mkdir",strRemoteDir)
     if(ret1>0){
        return false,"Create fig Remote Path faild!!!!"
@@ -52,9 +55,9 @@ func fig_transfer(strServerIP string,params map[string]interface{})(ret bool,err
     //创建启动文件
     mapCommands,ok:=params["commands"].(map[string]interface{})
     if ok {
-        //创建远程目录
         strRemoteDir=FIG_PATH+strProjectName+"/startup"
-        ret1,_:=common.ExecRemoteCMD(strServerIP,"mkdir",strRemoteDir)
+        //创建远程目录
+        ret1,_=common.ExecRemoteCMD(strServerIP,"mkdir",strRemoteDir)
         if(ret1>0){
            return false,"Create fig Remote Path faild!!!!"
         }
