@@ -1,19 +1,91 @@
 package action
 import (
     "github.com/codeskyblue/go-sh"
+
     "fmt"
+    "strings"
     "api/common"
 )
 
-func FigCreate(request *common.RequestData) string {
+const FIG_PATH="/home/tomzhao/fig/"
+
+func fig_transfer(strServerIP string,params map[string]interface{})(ret bool,err string){
+    var(
+        strRemoteDir string
+        ok bool
+    )
+    //获取项目名称
+    strFigDirectory,ok:=params["fig_directory"].(string)
+    if !ok {
+       return false,"fig directory empty!!!!"
+    }
+    str:=strings.Split(strFigDirectory,"/")
+
+    strProjectName:=str[len(str)-1]
+
+     strFigData,ok:=params["fig_data"].(string)
+     if !ok {
+        return false,"fig_data empty!!!!"
+    }
+
+    //生成项目fig文件
+    strFileName:=strProjectName+".yml"
+    ok=common.SaveFile(strFileName,strFigData)
+    if !ok{
+       return false,"save fig file empty!!!!"
+    }
+
+    //创建远程目录
+    strRemoteDir=FIG_PATH+strProjectName
+    ret1,_:=common.CreateRemotePath(strServerIP,strRemoteDir)
+    if(ret1>0){
+       return false,"Create fig Remote Path faild!!!!"
+    }
+
+    //传输文件到远程目录
+    strRemoteFile:=strServerIP+":"+strRemoteDir+strFileName
+    ret1,_=common.TransferFileSSH(strFileName,strRemoteFile)
+    if(ret1>0){
+       return false,"Transfer File faild!!!!"
+    }
+    //创建启动文件
+    mapCommands,ok:=params["commands"].(map[string]interface{})
+    if ok {
+        common.DisplayJson(mapCommands);
+        for k, v := range mapCommands  {
+            switch v2 := v.(type) {
+            case string:
+                //保存启动文件
+                //传输远程文件
+                //执行远程脚本
+                fmt.Println(k, "is string", v2)
+            default:
+                fmt.Println(k, "is another type not handle yet")
+            }
+        }            
+    }
+    fmt.Println("strFigDirectory=",strFigDirectory)
+    fmt.Println("strFile=",strFileName)
+    return true,"ok"
+}
+
+func FigCreate(request map[string]interface{}) string {
     session := sh.NewSession()
-    session.ShowCMD = true
-    fmt.Println("action.FigCreate:")
-/*
-    err := session.Call("ssh",request.ServerIP, "touch ","tt.aa")
+    session.ShowCMD = true    
+    //strVersion,_:= request["Version"].(string)
+    strServerIP,_:= request["ServerIP"].(string)
+    //nPort,_:= request["Port"].(int)
+    //strMethod,_:= request["Method"].(string)
+
+     params,_:=request["Params"].(map[string]interface{})
+    ok,_:=fig_transfer(strServerIP,params)
+    if ok {
+        return "ok"
+    }
+    //common.DisplayJson(params)
+    err := session.Call("ssh",strServerIP, "touch ","tt.aa")
     if err != nil {
             fmt.Println("exec remote shell faild error:", err)
     }
-*/
-    return "go-sh"
+    return "faild"
 }
