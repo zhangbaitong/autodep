@@ -56,8 +56,9 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	strRemoteDir = FIG_PATH + strProjectName
 	//删除远程目录
 	_, _ = common.ExecRemoteRM(strServerIP, strRemoteDir)
-
-	ret1, _ := common.ExecRemoteCMD(strServerIP, "mkdir", strRemoteDir)
+	//支持递归生成不存在目录
+	//TODO:需要改进
+	ret1, _ := common.ExecRemoteCMD(strServerIP, "mkdir -p", strRemoteDir)
 	if ret1 > 0 {
 		return false, "Create fig Remote Path faild!!!!"
 	}
