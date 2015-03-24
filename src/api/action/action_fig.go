@@ -10,6 +10,22 @@ import (
 
 const FIG_PATH = "/home/tomzhao/fig/"
 
+func getProPath(params map[string]interface{}) (ret bool, err string) {
+	//获取项目名称
+	strFigDirectory, ok := params["fig_directory"].(string)
+	if !ok {
+		return false, "fig directory empty!!!!"
+	}
+	str := strings.Split(strFigDirectory, "/")
+
+	strProjectName := str[len(str)-1]
+
+	strRemoteDir = FIG_PATH + strProjectName
+
+	return true, strRemoteDir
+
+}
+
 func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, err string) {
 	var (
 		strRemoteDir string
@@ -120,6 +136,10 @@ func FigCreate(request map[string]interface{}) string {
 	if ok {
 		//执行fig命令
 		//TODO:exec multi cmd
+		retFlag, strRemoteDir := getProPath(params)
+		if !retFlag {
+			fmt.Println("Get project path is error!")
+		}
 		ret, _ := common.ExecRemoteShell(strServerIP, " cd "+strRemoteDir+" && "+" fig up")
 		if ret > 0 {
 			fmt.Println("exec fig up is error!")
