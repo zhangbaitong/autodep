@@ -20,7 +20,7 @@ func getProPath(params map[string]interface{}) (ret bool, err string) {
 
 	strProjectName := str[len(str)-1]
 
-	strRemoteDir = FIG_PATH + strProjectName
+	strRemoteDir := FIG_PATH + strProjectName
 
 	return true, strRemoteDir
 
