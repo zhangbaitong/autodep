@@ -4,6 +4,20 @@ It's a auto deployment tool with docker.
 #How to get
 git clone https://github.com/zhangbaitong/autodep.git
 
+#Install
+
+1.install package
+
+go get github.com/codeskyblue/go-sh
+
+go get github.com/samalba/dockerclient
+
+2.install gcc
+
+yum install gcc
+
+3.create your ssh keygen
+
 #feature
 
 1. support http REST API for do some action.
