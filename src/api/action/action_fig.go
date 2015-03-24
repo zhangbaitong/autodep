@@ -107,8 +107,6 @@ func fig_transfer(strServerIP string,params map[string]interface{})(ret bool,err
 }
 
 func FigCreate(request map[string]interface{}) string {
-    session := sh.NewSession()
-    session.ShowCMD = true    
     //strVersion,_:= request["Version"].(string)
     strServerIP,_:= request["ServerIP"].(string)
     //nPort,_:= request["Port"].(int)
