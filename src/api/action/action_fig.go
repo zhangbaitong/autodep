@@ -119,7 +119,8 @@ func FigCreate(request map[string]interface{}) string {
 	ok, _ := fig_transfer(strServerIP, params)
 	if ok {
 		//执行fig命令
-		ret, _ := common.ExecRemoteShell(strServerIP, "fig up")
+		//TODO:exec multi cmd
+		ret, _ := common.ExecRemoteShell(strServerIP, " cd "+strRemoteDir+" && "+" fig up")
 		if ret > 0 {
 			fmt.Println("exec fig up is error!")
 		} else {
