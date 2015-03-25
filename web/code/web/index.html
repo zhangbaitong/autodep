@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link href="./css/style.css" rel="stylesheet">
+<link href="./css/create_image.css" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-inner">
+            
+		</div>
+   </div>
+   
+   <div class="ch-container">
+       	 <div class="row">
+       	      <div class="col-sm-2 col-lg-2">
+       	            <div class="sidebar-nav">
+       	                <div class="nav-canvas">
+       	                    <ul class="nav nav-pills nav-stacked main-menu">
+                                <li class="nav-header">Home</li>
+                                <li class="create_image"><a class="ajax-link" href="#"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
+                                <li><a class="ajax-link" href="./html/query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
+								<li><a class="ajax-link" href="./html/create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
+								<li><a class="query_machines" href="./html/query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
+							    <li><a class="register_machine" href="./html/register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
+							</ul>
+						</div>
+					</div>
+			  </div>
+			  
+			  <div id="content" class="col-lg-10 col-sm-10">
+			         <div>
+					    <ul class="breadcrumb">
+					        <li>
+					            <a href="#">Home </a>
+					        </li>
+					        <li>
+					            <a href="#"> /  镜像打包</a>
+					        </li>
+					    </ul>
+					</div>
+					
+					<div class="row2">
+						 <div class="box col-md-12">
+						 	 <div class="box-inner">
+						 	     <div class="box-header well" data-original-title="">
+						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 创建镜像</h2>
+								 </div>	
+								 <div class="box-content">
+								 	    <form class="form-inline" role="form" action="#">					 	    	
+											<div class="form-group">
+                                                <label class="control-label" >镜像模版：</label>
+                                                <input type="radio" name="template" class="form-redio"  value="nginx"  checked="checked"> nginx
+                                                <input type="radio" name="template" class="form-redio"  value="gearman"> gearman
+                                                <input type="radio" name="template" class="form-redio"  value="zeromq"> zeromq
+                                                <input type="radio" name="template" class="form-redio"  value="mysql"> mysql
+                                                <input type="radio" name="template" class="form-redio"  value="redis"> redis                                                 
+                                            </div>
+						                    <div class="form-group has-success has-feedback">
+						                        <label class="control-label" for="image_name">镜像名：</label>
+						                        <input type="text" class="form-control" id="image_name">
+						                    </div>
+											<div class="form-group has-success has-feedback">
+                                                <label class="control-label" for="code_path">代码路径：</label>
+                                                <input type="text" class="form-control" id="code_path">
+                                            </div>
+						                </form>
+									    <div class="form-btn">
+                                            <button class="btn" id="images_package">打包镜像</button>
+                                        </div>
+								 </div>	
+							 </div>
+						 </div>
+					</div>
+			  </div>
+			  
+			  <div class="clear"></div>
+		 </div>   	
+   </div>
+   
+   <div id="show" style="display:none;width:100%;height:100%;padding-top:7%;background:rgba(0, 0, 0, 0.0) none repeat scroll 0 0 !important;position: fixed;top: 0;">
+        <div style="width:400px;height:100px;line-height:100px;text-align:center;margin:0 auto;background-color:#00f;font-size:25px;">
+                    努力上传中...
+        </div>    
+    </div>
+</body>
+</html>
+
+<script src="./lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    
+    (function($){
+        //注册镜像打包事件
+        $("#images_package").click(images_package);
+        
+        
+       //定义镜像打包事件
+        function images_package(){
+   
+            //校验参数
+			var template = $('input[name="template"]:checked').val();
+            if(!template){
+                alert("请选择基础镜像");
+                return;
+            }
+			
+            var image_name = $("#image_name").val();
+            if(!image_name){
+                alert("镜像名称不能为空");
+                return;
+            }
+            
+
+            var code_path = $("#code_path").val();
+            if(!code_path){
+                alert("代码路径不能为空");
+                return;
+            }
+            
+             $("#show").css("display","block");
+			
+  
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"../php/images_package.php",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                        method:"images_package",
+						template:template,
+						image_name:image_name,
+						code_path:code_path
+                    },
+                   success:function(data) {
+				   	    var relust=$.parseJSON(data);
+					    
+						$("#show").css("display","none");
+					
+                        if(0==relust["code"]){
+                           alert("创建镜像成功");
+                        }else{
+						   alert("创建镜像失败");	
+						}
+						
+
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            }
+   
+    })(jQuery);        
+</script>

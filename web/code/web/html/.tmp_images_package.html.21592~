@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=GBK">
+<title>镜像打包</title>
+<style>
+	/* 简易表单 */
+.m-form{line-height:29px;color:#555;}
+.m-form legend{font-size:14px;font-weight:bold;}
+.m-form .formitm{padding:20px 0 0;line-height:30px;}
+.m-form .formitm-1{padding-left:100px;}
+.m-form .lab{float:left;width:120px;margin-right:-90px;text-align:right;font-weight:bold;}
+.m-form .ipt{margin-left:120px;}
+.m-form .ipt *{vertical-align:middle;}
+.m-form .ipt a,.m-form .ipt a:hover{text-decoration:none;color:#3891eb;}
+.m-form .ipt img{height:32px;margin:0 15px 0 5px;}
+.m-form .ipt .domain{margin:0 0 0 5px;font-weight:bold;color:#777;}
+.m-form .ipt p{height:22px;line-height:22px;color:#999;}
+.m-form .tip{padding-top:10px;}
+.m-form .tip input{margin:0 5px 3px 0;}
+	
+</style>
+</head>
+<body>
+<div class="m-form">
+    <form name="" action="/php/images_package.php" method="get">
+        <fieldset>
+            <legend>镜像打包</legend>
+			<div class="formitm">
+                <label class="lab">镜像名称：</label>
+                <div class="ipt">
+                    <input id="image_name" type="text" class="u-ipt"/>
+                </div>
+            </div>
+			<div class="formitm">
+                <label class="lab">选择基础镜像：</label>
+                <div class="ipt">
+                       <label class="lab">nginx</label><input type="radio" id="base_image" value="nginx" checked="checked"/>
+                </div>
+            </div>
+			<div class="formitm">
+                <label class="lab">代码路径：</label>
+                <div class="ipt">
+                        <input id="code_path"  type="text" class="u-ipt"/>
+                </div>
+            </div>
+            <div class="formitm">
+                <label class="lab">上传代码：</label>
+                <div class="ipt">
+                       <input type="file" class="u-ipt"/>
+                </div>
+            </div>
+            <div class="formitm formitm-1"><button  class="u-btn" type="button">打包镜像</button></div>
+        </fieldset>
+    </form>
+</div>
+
+</body>
+</html>
+
+ <script src="../lib/jquery-1.7.1.min.js"></script>
+ <script type="text/javascript">
+    
+    (function($){
+        //注册镜像打包事件
+        $(".u-btn").click(images_package);
+		
+		
+       //定义镜像打包事件
+        function images_package(){
+
+            /*
+            //校验参数
+            var image_name = $("#image_name").val();
+            if(!image_name){
+                alert("镜像名称不能为空");
+                return;
+            }
+			
+		    var base_image = $("#base_image").val();
+            if(!base_image){
+                alert("请选择基础镜像");
+                return;
+            }
+			
+			var code_path = $("#code_path").val();
+            if(!code_path){
+                alert("代码路径不能为空");
+                return;
+            }
+            */
+			
+            
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"/php/images_package.php",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                        method:"images_package"
+
+                    },
+                   success:function(data) {
+                        if(data){
+                           alert("qq");
+                        }         
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+              
+            }
+   
+    })(jQuery);    
+    
+    
+        
+
+    
+    
+
+</script>

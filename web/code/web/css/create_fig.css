@@ -1,0 +1,120 @@
+.fig_file {
+  color: #ffffff;
+  background-color: #2fa4e7;
+      margin-left: 8px;
+}
+
+.nav>li>a {
+  border: 1px solid rgba(221, 221, 221, 0.46);
+  display: block;
+  padding: 10px 15px;
+
+}
+
+
+
+.box-content {
+    width:80%;
+    margin:0 auto;
+    padding: 10px;
+}
+
+.machine{
+	   margin-bottom:20px;
+}
+
+
+.machine_value{
+	   width:70%;
+    font-size: 16px;
+    line-height: 15px;
+    color: #555555;
+    border: 1px solid #cccccc;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    border-radius: 4px;
+    padding: 5px 5px;
+}
+
+.server{
+	margin-bottom:25px;
+}
+
+.server_header{
+	height:45px;
+	line-height:45px;
+	padding-left:10px;
+    background-color:#F1F1F1;	
+}
+
+.server_body{
+
+}
+
+.control-label-title{
+	font-size: 18px;
+	color:#317EAC;
+	font-weight: bold;
+}
+
+.title1
+{
+    width:100px;
+	display:inline-block;
+	text-align:right;	
+}
+
+.server_content{
+	margin: 12px 0;
+}
+
+.port,.link,.volume{
+	margin: 2px 0;
+}
+
+.control-label{
+	display:inline-block;
+	width:120px;
+	text-align:right;
+	font-weight: bold;
+}
+
+.form-control{
+	width:70%;
+	font-size: 16px;
+    line-height: 15px;
+    color: #555555;
+    border: 1px solid #cccccc;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    border-radius: 4px;
+    padding: 5px 5px;
+}
+
+.command{
+	height:100px;
+}
+
+.bth{
+	 color: #DD5600;
+     font-weight: bold;
+	 margin-left:10px;
+}
+
+#server_template,#port_template,#link_template,#volume_template{
+	display:none;
+}
+
+.form-btn {
+  position: relative;
+  margin-right: 60px;
+  float: right;
+}
+
+
+.btn{ 
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #555555;
+    font-weight:bolder;
+}
+
