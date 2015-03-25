@@ -47,6 +47,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			ret = action.ActionRegList()
 		}
+	case "reg/tags":
+		{
+			ret = action.ActionRegTags()
+		}
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
