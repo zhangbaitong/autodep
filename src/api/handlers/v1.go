@@ -49,7 +49,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "reg/tags":
 		{
-			ret = action.ActionRegTags()
+			ret = action.ActionRegTags(r.Form["ns"], r.Form["rep"])
 		}
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
