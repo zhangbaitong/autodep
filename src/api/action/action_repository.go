@@ -17,6 +17,7 @@ var ip string
 
 func init() {
 	ip, _ = common.Config().String("autodep", "ip")
+	common.Log().Println("common inint ip - ", ip)
 }
 
 func ActionRegList() string {

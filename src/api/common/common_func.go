@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codeskyblue/go-sh"
 	"github.com/robfig/config"
+	"log"
 	"os"
 )
 
@@ -111,4 +112,10 @@ func Config() *config.Config {
 	c, _ := config.ReadDefault(file + "/common/config.cfg")
 	fmt.Println("Config init success ...")
 	return c
+}
+
+func Log() *log.Logger {
+	logger := log.New(os.Stdout, "autodep log : ", log.Ldate|log.Ltime|log.Lshortfile)
+	logger.Print("logger init success ...")
+	return logger
 }
