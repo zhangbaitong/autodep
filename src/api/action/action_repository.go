@@ -35,3 +35,17 @@ func ActionRegTags(ns []string, rep []string) string {
 	}
 	return ret
 }
+
+func ActionRegSearch(q []string, n []string, page []string) string {
+	if len(q) == 0 && len(n) == 0 && len(page) == 0 {
+		return ActionRegList()
+	}
+
+	url := fmt.Sprintf(SEARCH+"?q=%s&page=%s&n=%s", q[0], page[0], n[0])
+	ret, flag := client.GetHTTP(url)
+	fmt.Println(ret)
+	if !flag {
+		ret = ""
+	}
+	return ret
+}
