@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link href="../css/style.css" rel="stylesheet">
+<link href="../css/query_images.css" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-inner">
+            
+		</div>
+   </div>
+   
+   <div class="ch-container">
+       	 <div class="row">
+       	      <div class="col-sm-2 col-lg-2">
+       	            <div class="sidebar-nav">
+       	                <div class="nav-canvas">
+       	                    <ul class="nav nav-pills nav-stacked main-menu">
+                                <li class="nav-header">Home</li>
+                                <li class="create_image"><a class="ajax-link" href="../index.html"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
+                                <li class="query_images"><a class="ajax-link" href="#"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
+								<li><a class="ajax-link" href="./create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
+								<li ><a class="query_machines" href="./query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
+						       <li><a class="register_machine" href="./register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
+							</ul>
+						</div>
+					</div>
+			  </div>
+			  
+			  <div id="content" class="col-lg-10 col-sm-10">
+			         <div>
+					    <ul class="breadcrumb">
+					        <li>
+					            <a href="#">Home </a>
+					        </li>
+					        <li>
+					            <a href="#"> /  查询镜像</a>
+					        </li>
+					    </ul>
+					</div>
+					
+					<div class="row2">
+						 <div class="box col-md-12">
+						 	 <div class="box-inner">
+						 	     <div class="box-header well" data-original-title="">
+						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 查询镜像</h2>
+								 </div>	
+								 <div class="box-content">
+	                                    <div class="query">
+	                                    	<div class="col-md-6 ">
+	                                    		<label>
+	                                    			镜像名称：
+													<input type="text"  id="image_name" class="form-control">
+	                                    		</label>
+	                                    	</div>
+											<div class="col-md-6">
+                                                <label>
+                                                                                                          创建开始时间：
+                                                    <input type="date" id="start_time" class="form-control">
+                                                </label>
+                                            </div>
+											<div class="col-md-6">
+                                                <label>
+                                                                                                          创建结束时间：
+                                                    <input type="date"  id="end_time" class="form-control">
+                                                </label>
+                                            </div>
+											 <div class="col-md-7">
+                                                   <button class="btn" id="query_images">查询镜像</button>               
+                                            </div>
+											 <div class="clear"></div>
+	                                    </div>
+									
+										<div class="table-content">
+											<table class="table table-bordered">
+												<thead>
+													<tr>
+														<th class="short">编号</th>
+														<th class="long">镜像名称</th>
+														<th class="middle">创建者</th>
+														<th class="middle">创建时间</th>
+														<th class="longer">备注</th>
+													</tr>
+											    </thead>
+												<tbody class="table_body" id="query_content">
+											
+												</tbody>
+											</table>
+										</div>
+								 </div>	
+							 </div>
+						 </div>
+					</div>
+			  </div>
+			  
+			  <div class="clear"></div>
+		 </div>   	
+   </div>
+</body>
+</html>
+
+<script src="../lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    
+    (function($){
+        //注册镜像打包事件
+        $("#query_images").click(query_images);
+        
+        
+       //定义镜像打包事件
+        function query_images(){
+  		
+            var image_name = $("#image_name").val();
+			var start_time = $("#start_time").val();
+			var end_time = $("#end_time").val();
+       
+
+
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"../../php/query_images.php",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                        method:"query_images",
+						image_name:image_name,
+						start_time:start_time,
+						end_time:end_time
+                    },
+                   success:function(data) {
+				   	    var result=$.parseJSON(data);
+						
+			            console.log(result);
+					  
+                        if(1==result.code){
+                           alert("查看镜像出错，请联系管理员");
+						   return;
+                        }
+						
+						//删除上次加载的数据
+                        $("#query_content").children().remove();
+						
+						var values=result.data;
+						
+						console.log(values[0]);
+						
+						if(values){
+						   var tr="";		
+						   var num=1;
+						   for(var i=0;i<values.length;i++){
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].image_name+"</td><td>"+values[i].creator+"</td><td>"+values[i].create_time+"</td><td>"+values[i].remark+"</td></tr>";
+                           } 
+                           $("#query_content").append(tr);   
+						}
+		   
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            }
+   
+    })(jQuery);        
+</script>
