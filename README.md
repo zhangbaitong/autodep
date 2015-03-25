@@ -12,11 +12,17 @@ go get github.com/codeskyblue/go-sh
 
 go get github.com/samalba/dockerclient
 
+go get github.com/robfig/config
+
 2.install gcc
 
 yum install gcc
 
 3.create your ssh keygen
+
+#Test
+
+go test api/common -v
 
 #feature
 
