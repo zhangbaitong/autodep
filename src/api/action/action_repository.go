@@ -13,8 +13,13 @@ const (
 	REPOSITORY_DEFAULT = "registry"
 )
 
+var ip string
+
+func init() {
+	ip, _ = common.Config().String("autodep", "ip")
+}
+
 func ActionRegList() string {
-	ip, _ := common.Config().String("autodep", "ip")
 	ret, flag := client.GetHTTP(fmt.Sprintf(SEARCH, ip))
 	fmt.Println(ret)
 	if !flag {
@@ -24,7 +29,6 @@ func ActionRegList() string {
 }
 
 func ActionRegTags(ns []string, rep []string) string {
-	ip, _ := common.Config().String("autodep", "ip")
 	var url string
 	if len(ns) > 0 && len(rep) > 0 {
 		url = fmt.Sprintf(TAGS, ip, ns[0], rep[0])
@@ -43,7 +47,7 @@ func ActionRegSearch(q []string, n []string, page []string) string {
 	if len(q) == 0 || len(n) == 0 || len(page) == 0 {
 		return ActionRegList()
 	}
-	ip, _ := common.Config().String("autodep", "ip")
+	//ip, _ := common.Config().String("autodep", "ip")
 	url := fmt.Sprintf(SEARCH+"?q=%s&page=%s&n=%s", ip, q[0], page[0], n[0])
 	ret, flag := client.GetHTTP(url)
 	fmt.Println(ret)

@@ -1,7 +1,6 @@
 package common
 
 import (
-	//"encoding/json"
 	"fmt"
 	"github.com/codeskyblue/go-sh"
 	"github.com/robfig/config"
@@ -108,6 +107,8 @@ func SaveFile(strFileName string, strData string) (ok bool) {
 }
 
 func Config() *config.Config {
-	c, _ := config.ReadDefault("config.cfg")
+	file, _ := os.Getwd()
+	c, _ := config.ReadDefault(file + "/common/config.cfg")
+	fmt.Println("Config init success ...")
 	return c
 }

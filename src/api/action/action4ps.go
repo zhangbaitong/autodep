@@ -1,8 +1,9 @@
 package action
+
 import (
+	"fmt"
 	"github.com/samalba/dockerclient"
 	"log"
-	"fmt"
 )
 
 func Actionps() string {
@@ -13,7 +14,7 @@ func Actionps() string {
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
-                return ""
+	return ""
 }
 
 func Actionversion() string {
@@ -24,6 +25,6 @@ func Actionversion() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("version type", version.Version);
-                return version.Version
+	fmt.Println("version type", version.Version)
+	return version.Version
 }
