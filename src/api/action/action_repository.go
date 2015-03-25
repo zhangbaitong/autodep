@@ -2,6 +2,7 @@ package action
 
 import (
 	"client"
+	"fmt"
 )
 
 const (
@@ -9,7 +10,7 @@ const (
 )
 
 func ActionRegList() string {
-	ret, flag := GetHTTP(SEARCH)
+	ret, flag := client.GetHTTP(SEARCH)
 	fmt.Println(ret)
 	if !flag {
 		ret = ""
