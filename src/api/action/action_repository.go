@@ -1,31 +1,18 @@
 package action
-/*
+
 import (
-	"github.com/samalba/dockerclient"
-	"log"
-	"fmt"
+	"client"
 )
 
-func Actionps() string {
-	//docker, _ := dockerclient.NewDockerClient("117.78.19.76:4243", nil)
+const (
+	SEARCH = "http://10.122.75.228:5000/v1/search"
+)
 
-	// Get only running containers
-	//containers, err := docker.ListContainers(true, true, "")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-                return ""
-}
-
-func Actionversion() string {
-	docker, _ := dockerclient.NewDockerClient("127.0.0.1:4243", nil)
-
-	// Get only running containers
-	version, err := docker.Version()
-	if err != nil {
-		log.Fatal(err)
+func ActionRegList() string {
+	ret, flag := GetHTTP(SEARCH)
+	fmt.Println(ret)
+	if !flag {
+		ret = ""
 	}
-	fmt.Println("version type", version.Version);
-                return version.Version
+	return ret
 }
-*/

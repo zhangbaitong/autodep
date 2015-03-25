@@ -1,6 +1,6 @@
-package main
+package client
 
-
+/*
 import (
     "fmt"
     "io/ioutil"
@@ -94,10 +94,10 @@ func httpDo() {
 
 	fmt.Println(string(body))
 }
-
-func main() {
-	//httpGet()
-	httpPost()
-	//httpPostForm()
-	//httpDo()
-}
+*/
+//func main() {
+//httpGet()
+//	httpPost()
+//httpPostForm()
+//httpDo()
+//}
