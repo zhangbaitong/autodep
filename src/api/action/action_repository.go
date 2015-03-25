@@ -37,7 +37,7 @@ func ActionRegTags(ns []string, rep []string) string {
 }
 
 func ActionRegSearch(q []string, n []string, page []string) string {
-	if len(q) == 0 && len(n) == 0 && len(page) == 0 {
+	if len(q) == 0 || len(n) || 0 && len(page) || 0 {
 		return ActionRegList()
 	}
 
