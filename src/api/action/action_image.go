@@ -1,30 +1,30 @@
 package action
-/*
+
 import (
+	"encoding/json"
 	"github.com/samalba/dockerclient"
-	"log"
-	"fmt"
 )
-func Actionps() string {
-	//docker, _ := dockerclient.NewDockerClient("117.78.19.76:4243", nil)
 
-	// Get only running containers
-	//containers, err := docker.ListContainers(true, true, "")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-                return ""
-}
+func ActionImages() string {
+	docker, _ := dockerclient.NewDockerClient("117.78.19.76:4243", nil)
 
-func Actionversion() string {
-	docker, _ := dockerclient.NewDockerClient("127.0.0.1:4243", nil)
-
-	// Get only running containers
-	version, err := docker.Version()
+	images, err := docker.ListImages()
 	if err != nil {
-		log.Fatal(err)
+		logger.Println("List images faild!")
 	}
-	fmt.Println("version type", version.Version);
-                return version.Version
+
+	ret, _ := json.Marshal(images)
+	return string(ret)
 }
-*/
+
+// func Actionversion() string {
+// 	docker, _ := dockerclient.NewDockerClient("127.0.0.1:4243", nil)
+
+// 	// Get only running containers
+// 	version, err := docker.Version()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fmt.Println("version type", version.Version)
+// 	return version.Version
+// }
