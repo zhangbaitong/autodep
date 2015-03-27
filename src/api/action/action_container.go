@@ -1,31 +1,25 @@
 package action
-/*
+
 import (
 	"github.com/samalba/dockerclient"
 	"log"
 	"fmt"
+	"api/common"
 )
 
-func Actionps() string {
-	//docker, _ := dockerclient.NewDockerClient("117.78.19.76:4243", nil)
+func ActionListContainers(request map[string]interface{}) string {
+	common.DisplayJson(request)
+	strServerIP, _ := request["ServerIP"].(string)
+	nPort:= fmt.Sprintf("%.0f", request["Port"])
+	strDockerServer:=strServerIP+":"+nPort
+	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
 	// Get only running containers
-	//containers, err := docker.ListContainers(true, true, "")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-                return ""
-}
-
-func Actionversion() string {
-	docker, _ := dockerclient.NewDockerClient("127.0.0.1:4243", nil)
-
-	// Get only running containers
-	version, err := docker.Version()
+	containers, err := client.ListContainers(true, false, "")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("cannot get containers: %s", err)
 	}
-	fmt.Println("version type", version.Version);
-                return version.Version
+
+	fmt.Println("containers :", containers)
+	return containers
 }
-*/
