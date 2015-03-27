@@ -13,35 +13,36 @@ func init() {
 }
 
 func API_V1(w http.ResponseWriter, r *http.Request) {
+
 	strMethod := r.URL.Path[len("/v1/"):]
 	if err = r.ParseForm(); err != nil {
-		fmt.Println("Server start faild error:", err)
+		common.Log().Println("Server internal error:", err)
 	}
 
-	strPostData := r.FormValue("request")
-	//fmt.Println(strPostData)
-	//var request common.RequestData
-	var req interface{}
-	err := json.Unmarshal([]byte(strPostData), &req)
-	if err != nil {
-		fmt.Println("json data decode faild :", err)
+	var request map[string]interface{}
+
+	if r.Method == "GET" {
+	} else {
+		strPostData := r.FormValue("request")
+		//var request common.RequestData
+		var req interface{}
+		err := json.Unmarshal([]byte(strPostData), &req)
+		if err != nil {
+			fmt.Println("json data decode faild :", err)
+		}
+		request, _ = req.(map[string]interface{})
+		common.DisplayJson(request)
 	}
 
-	request, _ := req.(map[string]interface{})
-	common.DisplayJson(request)
 	var ret string
 	switch strMethod {
 	case "fig/create":
 		{
 			ret = action.FigCreate(request)
 		}
-	case "echo":
-		{
-			ret = action.Actionecho()
-		}
 	case "version":
 		{
-			ret = action.Actionversion()
+			//ret = action.Actionversion()
 		}
 	case "reg/list":
 		{
@@ -54,6 +55,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	case "reg/search":
 		{
 			ret = action.ActionRegSearch(r.Form["q"], r.Form["n"], r.Form["page"])
+		}
+	case "reg/info":
+		{
+			ret = action.ActionAllInfo()
 		}
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}

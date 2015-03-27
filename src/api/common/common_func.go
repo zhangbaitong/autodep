@@ -9,7 +9,8 @@ import (
 )
 
 func DisplayJson(obj_json map[string]interface{}) {
-	fmt.Println("----------------------parse start------------------------")
+	Log().Println(obj_json)
+	Log().Println("----------------------parse start------------------------")
 	for k, v := range obj_json {
 		switch v2 := v.(type) {
 		case string:
@@ -30,67 +31,44 @@ func DisplayJson(obj_json map[string]interface{}) {
 			fmt.Println(k, "is another type not handle yet")
 		}
 	}
-	fmt.Println("----------------------parse end------------------------")
+	Log().Println("----------------------parse end------------------------")
+}
+
+const (
+	SUCCESS     int    = 0
+	FAILT       int    = 1
+	SUCCESS_MSG string = "ok"
+)
+
+func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
+	session := sh.NewSession()
+	session.ShowCMD = true
+	err := session.Call(cmd, cmds...)
+	if err != nil {
+		Log().Println(msg, ":", err)
+		return FAILT, msg
+	}
+	return SUCCESS, SUCCESS_MSG
 }
 
 func TransferFileSSH(strSrcFile string, strDestFile string) (ret int, err string) {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	err1 := session.Call("scp", strSrcFile, strDestFile)
-	if err1 != nil {
-		fmt.Println("transfer remote file faild error:", err1)
-		return 1, "transfer remote file faild error"
-	}
-
-	return 0, "ok"
+	return execsh("transfer remote file faild error", "scp", strSrcFile, strDestFile)
 }
 
 func ExecRemoteCMD(strServerIP string, strCMD string, strPath string) (ret int, err string) {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	err1 := session.Call("ssh", strServerIP, strCMD, strPath)
-	if err1 != nil {
-		fmt.Println("exec remote shell faild error:", err1)
-		return 1, "exec remote shell faild error"
-	}
-
-	return 0, "ok"
+	return execsh("exec remote shell faild error", "ssh", strServerIP, strCMD, strPath)
 }
 
 func ExecRemoteChmod(strServerIP string, strPrivilege string, strFile string) (ret int, err string) {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	err1 := session.Call("ssh", strServerIP, "chmod", strPrivilege, strFile)
-	if err1 != nil {
-		fmt.Println("exec remote shell faild error:", err1)
-		return 1, "exec remote shell faild error"
-	}
-
-	return 0, "ok"
+	return execsh("exec remote shell faild error", "ssh", strServerIP, "chmod", strPrivilege, strFile)
 }
 
 func ExecRemoteRM(strServerIP string, strFile string) (ret int, err string) {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	err1 := session.Call("ssh", strServerIP, "rm", "-rf", strFile)
-	if err1 != nil {
-		fmt.Println("exec remote shell faild error:", err1)
-		return 1, "exec remote shell faild error"
-	}
-
-	return 0, "ok"
+	return execsh("exec remote shell faild error", "ssh", strServerIP, "rm", "-rf", strFile)
 }
 
 func ExecRemoteShell(strServerIP string, strShell string) (ret int, err string) {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	err1 := session.Call("ssh", strServerIP, strShell)
-	if err1 != nil {
-		fmt.Println("exec remote shell faild error:", err1)
-		return 1, "exec remote shell faild error"
-	}
-
-	return 0, "ok"
+	return execsh("exec remote shell faild error", "ssh", strServerIP, strShell)
 }
 
 func SaveFile(strFileName string, strData string) (ok bool) {
