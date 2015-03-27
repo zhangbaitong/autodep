@@ -76,7 +76,7 @@ func (image *Image) getName() string {
 	return strings.Split(image.Name, "/")[1]
 }
 
-func routineSearch(image *Image) {
+func routineSearch(image *Image, ch chan string) {
 	url := fmt.Sprintf(TAGS, ip, image.getNS(), image.getName())
 	retTag := search(url)
 
@@ -92,6 +92,7 @@ func routineSearch(image *Image) {
 	}
 
 	logger.Println(image.Tag)
+	ch <- retTag
 }
 
 func ActionAllInfo() string {
@@ -103,9 +104,14 @@ func ActionAllInfo() string {
 		logger.Println("json data decode faild :", err)
 	}
 	logger.Println("Method ActionAllInfo Num_results : ", repo.Num_results)
-
+	ch := make(chan string, repo.Num_results)
 	for i := 0; i < len(repo.Results); i++ {
-		routineSearch(&repo.Results[i])
+		go routineSearch(&repo.Results[i], ch)
+	}
+
+	for i := 0; i < repo.Num_results; i++ {
+		v := <-ch
+		logger.Println("Received tag is ", i, v)
 	}
 
 	rets, _ := json.Marshal(repo)
