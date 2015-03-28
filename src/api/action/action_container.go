@@ -10,8 +10,7 @@ import (
 func ActionListContainers(request map[string]interface{}) string {
 	common.DisplayJson(request)
 	strServerIP, _ := request["ServerIP"].(string)
-	nPort:= fmt.Sprintf("%.0f", request["Port"])
-	strDockerServer:=strServerIP+":"+nPort
+	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
 	// Get only running containers
