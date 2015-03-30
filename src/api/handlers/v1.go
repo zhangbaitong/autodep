@@ -43,7 +43,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "container/create":
 		{
-			ret = action.CreateContainer(request)
+			//ret = action.CreateContainer(request)
 		}
 	case "container/inspect":
 		{
