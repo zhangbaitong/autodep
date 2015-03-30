@@ -320,16 +320,16 @@
 			servers_arr[j]=server;
 		}
 		
-		var params=[];
-		params["project_name"]=$(".project_name").val();
-		params["servers"]=servers_arr;
 
+    var params={};
+    params.project_name=$(".project_name").val();
+    params.servers=servers_arr;
                 
 		
 		var machine=$("#machine_value").val().split(":");
 		data.Version="1.0";
 		data.ServerIP=machine[1];
-		data.Port=machine[2];
+		data.Port=parseInt(machine[2]);
 		data.Method="create_fig";
 	    data.Params=JSON.stringify(params);		
 
