@@ -4,6 +4,7 @@ import (
 	"github.com/codeskyblue/go-sh"
 
 	"api/common"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -124,15 +125,16 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	return true, "ok"
 }
 
-func FigCreate(request map[string]interface{}) string {
+func FigCreate(request common.RequestData) string {
 	session := sh.NewSession()
 	session.ShowCMD = true
 	//strVersion,_:= request["Version"].(string)
-	strServerIP, _ := request["ServerIP"].(string)
+	strServerIP := request.ServerIP
 	//nPort,_:= request["Port"].(int)
 	//strMethod,_:= request["Method"].(string)
 
-	params, _ := request["Params"].(map[string]interface{})
+	params := dealParams(request.Params)
+
 	ok, _ := fig_transfer(strServerIP, params)
 	if ok {
 		//执行fig命令
@@ -150,4 +152,98 @@ func FigCreate(request map[string]interface{}) string {
 	}
 	//common.DisplayJson(params)
 	return "faild"
+}
+
+//处理从前台传过来的函数
+func dealParams(strParam string) map[string]interface{} {
+	ret := map[string]interface{}{}
+	figData := ""
+	commands := []map[string]string{}
+	temp, _ := common.Config().String("fig", "figDirectory")
+
+	var params FigParams
+	err := json.Unmarshal([]byte(strParam), &params)
+	if err != nil {
+		logger.Println("json data decode faild :", err)
+	}
+
+	figDirectory := temp + "/" + params.Project_name
+	//servers := params["servers"].([]map[string]interface{})
+	servers := params.Servers
+	//servers := params["servers"].([][]interface{})
+	for _, server := range servers {
+		figData += dealServer(server.Server_name)
+		figData += dealOneValue("image", server.Image)
+		figData += dealMoreValues("ports", server.Ports)
+		figData += dealMoreValues("links", server.Links)
+		figData += dealMoreValues("volumes", server.Volumes)
+		figData += dealCommand(server.Server_name, server.Command, figDirectory)
+		command := dealCommandContent(server.Server_name, server.Command)
+		commands = append(commands, command)
+	}
+	ret["fig_data"] = figData
+	ret["commands"] = commands
+	ret["fig_directory"] = figDirectory
+	return ret
+}
+
+//处理fig.yml中的服务名格式
+func dealServer(server string) (ret string) {
+	return server + ":" + "\n"
+}
+
+//处理fig.yml文件中只有单个值的数据，比如image,command
+func dealOneValue(name, value string) string {
+	return "  " + name + ": " + value + "\n"
+}
+
+//处理fig.yml文件中有多个值的数据，比如ports,links
+func dealMoreValues(name string, values []string) string {
+	ret := ""
+	for _, value := range values {
+		if "" != strings.TrimSpace(value) {
+			if "port" == name {
+				ret += "    - \"" + value + "\"" + "\n"
+			} else {
+				ret += "    - " + value + "\n"
+			}
+		}
+	}
+
+	if "" != ret {
+		ret = "  " + name + ":" + "\n" + ret
+	}
+	return ret
+}
+
+//处理fig.yml文件中的command命令
+func dealCommand(serverName, command, figDirectory string) string {
+	if "" != strings.TrimSpace(command) {
+		return "  command: " + figDirectory + "/startup/" + serverName + "/start.sh" + "\n"
+	}
+	return ""
+}
+
+//处理fig.yml文件中command的内容
+func dealCommandContent(serverName, command string) map[string]string {
+	ret := map[string]string{}
+	if "" != strings.TrimSpace(command) {
+		command += "#!/bin/bash" + "\n" + command + "\n" + "tail -f /root/docker/daemonize/daemonize" + "\n"
+		ret[serverName] = command
+	}
+	return ret
+}
+
+type FigParams struct {
+	Project_name string
+	Servers      []Server
+}
+
+type Server struct {
+	Server_name string
+	Image       string
+	Ports       []string
+	Links       []string
+	Volumes     []string
+	Command     string
 }
