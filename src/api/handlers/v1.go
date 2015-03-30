@@ -40,6 +40,42 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			ret = action.FigCreate(request)
 		}
+	case "container/inspect":
+		{
+			ret = action.InspectContainer(request)
+		}
+	case "container/list":
+		{
+			ret = action.ListContainers(request)
+		}
+	case "container/changes":
+		{
+			ret = action.ContainerChanges(request)
+		}
+	case "container/stop":
+		{
+			ret = action.StopContainer(request)
+		}
+	case "container/restart":
+		{
+			ret = action.RestartContainer(request)
+		}
+	case "container/pause":
+		{
+			ret = action.PauseContainer(request)
+		}
+	case "container/unpause":
+		{
+			ret = action.UnpauseContainer(request)
+		}
+	case "container/kill":
+		{
+			ret = action.KillContainer(request)
+		}
+	case "container/info":
+		{
+			ret = action.InfoContainer(request)
+		}
 	case "version":
 		{
 			//ret = action.Actionversion()
