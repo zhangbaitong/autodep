@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 <title>Insert title here</title>
 <link href="../css/style.css" rel="stylesheet">
 <link href="../css/create_fig.css" rel="stylesheet">
 </head>
 <body>
-	<!---------------- 模版 --------------->
 	 <div class="port" id="port_template">
          <label class="control-label"></label>
          <input type="text" class="form-control ports">
@@ -74,7 +73,6 @@
              </div>
         </div>                             
     </div>
-    <!---------------- 模版 --------------->
 	
 	
 	
@@ -123,7 +121,8 @@
                                         <form  id="form_server" action="#">
 	                                         <div class="machine">   
 											     <label class="control-label-title title1">服务器：</label>
-                                                 <select class="machine_value" id="machine_value">
+												  <input type="text" class="form-control machine_value" id="machine_value" > 
+                                                  <!--<select class="machine_value" id="machine_value">-->
 												  </select>
 											</div>
 											<div class="machine">   
@@ -151,8 +150,6 @@
         </div>    
     </div>
 	
-	
-        
 
 	
 	
@@ -172,12 +169,13 @@
         //注册镜像打包事件
         $("#create_fig").click(create_fig);
 		
-		query_machines();
+		//query_machines();
 
     })(jQuery);  
     
 	
         //定义镜像打包事件
+		/*
         function query_machines(){
 
             //通过ajax请求后台服务
@@ -217,7 +215,7 @@
                        //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
                    }
                 });
-            } 
+            } */
 	
 	
 	
@@ -322,23 +320,33 @@
 			servers_arr[j]=server;
 		}
 		
+		var params=[];
+		params["project_name"]=$(".project_name").val();
+		params["servers"]=servers_arr;
+
+                
 		
 		var machine=$("#machine_value").val().split(":");
-		data.machine_ip=machine[1];
-		data.docker_port=machine[2];
-		data.project_name=$(".project_name").val();
-	    data.server=servers_arr;		
+		data.Version="1.0";
+		data.ServerIP=machine[1];
+		data.Port=machine[2];
+		data.Method="create_fig";
+	    data.Params=params;		
 
+        console.log(data);
+	//var rdata= "request="+JSON.stringify(data);
+	var rdata= JSON.stringify(data);
+	//var rdata= data;
+	//var rdata= "request=hhhh";
 
         //通过ajax请求后台服务
           $.ajax({
-               url:"../../php/create_fig.php",
+               url:"http://117.78.19.76:8099/v1/fig/create",
                dataType:"json",
                type: "post",
                data:{
-                    method:"create_fig",
-                    data:data,
-                },
+		 request:rdata
+		},
                success:function(data) {
                     var relust=$.parseJSON(data);
                     

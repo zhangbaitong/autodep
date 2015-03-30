@@ -19,19 +19,20 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		common.Log().Println("Server internal error:", err)
 	}
 
-	var request map[string]interface{}
+	//var request map[string]interface{}
+	var request common.RequestData
 
 	if r.Method == "GET" {
 	} else {
 		strPostData := r.FormValue("request")
 		//var request common.RequestData
-		var req interface{}
-		err := json.Unmarshal([]byte(strPostData), &req)
+
+		err := json.Unmarshal([]byte(strPostData), &request)
 		if err != nil {
 			fmt.Println("json data decode faild :", err)
 		}
-		request, _ = req.(map[string]interface{})
-		common.DisplayJson(request)
+		//request, _ = req.(map[string]interface{})
+		//common.DisplayJson(request)
 	}
 
 	var ret string
@@ -42,39 +43,39 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "container/inspect":
 		{
-			ret = action.InspectContainer(request)
+			//ret = action.InspectContainer(request)
 		}
 	case "container/list":
 		{
-			ret = action.ListContainers(request)
+			//ret = action.ListContainers(request)
 		}
 	case "container/changes":
 		{
-			ret = action.ContainerChanges(request)
+			//ret = action.ContainerChanges(request)
 		}
 	case "container/stop":
 		{
-			ret = action.StopContainer(request)
+			//ret = action.StopContainer(request)
 		}
 	case "container/restart":
 		{
-			ret = action.RestartContainer(request)
+			//ret = action.RestartContainer(request)
 		}
 	case "container/pause":
 		{
-			ret = action.PauseContainer(request)
+			// ret = action.PauseContainer(request)
 		}
 	case "container/unpause":
 		{
-			ret = action.UnpauseContainer(request)
+			// ret = action.UnpauseContainer(request)
 		}
 	case "container/kill":
 		{
-			ret = action.KillContainer(request)
+			// ret = action.KillContainer(request)
 		}
 	case "container/info":
 		{
-			ret = action.InfoContainer(request)
+			// ret = action.InfoContainer(request)
 		}
 	case "version":
 		{
@@ -82,23 +83,23 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "reg/list":
 		{
-			ret = action.ActionRegList()
+			// ret = action.ActionRegList()
 		}
 	case "reg/tags":
 		{
-			ret = action.ActionRegTags(r.Form["ns"], r.Form["rep"])
+			// ret = action.ActionRegTags(r.Form["ns"], r.Form["rep"])
 		}
 	case "reg/search":
 		{
-			ret = action.ActionRegSearch(r.Form["q"], r.Form["n"], r.Form["page"])
+			// ret = action.ActionRegSearch(r.Form["q"], r.Form["n"], r.Form["page"])
 		}
 	case "reg/info":
 		{
-			ret = action.ActionAllInfo()
+			// ret = action.ActionAllInfo()
 		}
 	case "image/list":
 		{
-			ret = action.ActionImages()
+			// ret = action.ActionImages()
 		}
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
