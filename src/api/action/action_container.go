@@ -29,6 +29,50 @@ func GetContainerID(params string) (ret string, ok bool){
 	}
 	return strID,true
 }
+
+func CreateContainer(request map[string]interface{}) string {
+	common.DisplayJson(request)
+	strServerIP, _ := request["ServerIP"].(string)
+	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+	fmt.Println("strDockerServer=", strDockerServer)	
+	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
+
+	var data map[string]string
+	strData,_:=request["Params"].(string)
+	fmt.Println("Info=", strData)
+	err := json.Unmarshal([]byte(strData), &data)
+	if err != nil {
+		fmt.Println("json data decode faild :", err)
+	}
+
+	fmt.Println("Info=", data)
+	//fmt.Println("imageName:%s;containerName=%s", Info.imageName,Info.containerName)
+	cmd:=[]string{"/bin/bash"}
+	containerConfig := &dockerclient.ContainerConfig{
+	    Image:          data["imageName"],
+	    Cmd:			 cmd,
+	    Tty:			 true,
+	}
+
+	fmt.Println("containerName=", data["containerName"])
+	containerID, err := client.CreateContainer(containerConfig, data["containerName"])
+     if err != nil {
+		log.Fatal("cannot create container: %s", err)
+	}
+
+    // Start the container
+	createContHostConfig := &dockerclient.HostConfig{
+	    Binds:           []string{"/var/run:/var/run", "/sys:/sys", "/var/lib/docker:/var/lib/docker"},
+	    PublishAllPorts: true,
+	    Privileged:      false,
+	}
+    err = client.StartContainer(containerID,createContHostConfig)
+    if err != nil {
+	fmt.Println(err)
+    }
+	return "ok"
+}
+
 func ListContainers(request map[string]interface{}) string {
 	common.DisplayJson(request)
 	strServerIP, _ := request["ServerIP"].(string)
