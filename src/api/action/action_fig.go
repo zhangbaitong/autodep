@@ -55,6 +55,8 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 
 	//创建远程目录
 	strRemoteDir = FIG_PATH + strProjectName
+		fmt.Println(strRemoteDir);
+
 	//删除远程目录
 	_, _ = common.ExecRemoteRM(strServerIP, strRemoteDir)
 	//支持递归生成不存在目录
@@ -72,8 +74,10 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	}
 
 	//创建启动文件
-	mapCommands, ok := params["commands"].(map[string]interface{})
-	if ok {
+	//mapCommands, ok := params["commands"].(map[string]interface{})
+	fmt.Println("commands=",params["commands"].([]map[string]string))
+	commands:=params["commands"].([]map[string]string);
+	if(len(commands)>0){
 		strRemoteDir = FIG_PATH + strProjectName + "/startup"
 		//创建远程目录
 		ret1, _ = common.ExecRemoteCMD(strServerIP, "mkdir", strRemoteDir)
@@ -81,45 +85,39 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 			return false, "Create fig Remote Path faild!!!!"
 		}
 
-		common.DisplayJson(mapCommands)
-		for k, v := range mapCommands {
-			switch v2 := v.(type) {
-			case string:
-
+		for i := 0; i < len(commands); i++ {
+			for k,v := range commands[i] {
 				//保存启动文件
+				strStartDir := strRemoteDir+ "/"+k
+				ret1, _ = common.ExecRemoteCMD(strServerIP, "mkdir -p", strStartDir)
+				if ret1 > 0 {
+					return false, "Create fig Remote Path faild!!!!"
+				}
+
 				strStartFile := "start.sh"
-				ok = common.SaveFile(strStartFile, v2)
+				ok = common.SaveFile(strStartFile, v)
 				if !ok {
 					return false, "save start file empty!!!!"
 				}
 
 				//传输文件到远程目录
-				strRemoteFile := strServerIP + ":" + strRemoteDir + "/" + strStartFile
+				strRemoteFile := strServerIP + ":" + strStartDir + "/" + strStartFile
 				ret1, _ = common.TransferFileSSH(strStartFile, strRemoteFile)
 				if ret1 > 0 {
 					return false, "Transfer File faild!!!!"
 				}
 
 				//远程脚本设置执行权限
-				strRemoteFile = strRemoteDir + "/" + strStartFile
+				strRemoteFile = strStartDir + "/" + strStartFile
 				fmt.Println("strRemoteFile=", strRemoteFile)
 				ret1, _ = common.ExecRemoteChmod(strServerIP, "+x", strRemoteFile)
 				if ret1 > 0 {
 					return false, "Exec Remote Shell faild!!!!"
 				}
-
-				//执行远程脚本
-				ret1, _ = common.ExecRemoteShell(strServerIP, strRemoteFile)
-				if ret1 > 0 {
-					return false, "Exec Remote Shell faild!!!!"
-				}
-
-				fmt.Println(k, "is string", v2)
-			default:
-				fmt.Println(k, "is another type not handle yet")
-			}
+		}		
 		}
 	}
+
 	fmt.Println("strFigDirectory=", strFigDirectory)
 	fmt.Println("strFile=", strFileName)
 	return true, "ok"
@@ -132,9 +130,10 @@ func FigCreate(request common.RequestData) string {
 	strServerIP := request.ServerIP
 	//nPort,_:= request["Port"].(int)
 	//strMethod,_:= request["Method"].(string)
+	fmt.Println("strServerIP=",strServerIP);
 
 	params := dealParams(request.Params)
-
+	fmt.Println("params=",params)
 	ok, _ := fig_transfer(strServerIP, params)
 	if ok {
 		//执行fig命令
@@ -228,8 +227,8 @@ func dealCommand(serverName, command, figDirectory string) string {
 func dealCommandContent(serverName, command string) map[string]string {
 	ret := map[string]string{}
 	if "" != strings.TrimSpace(command) {
-		command += "#!/bin/bash" + "\n" + command + "\n" + "tail -f /root/docker/daemonize/daemonize" + "\n"
-		ret[serverName] = command
+		tmpcommand := "#!/bin/bash" + "\n" + command + "\n" + "tail -f /root/docker/daemonize/daemonize" + "\n"
+		ret[serverName] = tmpcommand
 	}
 	return ret
 }
