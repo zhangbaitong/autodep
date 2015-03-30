@@ -320,10 +320,10 @@
 			servers_arr[j]=server;
 		}
 		
-		var params=[];
-		params["project_name"]=$(".project_name").val();
-		params["servers"]=servers_arr;
 
+    var params={};
+    params.project_name=$(".project_name").val();
+    params.servers=servers_arr;
                 
 		
 		var machine=$("#machine_value").val().split(":");
