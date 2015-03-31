@@ -123,12 +123,12 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	return true, "ok"
 }
 
-func FigCreate(request common.RequestData) string {
-	strServerIP := request.ServerIP
-
+func FigCreate(request common.RequestData) (code int,result string) {
 	params := dealParams(request.Params)
 	fmt.Println("params=",params)
-	ok, _ := fig_transfer(strServerIP, params)
+	ok, _ := fig_transfer(request.ServerIP, params)
+	code=1	
+	result="faild"
 	if ok {
 		//执行fig命令
 		//TODO:exec multi cmd
@@ -136,15 +136,16 @@ func FigCreate(request common.RequestData) string {
 		if !retFlag {
 			fmt.Println("Get project path is error!")
 		}
-		ret, _ := common.ExecRemoteShell(strServerIP, " cd "+strRemoteDir+" && "+" fig up")
+		ret, _ := common.ExecRemoteShell(request.ServerIP, " cd "+strRemoteDir+" && "+" fig up")
 		if ret > 0 {
 			fmt.Println("exec fig up is error!")
 		} else {
-			return "ok"
+			result="ok"
+			code=0
 		}
 	}
 	//common.DisplayJson(params)
-	return "faild"
+	return code,result
 }
 
 //处理从前台传过来的函数
