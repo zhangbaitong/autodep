@@ -16,16 +16,16 @@ const (
 	REPOSITORY_DEFAULT = "registry"
 )
 
-var ip string
+//var ip string
 
 var logger *log.Logger
-
+/*
 func init() {
 	ip, _ = common.Config().String("autodep", "ip")
 	common.Log().Println("common inint ip - ", ip)
 	logger = common.Log()
 }
-
+*/
 func search(url string) string {
 	ret, flag := client.GetHTTP(url)
 	if !flag {
@@ -34,29 +34,30 @@ func search(url string) string {
 	return ret
 }
 
-func ActionRegList() string {
-	url := fmt.Sprintf(SEARCH, ip)
+func ActionRegList(ServerIP string) string {
+	url := fmt.Sprintf(SEARCH, ServerIP)
 	return search(url)
 }
 
-func ActionRegTags(ns []string, rep []string) string {
+func ActionRegTags(ns []string, rep []string,ServerIP string) string {
 	var url string
 	if len(ns) > 0 && len(rep) > 0 {
-		url = fmt.Sprintf(TAGS, ip, ns[0], rep[0])
+		url = fmt.Sprintf(TAGS, ServerIP, ns[0], rep[0])
 	} else {
-		url = fmt.Sprintf(TAGS, ip, NAMESPACE_DEFAULT, REPOSITORY_DEFAULT)
+		url = fmt.Sprintf(TAGS, ServerIP, NAMESPACE_DEFAULT, REPOSITORY_DEFAULT)
 	}
 	return search(url)
 }
 
-func ActionRegSearch(q []string, n []string, page []string) string {
+/*
+func ActionRegSearch(q []string, n []string, page []string,ServerIP string) string {
 	if len(q) == 0 || len(n) == 0 || len(page) == 0 {
 		return ActionRegList()
 	}
-	url := fmt.Sprintf(SEARCH+"?q=%s&page=%s&n=%s", ip, q[0], page[0], n[0])
+	url := fmt.Sprintf(SEARCH+"?q=%s&page=%s&n=%s", ServerIP, q[0], page[0], n[0])
 	return search(url)
 }
-
+*/
 type Image struct {
 	Description string
 	Name        string
@@ -76,8 +77,8 @@ func (image *Image) getName() string {
 	return strings.Split(image.Name, "/")[1]
 }
 
-func routineSearch(image *Image, ch chan string) {
-	url := fmt.Sprintf(TAGS, ip, image.getNS(), image.getName())
+func routineSearch(image *Image, ch chan string,ServerIP string) {
+	url := fmt.Sprintf(TAGS, ServerIP, image.getNS(), image.getName())
 	retTag := search(url)
 
 	var imageTag map[string]interface{}
@@ -95,8 +96,8 @@ func routineSearch(image *Image, ch chan string) {
 	ch <- retTag
 }
 
-func ActionAllInfo() string {
-	ret_json := ActionRegList()
+func ActionAllInfo(request common.RequestData) string {
+	ret_json := ActionRegList(request.ServerIP)
 
 	var repo Repository
 	err := json.Unmarshal([]byte(ret_json), &repo)
@@ -106,7 +107,7 @@ func ActionAllInfo() string {
 	logger.Println("Method ActionAllInfo Num_results : ", repo.Num_results)
 	ch := make(chan string, repo.Num_results)
 	for i := 0; i < len(repo.Results); i++ {
-		go routineSearch(&repo.Results[i], ch)
+		go routineSearch(&repo.Results[i], ch,request.ServerIP)
 	}
 
 	for i := 0; i < repo.Num_results; i++ {
