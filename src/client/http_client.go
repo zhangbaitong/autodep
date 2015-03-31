@@ -32,9 +32,9 @@ func httpGet() {
 	fmt.Println(string(body))
 }
 func httpPost() {
-			var data map[string]string
-			data["imageName"]="centos:latest"
-			data["containerName"]="tomzhao"
+			//var data map[string]string
+			//data["imageName"]="centos:latest"
+			//data["containerName"]="tomzhao"
                 //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/list",Params:"{\"id\":[\"13100f09aa075adf6129c57467b6564ab3f89f2e4ec8c01bbb312e8258e21ea7\"]}"}
                 //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/info",Params:""}
                 //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/inspect",Params:"13100f09aa075adf6129c57467b6564ab3f89f2e4ec8c01bbb312e8258e21ea7"}
@@ -45,13 +45,11 @@ func httpPost() {
                 //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/unpause",Params:"{\"id\":\"6e9f36168a78\"}"}
                 //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/remove",Params:"{\"id\":\"3fb5c4080f37\"}"}
                 //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/kill",Params:"{\"id\":\"ad7be2d3c897\"}"}
-                strData, _ := json.Marshal(data)
-                post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/create",Params:""}
-                //post_data.Params=
-                post_data.Params=string(strData)
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/create",Params:""}
+                post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"image/list",Params:""}
                 strPostData, _ := json.Marshal(post_data)
                 strTemp:="request="+string(strPostData)
-	resp, err := http.Post("http://127.0.0.1:8080/v1/container/create",
+	resp, err := http.Post("http://127.0.0.1:8080/v1/image/list",
 		"application/x-www-form-urlencoded",strings.NewReader(strTemp))
 		//"application/json",strings.NewReader(strTemp))
 	if err != nil {
@@ -108,9 +106,9 @@ func httpDo() {
 	fmt.Println(string(body))
 }
 //
-//func main() {
+func main() {
 //httpGet()
-//httpPost()
+httpPost()
 //httpPostForm()
 //httpDo()
-//}
+}
