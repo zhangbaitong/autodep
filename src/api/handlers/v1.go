@@ -41,6 +41,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			ret = action.FigCreate(request)
 		}
+	case "container/create":
+		{
+			//ret = action.CreateContainer(request)
+		}
 	case "container/inspect":
 		{
 			//ret = action.InspectContainer(request)
