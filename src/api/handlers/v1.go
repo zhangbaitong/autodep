@@ -43,39 +43,39 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "container/create":
 		{
-			//ret = action.CreateContainer(request)
+			ret = action.CreateContainer(request)
 		}
 	case "container/inspect":
 		{
-			//ret = action.InspectContainer(request)
+			ret = action.InspectContainer(request)
 		}
 	case "container/list":
 		{
-			//ret = action.ListContainers(request)
+			ret = action.ListContainers(request)
 		}
 	case "container/changes":
 		{
-			//ret = action.ContainerChanges(request)
+			ret = action.ContainerChanges(request)
 		}
 	case "container/stop":
 		{
-			//ret = action.StopContainer(request)
+			ret = action.StopContainer(request)
 		}
 	case "container/restart":
 		{
-			//ret = action.RestartContainer(request)
+			ret = action.RestartContainer(request)
 		}
 	case "container/pause":
 		{
-			// ret = action.PauseContainer(request)
+			ret = action.PauseContainer(request)
 		}
 	case "container/unpause":
 		{
-			// ret = action.UnpauseContainer(request)
+			ret = action.UnpauseContainer(request)
 		}
 	case "container/kill":
 		{
-			// ret = action.KillContainer(request)
+			ret = action.KillContainer(request)
 		}
 	case "container/info":
 		{
@@ -84,6 +84,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	case "version":
 		{
 			//ret = action.Actionversion()
+		}
+	case "image/list":
+		{
+			ret = action.ListImages(request)
 		}
 	case "reg/list":
 		{
@@ -100,10 +104,6 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	case "reg/info":
 		{
 			// ret = action.ActionAllInfo()
-		}
-	case "image/list":
-		{
-			// ret = action.ActionImages()
 		}
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
