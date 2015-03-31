@@ -116,29 +116,32 @@
 		    //定义镜像打包事件
         function query_machines(){
         
-            var machine_name = $("#machine_name").val();
-            var machine_ip = $("#machine_ip").val();
-            var docker_port = $("#docker_port").val();
-            var is_use = $('input[name="is_use"]:checked').val();
+			 var params={};
+             params.machine_name=$("#machine_name").val();
+             params.machine_ip=$("#machine_ip").val();
+             params.docker_port=parseInt($("#docker_port").val());
+             params.is_use=parseInt($('input[name="is_use"]:checked').val());
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="127.0.0.1";
+			 data.Port=4243;
+			 data.Method="SearchMachine";
+			 data.Params=JSON.stringify(params);	
+			 
+
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"../../php/query_machines.php",
+                   url:"http://117.78.19.76:8099/v1/machine/search",
                    dataType:"json",
                    type: "post",
                    data:{
-                        method:"query_machines",
-                        machine_name:machine_name,
-                        machine_ip:machine_ip,
-                        docker_port:docker_port,
-						is_use:is_use
+						request:JSON.stringify(data)
                     },
                    success:function(data) {
-                        var result=$.parseJSON(data);
-                        
-                        console.log(result);
                       
-                        if(1==result.code){
+                        if(data.Code>0){
                            alert("查看服务器出错，请联系管理员");
                            return;
                         }
@@ -146,7 +149,7 @@
                         //删除上次加载的数据
                         $("#query_content").children().remove();
                         
-                        var values=result.data;
+                        var values=$.parseJSON(data.Data);
                         
                         console.log(values[0]);
                         
@@ -154,7 +157,7 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].machine_name+"</td><td>"+values[i].machine_ip+"</td><td>"+values[i].docker_port+"</td><td>"+values[i].is_use+"</td><td>"+values[i].remark+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Machine_name+"</td><td>"+values[i].Machine_ip+"</td><td>"+values[i].Docker_port+"</td><td>"+values[i].Is_use+"</td><td>"+values[i].Remark+"</td></tr>";
                            } 
                            $("#query_content").append(tr);   
                         }
