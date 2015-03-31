@@ -1,12 +1,16 @@
 package action
 
 import (
+	"fmt"
 	"encoding/json"
 	"github.com/samalba/dockerclient"
+	"api/common"
 )
 
-func ActionImages() string {
-	docker, _ := dockerclient.NewDockerClient("117.78.19.76:4243", nil)
+func ListImages(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
+	fmt.Println("strDockerServer=", strDockerServer)	
+	docker, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
 	images, err := docker.ListImages()
 	if err != nil {
@@ -16,15 +20,3 @@ func ActionImages() string {
 	ret, _ := json.Marshal(images)
 	return string(ret)
 }
-
-// func Actionversion() string {
-// 	docker, _ := dockerclient.NewDockerClient("127.0.0.1:4243", nil)
-
-// 	// Get only running containers
-// 	version, err := docker.Version()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fmt.Println("version type", version.Version)
-// 	return version.Version
-// }
