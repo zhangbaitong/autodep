@@ -30,17 +30,13 @@ func GetContainerID(params string) (ret string, ok bool){
 	return strID,true
 }
 
-func CreateContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func CreateContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
 	var data map[string]string
-	strData,_:=request["Params"].(string)
-	fmt.Println("Info=", strData)
-	err := json.Unmarshal([]byte(strData), &data)
+	err := json.Unmarshal([]byte(request.Params), &data)
 	if err != nil {
 		fmt.Println("json data decode faild :", err)
 	}
@@ -73,10 +69,8 @@ func CreateContainer(request map[string]interface{}) string {
 	return "ok"
 }
 
-func ListContainers(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func ListContainers(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
@@ -91,14 +85,12 @@ func ListContainers(request map[string]interface{}) string {
 	return string(rets)
 }
 
-func InspectContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func InspectContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		strID=""
 	}
@@ -114,14 +106,12 @@ func InspectContainer(request map[string]interface{}) string {
 	return string(rets)
 }
 
-func ContainerChanges(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func ContainerChanges(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		strID=""
 	}
@@ -137,14 +127,12 @@ func ContainerChanges(request map[string]interface{}) string {
 	return string(rets)
 }
 
-func StopContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func StopContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		strID=""
 	}
@@ -159,14 +147,12 @@ func StopContainer(request map[string]interface{}) string {
 	return "ok"
 }
 
-func RestartContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func RestartContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot Restart Container ", )
 		return "faild"
@@ -183,14 +169,12 @@ func RestartContainer(request map[string]interface{}) string {
 	return "ok"
 }
 
-func PauseContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func PauseContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers: ")
 		return "faild"
@@ -206,14 +190,12 @@ func PauseContainer(request map[string]interface{}) string {
 	return "ok"
 }
 
-func UnpauseContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func UnpauseContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers:")
 		return "faild"
@@ -230,14 +212,12 @@ func UnpauseContainer(request map[string]interface{}) string {
 }
 
 
-func RemoveContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func RemoveContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers:")
 		return "faild"
@@ -253,14 +233,12 @@ func RemoveContainer(request map[string]interface{}) string {
 	return "ok"
 }
 
-func KillContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func KillContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
-	strID, ok := GetContainerID(request["Params"].(string))
+	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers:")
 		return "faild"
@@ -302,10 +280,9 @@ func ContainerExec(request map[string]interface{}) string {
 }
 */
 
-func InfoContainer(request map[string]interface{}) string {
-	common.DisplayJson(request)
-	strServerIP, _ := request["ServerIP"].(string)
-	strDockerServer:= fmt.Sprintf("%s:%.0f",strServerIP,request["Port"])
+func InfoContainer(request common.RequestData) string {
+	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
+	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
 
 

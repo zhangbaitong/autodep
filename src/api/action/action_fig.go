@@ -1,8 +1,6 @@
 package action
 
 import (
-	"github.com/codeskyblue/go-sh"
-
 	"api/common"
 	"encoding/json"
 	"fmt"
@@ -126,13 +124,7 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 }
 
 func FigCreate(request common.RequestData) string {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	//strVersion,_:= request["Version"].(string)
 	strServerIP := request.ServerIP
-	//nPort,_:= request["Port"].(int)
-	//strMethod,_:= request["Method"].(string)
-	fmt.Println("strServerIP=",strServerIP);
 
 	params := dealParams(request.Params)
 	fmt.Println("params=",params)
