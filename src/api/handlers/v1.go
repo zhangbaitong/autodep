@@ -103,7 +103,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "reg/info":
 		{
-			// ret = action.ActionAllInfo()
+			 ret = action.ActionAllInfo(request)
 		}
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
