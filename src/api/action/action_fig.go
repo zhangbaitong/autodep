@@ -37,9 +37,9 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	if !ok {
 		return false, "fig directory empty!!!!"
 	}
-	str := strings.Split(strFigDirectory, "/")
+	//str := strings.Split(strFigDirectory, "/")
 
-	strProjectName := str[len(str)-1]
+	//strProjectName := str[len(str)-1]
 
 	strFigData, ok := params["fig_data"].(string)
 	if !ok {
@@ -54,7 +54,8 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	}
 
 	//创建远程目录
-	strRemoteDir = FIG_PATH + strProjectName
+	//strRemoteDir = FIG_PATH + strProjectName
+	strRemoteDir = strFigDirectory
 		fmt.Println(strRemoteDir);
 
 	//删除远程目录
@@ -78,7 +79,8 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	fmt.Println("commands=",params["commands"].([]map[string]string))
 	commands:=params["commands"].([]map[string]string);
 	if(len(commands)>0){
-		strRemoteDir = FIG_PATH + strProjectName + "/startup"
+		//strRemoteDir = FIG_PATH + strProjectName + "/startup"
+		strRemoteDir = strFigDirectory + "/startup"
 		//创建远程目录
 		ret1, _ = common.ExecRemoteCMD(strServerIP, "mkdir", strRemoteDir)
 		if ret1 > 0 {
