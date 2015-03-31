@@ -30,7 +30,7 @@ func GetContainerID(params string) (ret string, ok bool){
 	return strID,true
 }
 
-func CreateContainer(request common.RequestData) string {
+func CreateContainer(request common.RequestData)(code int,result string) {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -39,6 +39,8 @@ func CreateContainer(request common.RequestData) string {
 	err := json.Unmarshal([]byte(request.Params), &data)
 	if err != nil {
 		fmt.Println("json data decode faild :", err)
+		code=1;result="faild"
+		return code,result
 	}
 
 	fmt.Println("Info=", data)
@@ -54,6 +56,8 @@ func CreateContainer(request common.RequestData) string {
 	containerID, err := client.CreateContainer(containerConfig, data["containerName"])
      if err != nil {
 		log.Fatal("cannot create container: %s", err)
+		code=1;result="faild"
+		return code,result
 	}
 
     // Start the container
@@ -65,11 +69,12 @@ func CreateContainer(request common.RequestData) string {
     err = client.StartContainer(containerID,createContHostConfig)
     if err != nil {
 	fmt.Println(err)
+	code=1;result="faild"
     }
-	return "ok"
+	return code,result
 }
 
-func ListContainers(request common.RequestData) string {
+func ListContainers(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -77,15 +82,16 @@ func ListContainers(request common.RequestData) string {
 	containers, err := client.ListContainers(true, false,"")
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
 	DisplayContainers(containers)
 	rets, _ := json.Marshal(containers)
-	return string(rets)
+	return 0,string(rets)
 }
 
-func InspectContainer(request common.RequestData) string {
+func InspectContainer(request common.RequestData)(code int,result string){
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -99,14 +105,15 @@ func InspectContainer(request common.RequestData) string {
 	containerInfo, err := client.InspectContainer(strID)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
 	rets, _ := json.Marshal(containerInfo)
-	return string(rets)
+	return 0,string(rets)
 }
 
-func ContainerChanges(request common.RequestData) string {
+func ContainerChanges(request common.RequestData)(code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -120,14 +127,15 @@ func ContainerChanges(request common.RequestData) string {
 	changes, err := client.ContainerChanges(strID)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
 	rets, _ := json.Marshal(changes)
-	return string(rets)
+	return 0,string(rets)
 }
 
-func StopContainer(request common.RequestData) string {
+func StopContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -141,13 +149,14 @@ func StopContainer(request common.RequestData) string {
 	err := client.StopContainer(strID,nTime)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
-	return "ok"
+	return 0,"ok"
 }
 
-func RestartContainer(request common.RequestData) string {
+func RestartContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -155,7 +164,8 @@ func RestartContainer(request common.RequestData) string {
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot Restart Container ", )
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 	//fmt.Println("strID=", strID)
 
@@ -163,13 +173,14 @@ func RestartContainer(request common.RequestData) string {
 	err := client.RestartContainer(strID,nTime)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 
-	return "ok"
+	return 0,"ok"
 }
 
-func PauseContainer(request common.RequestData) string {
+func PauseContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -177,20 +188,22 @@ func PauseContainer(request common.RequestData) string {
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers: ")
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 	//fmt.Println("strID=", strID)
 
 	err:= client.PauseContainer(strID)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 
-	return "ok"
+	return 0,"ok"
 }
 
-func UnpauseContainer(request common.RequestData) string {
+func UnpauseContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -198,21 +211,23 @@ func UnpauseContainer(request common.RequestData) string {
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers:")
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 	//fmt.Println("strID=", strID)
 
 	err := client.UnpauseContainer(strID)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
-	return "ok"
+	return 0,"ok"
 }
 
 
-func RemoveContainer(request common.RequestData) string {
+func RemoveContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -220,20 +235,22 @@ func RemoveContainer(request common.RequestData) string {
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers:")
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 	fmt.Println("strID=", strID)
 
 	err := client.RemoveContainer(strID,true,true)
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
-	return "ok"
+	return 0,"ok"
 }
 
-func KillContainer(request common.RequestData) string {
+func KillContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -241,17 +258,19 @@ func KillContainer(request common.RequestData) string {
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
 		log.Fatal("cannot get containers:")
-		return "faild"
+		code=1;result="faild"
+		return code,result
 	}
 	//fmt.Println("strID=", strID)
 
 	err := client.KillContainer(strID,"5")
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
-	return "ok"
+	return 0,"ok"
 }
 
 /*
@@ -280,7 +299,7 @@ func ContainerExec(request map[string]interface{}) string {
 }
 */
 
-func InfoContainer(request common.RequestData) string {
+func InfoContainer(request common.RequestData) (code int,result string)  {
 	strDockerServer:= fmt.Sprintf("%s:%d",request.ServerIP,request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)	
 	client, _ := dockerclient.NewDockerClient(strDockerServer, nil)
@@ -289,10 +308,11 @@ func InfoContainer(request common.RequestData) string {
 	Info, err := client.Info()
 	if err != nil {
 		log.Fatal("cannot get containers: %s", err)
-		return ""
+		code=1;result="faild"
+		return code,result
 	}
 
 	fmt.Println("Info=", Info)
 	rets, _ := json.Marshal(Info)
-	return string(rets)
+	return 0,string(rets)
 }

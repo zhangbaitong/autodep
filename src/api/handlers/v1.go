@@ -36,46 +36,47 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ret string
+                var code int=0
 	switch strMethod {
 	case "fig/create":
 		{
-			ret = action.FigCreate(request)
+			code,ret = action.FigCreate(request)
 		}
 	case "container/create":
 		{
-			ret = action.CreateContainer(request)
+			code,ret = action.CreateContainer(request)
 		}
 	case "container/inspect":
 		{
-			ret = action.InspectContainer(request)
+			code,ret = action.InspectContainer(request)
 		}
 	case "container/list":
 		{
-			ret = action.ListContainers(request)
+			code,ret = action.ListContainers(request)
 		}
 	case "container/changes":
 		{
-			ret = action.ContainerChanges(request)
+			code,ret = action.ContainerChanges(request)
 		}
 	case "container/stop":
 		{
-			ret = action.StopContainer(request)
+			code,ret = action.StopContainer(request)
 		}
 	case "container/restart":
 		{
-			ret = action.RestartContainer(request)
+			code,ret = action.RestartContainer(request)
 		}
 	case "container/pause":
 		{
-			ret = action.PauseContainer(request)
+			code,ret = action.PauseContainer(request)
 		}
 	case "container/unpause":
 		{
-			ret = action.UnpauseContainer(request)
+			code,ret = action.UnpauseContainer(request)
 		}
 	case "container/kill":
 		{
-			ret = action.KillContainer(request)
+			code,ret = action.KillContainer(request)
 		}
 	case "container/info":
 		{
@@ -87,7 +88,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "image/list":
 		{
-			ret = action.ListImages(request)
+			code,ret = action.ListImages(request)
 		}
 	case "reg/list":
 		{
@@ -103,7 +104,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		}
 	case "reg/info":
 		{
-			 ret = action.ActionAllInfo(request)
+			 code,ret = action.ActionAllInfo(request)
 		}
 	case "machine/register":
 		{
@@ -114,7 +115,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 			ret = action.SearchMachine(request)
 		}
 	}
-	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
+	v1 := common.Response{Method: strMethod, Code: code, Messgae: "ok", Data: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	body, err1 := json.Marshal(v1)
