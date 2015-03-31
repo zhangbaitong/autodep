@@ -1,8 +1,6 @@
 package action
 
 import (
-	"github.com/codeskyblue/go-sh"
-
 	"api/common"
 	"encoding/json"
 	"fmt"
