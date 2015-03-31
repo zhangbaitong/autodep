@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 <title>Insert title here</title>
 <link href="../css/style.css" rel="stylesheet">
 <link href="../css/register_machine.css" rel="stylesheet">
@@ -127,23 +128,33 @@
 
             
              $("#show").css("display","block");
+
+			 var params={};
+             params.machine_name=machine_name;
+             params.machine_ip=machine_ip;
+             params.docker_port=parseInt(docker_port);
+             params.is_use=parseInt(is_use);
+             params.remark=remark;
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="127.0.0.1";
+			 data.Port=4243;
+			 data.Method="RegisterMachine";
+			 data.Params=JSON.stringify(params);	
+			 
+
             
   
             //通过ajax请求后台服务
               $.ajax({
-                   url:"../../php/register_machine.php",
+                   url:"http://117.78.19.76:8099/v1/machine/register",
                    dataType:"json",
                    type: "post",
                    data:{
-                        method:"register_machine",
-						machine_name:machine_name,
-                        machine_ip:machine_ip,
-                        docker_port:docker_port,
-                        is_use:is_use,
-						remark:remark
+						request:JSON.stringify(data)
                     },
                    success:function(data) {
-
                         var relust=$.parseJSON(data);
                     
                         if(0==relust["code"]){
