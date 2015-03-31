@@ -178,11 +178,11 @@
         function query_machines(){
 
              var params={};
-             params.machine_name="";
-             params.machine_ip="";
-             params.docker_port=0;
-             params.is_use=0;
-             params.remark="";
+             params.machine_name=machine_name;
+             params.machine_ip=machine_ip;
+             params.docker_port=parseInt(docker_port);
+             params.is_use=parseInt(is_use);
+             params.remark=remark;
 			 
 			 var data={};
 			 data.Version="1.0";
