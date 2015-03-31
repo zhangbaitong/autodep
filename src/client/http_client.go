@@ -1,6 +1,6 @@
 package client
 
-/*
+
 import (
     "fmt"
     "io/ioutil"
@@ -31,14 +31,27 @@ func httpGet() {
 
 	fmt.Println(string(body))
 }
-
 func httpPost() {
-                post_data:=RequestData{"1.0","117.78.19.76",4243,"fig/create","TestValue"}
+			var data map[string]string
+			data["imageName"]="centos:latest"
+			data["containerName"]="tomzhao"
+                //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/list",Params:"{\"id\":[\"13100f09aa075adf6129c57467b6564ab3f89f2e4ec8c01bbb312e8258e21ea7\"]}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/info",Params:""}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/inspect",Params:"13100f09aa075adf6129c57467b6564ab3f89f2e4ec8c01bbb312e8258e21ea7"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"container/changes",Params:"{\"id\":\"13100f09aa075adf6129c57467b6564ab3f89f2e4ec8c01bbb312e8258e21ea7\"}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/stop",Params:"{\"id\":\"6e9f36168a78\"}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/restart",Params:"{\"id\":\"6e9f36168a78\"}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/pause",Params:"{\"id\":\"6e9f36168a78\"}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/unpause",Params:"{\"id\":\"6e9f36168a78\"}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/remove",Params:"{\"id\":\"3fb5c4080f37\"}"}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/kill",Params:"{\"id\":\"ad7be2d3c897\"}"}
+                strData, _ := json.Marshal(data)
+                post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/create",Params:""}
+                //post_data.Params=
+                post_data.Params=string(strData)
                 strPostData, _ := json.Marshal(post_data)
-                strPostData="{\"Version\":\"1.0\",\"ServerIP\":\"117.78.19.76\","Port":\"4243\",\"Method\":\"create_fig\",\"Params\":{\"fig_data\":\"nginx:\n  image: centos6\/nginx:2015-02-08\n  ports:\n    - \"8807:8807\"\n    - \"9090:9090\"\n  links:\n    - mysql\n  volumes:\n    - \/data\/esp\/code\/nginx:\/data\/esp\/code\/nginx\n    - \/data\/espreport\/code:\/data\/espreport\/code\n  command: #&fig_directory&#\/startup\/nginx\/start.sh\r\nmysql:\n  image: centos6\/mysql:2015-01-09\n  ports:\n    - \"3306:3306\"\n  volumes:\n    - \/data\/esp\/mysql:\/home\/databases\/mysql\/data\n    - \/home\/docker\/fig\/startup\/mysql:\/home\/docker\/fig\/startup\/mysql\n  command: #&fig_directory&#\/startup\/mysql\/start.sh\r\n\",\"commands\":{\"nginx\":\"#!\/bin\/bash\nservice nginx restart\ntail -f nginx\",\"mysql\":\"#!\/bin\/bash\nservice mysqld restart\ntail -f mysql\"}}}"
                 strTemp:="request="+string(strPostData)
-                //strTemp:=string(strPostData)
-	resp, err := http.Post("http://127.0.0.1:8080/v1/fig/create",
+	resp, err := http.Post("http://127.0.0.1:8080/v1/container/create",
 		"application/x-www-form-urlencoded",strings.NewReader(strTemp))
 		//"application/json",strings.NewReader(strTemp))
 	if err != nil {
@@ -94,10 +107,10 @@ func httpDo() {
 
 	fmt.Println(string(body))
 }
-*/
+//
 //func main() {
 //httpGet()
-//	httpPost()
+//httpPost()
 //httpPostForm()
 //httpDo()
 //}
