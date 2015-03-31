@@ -112,6 +112,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	}
 	v1 := common.Response{Method: strMethod, Code: 0, Messgae: "ok", Data: ret}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	body, err1 := json.Marshal(v1)
 	if err1 != nil {
 		fmt.Println(err1)
