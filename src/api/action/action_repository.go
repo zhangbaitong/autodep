@@ -19,13 +19,13 @@ const (
 //var ip string
 
 var logger *log.Logger
-/*
+
 func init() {
-	ip, _ = common.Config().String("autodep", "ip")
-	common.Log().Println("common inint ip - ", ip)
+	//	ip, _ = common.Config().String("autodep", "ip")
+	//	common.Log().Println("common inint ip - ", ip)
 	logger = common.Log()
 }
-*/
+
 func search(url string) string {
 	ret, flag := client.GetHTTP(url)
 	if !flag {
@@ -39,7 +39,7 @@ func ActionRegList(ServerIP string) string {
 	return search(url)
 }
 
-func ActionRegTags(ns []string, rep []string,ServerIP string) string {
+func ActionRegTags(ns []string, rep []string, ServerIP string) string {
 	var url string
 	if len(ns) > 0 && len(rep) > 0 {
 		url = fmt.Sprintf(TAGS, ServerIP, ns[0], rep[0])
@@ -77,7 +77,7 @@ func (image *Image) getName() string {
 	return strings.Split(image.Name, "/")[1]
 }
 
-func routineSearch(image *Image, ch chan string,ServerIP string) {
+func routineSearch(image *Image, ch chan string, ServerIP string) {
 	url := fmt.Sprintf(TAGS, ServerIP, image.getNS(), image.getName())
 	retTag := search(url)
 
@@ -109,7 +109,7 @@ func ActionAllInfo(request common.RequestData) (code int,result string) {
 	logger.Println("Method ActionAllInfo Num_results : ", repo.Num_results)
 	ch := make(chan string, repo.Num_results)
 	for i := 0; i < len(repo.Results); i++ {
-		go routineSearch(&repo.Results[i], ch,request.ServerIP)
+		go routineSearch(&repo.Results[i], ch, request.ServerIP)
 	}
 
 	for i := 0; i < repo.Num_results; i++ {

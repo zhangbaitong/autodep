@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <link href="../css/style.css" rel="stylesheet">
-<link href="../css/query_machines.css" rel="stylesheet">
+<link href="../css/query_machines_images.css" rel="stylesheet">
 </head>
 <body>
     <div class="navbar navbar-default" role="navigation">
@@ -14,6 +14,7 @@
    </div>
    
    <div class="ch-container">
+
        	 <div class="row">
        	      <div class="col-sm-2 col-lg-2">
        	            <div class="sidebar-nav">
@@ -23,16 +24,16 @@
                                 <li class="create_image"><a class="ajax-link" href="../index.html"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
                                 <li class="query_images"><a class="ajax-link" href="./query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
                                 <li><a class="query_repository_images" href="./query_repository_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 仓库镜像查询</span></a></li>
-                                <li><a class="query_machine_images" href="./query_machines_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
+                                <li><a class="query_machine_images" href="#"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
                                 <li><a class="query_machine_containers" href="./query_machine_container.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器容器查询</span></a></li>
 								<li><a class="ajax-link" href="./create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
-								<li ><a class="query_machines" href="#"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
+								<li ><a class="query_machines" href="./query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
 							    <li><a class="register_machine" href="./register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
 							</ul>
 						</div>
 					</div>
 			  </div>
-			  
+	  
 			  <div id="content" class="col-lg-10 col-sm-10">
 			         <div>
 					    <ul class="breadcrumb">
@@ -40,52 +41,37 @@
 					            <a href="#">Home </a>
 					        </li>
 					        <li>
-					            <a href="#"> /  查询服务器</a>
+					            <a href="#"> /  服务器镜像列表</a>
 					        </li>
 					    </ul>
 					</div>
-					
+			
 					<div class="row2">
 						 <div class="box col-md-12">
 						 	 <div class="box-inner">
 						 	     <div class="box-header well" data-original-title="">
-						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 查询服务器</h2>
+						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 服务器镜像列表</h2>
 								 </div>	
+
 								 <div class="box-content">
 	                                    <div class="query">
-	                                    	<div class="col-md-6">
-	                                    		<label class="control-label">服务器名称：</label>
-											    <input type="text"  id="machine_name" class="form-control">
-	                                    	</div>
-											<div class="col-md-6">
-                                                <label class="control-label">服务器IP：</label>
-                                                <input type="text"  id="machine_ip" class="form-control">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="control-label">Docker端口：</label>                                                  
-                                                <input type="text"  id="docker_port" class="form-control">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="control-label">是否启用：</label>                                                
-                                                <input type="radio" name="is_use" class="form-redio"  value="0"  checked="checked"> 是
-                                                <input type="radio" name="is_use" class="form-redio"  value="1"> 否
-                                            </div>
+											<div class="col-md-6">   
+											     <label class="control-label">服务器：</label>
+                                                  <select class="machine_value" id="machine_value">
+												  </select>
+											</div>
 											 <div class="col-md-7">
-                                                   <button class="btn" id="query_images">查询服务器</button>               
+                                                   <button class="btn" id="query_images">服务器镜像查询</button>               
                                             </div>
 											 <div class="clear"></div>
 	                                    </div>
-									
+
 										<div class="table-content">
 											<table class="table table-bordered">
 												<thead>
 													<tr>
 														<th class="short">编号</th>
-														<th class="long">服务器名称</th>
-														<th class="middle">服务器IP</th>
-														<th class="middle">Docker端口</th>
-														<th class="middle">是否启用</th>
-														<th class="longer">备注</th>
+														<th class="long">镜像名称及标签</th>
 													</tr>
 											    </thead>
 												<tbody class="table_body" id="query_content">
@@ -110,13 +96,11 @@
     
     (function($){
         //注册镜像打包事件
-        $("#query_images").click(query_machines);
-           query_machines();
+        $("#query_images").click(query_machine_images);
+			 query_machines();
         })(jQuery);       
 		
-
-
-   //定义镜像打包事件
+        //定义镜像打包事件
         function query_machines(){
 
              var params={};
@@ -175,26 +159,20 @@
 		
 		
 		    //定义镜像打包事件
-        function query_machines(){
-        
-			 var params={};
-             params.machine_name=$("#machine_name").val();
-             params.machine_ip=$("#machine_ip").val();
-             params.docker_port=parseInt($("#docker_port").val());
-             params.is_use=parseInt($('input[name="is_use"]:checked').val());
-			 
-			 var data={};
-			 data.Version="1.0";
-		     data.ServerIP="127.0.0.1";
-			 data.Port=4243;
-			 data.Method="SearchMachine";
-			 data.Params=JSON.stringify(params);	
+        function query_machine_images(){
+        	var machine=$("#machine_value").val().split(":");
+			var data={};
+			data.Version="1.0";
+			data.ServerIP=machine[1];
+			data.Port=parseInt(machine[2]);
+			data.Method="SearchMachineImages";
+			data.Params="";	
 			 
 
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   url:"http://117.78.19.76:8099/v1/image/list",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -210,13 +188,13 @@
                         //删除上次加载的数据
                         $("#query_content").children().remove();
                         
-                        var values=$.parseJSON(data.Data);                       
+                        var values=$.parseJSON(data.Data);
                         
                         if(values){
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Machine_name+"</td><td>"+values[i].Machine_ip+"</td><td>"+values[i].Docker_port+"</td><td>"+values[i].Is_use+"</td><td>"+values[i].Remark+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].RepoTags+"</td></tr>";
                            } 
                            $("#query_content").append(tr);   
                         }
