@@ -363,11 +363,8 @@
 		 request:rdata
 		},
                success:function(data) {
-                    var relust=$.parseJSON(data);
-                    
-                    $("#show").css("display","none");
                 
-                    if(0==relust["code"]){
+                    if(0==data.Code){
                        alert("创建fig文件成功");
                     }else{
                        alert("创建fig文件失败"); 
