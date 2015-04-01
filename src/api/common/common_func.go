@@ -47,10 +47,8 @@ func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string
 	fmt.Println("out=",string(out),"err=",err)
 	if err != nil {
 		Log().Println(msg, ":", err)
-		//return FAILT, err.Error())
-		return FAILT, out
+		return FAILT, string(out)
 	}
-	//fmt.Println("out=",out)
 
 	return SUCCESS, string(out)
 }
