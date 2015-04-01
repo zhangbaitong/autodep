@@ -154,6 +154,74 @@ func FigPS(request common.RequestData) (code int,result string) {
 	return 	code,out
 }
 
+func FigRM(request common.RequestData) (code int,result string) {
+		//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code=1
+	} else {
+		code=0
+	}
+	return 	code,out
+}
+
+func FigRm(request common.RequestData) (code int,result string) {
+		//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code=1
+	} else {
+		code=0
+	}
+	return 	code,out
+}
+
+func FigStop(request common.RequestData) (code int,result string) {
+		//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code=1
+	} else {
+		code=0
+	}
+	return 	code,out
+}
+
+func FigRestart(request common.RequestData) (code int,result string) {
+		//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig restart")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code=1
+	} else {
+		code=0
+	}
+	return 	code,out
+}
+
 func FigCreate(request common.RequestData) (code int,result string) {
 	params := dealParams(request.Params)
 	fmt.Println("params=",params)
@@ -163,6 +231,7 @@ func FigCreate(request common.RequestData) (code int,result string) {
 	if ok {
 		//执行fig命令
 		//TODO:exec multi cmd
+		/*
 		retFlag, strRemoteDir := getProPath(params)
 		if !retFlag {
 			fmt.Println("Get project path is error!")
@@ -174,6 +243,7 @@ func FigCreate(request common.RequestData) (code int,result string) {
 			code=0
 		}
 		result=out
+		*/
 	}
 	//common.DisplayJson(params)
 	return code,result
