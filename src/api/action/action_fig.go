@@ -209,9 +209,9 @@ func FigCreate(request common.RequestData) (code int,result string) {
 	params := dealParams(request.Params)
 	fmt.Println("params=",params)
 	ok, _ := fig_transfer(request.ServerIP, params)
-	code=1	
-	result="faild"
+	code=1;result="faild"
 	if ok {
+		code=0;result="ok"
 		//执行fig命令
 		//TODO:exec multi cmd
 		/*

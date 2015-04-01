@@ -113,8 +113,6 @@ func ActionAllInfo(request common.RequestData) (code int,result string) {
 	for i := 0; i < repo.Num_results; i++ {
 		v := <-ch
 		logger.Println("Received tag is ", i, v)
-		code=1;result="faild"
-		return code,result
 	}
 
 	rets, _ := json.Marshal(repo)
