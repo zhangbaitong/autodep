@@ -6,6 +6,8 @@ git clone https://github.com/zhangbaitong/autodep.git
 
 #Install
 
+run install.sh
+
 1.install package
 
 go get github.com/codeskyblue/go-sh
