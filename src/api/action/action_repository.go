@@ -21,8 +21,6 @@ const (
 var logger *log.Logger
 
 func init() {
-	//	ip, _ = common.Config().String("autodep", "ip")
-	//	common.Log().Println("common inint ip - ", ip)
 	logger = common.Log()
 }
 
