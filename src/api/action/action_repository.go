@@ -19,13 +19,13 @@ const (
 //var ip string
 
 var logger *log.Logger
-/*
+
 func init() {
-	ip, _ = common.Config().String("autodep", "ip")
-	common.Log().Println("common inint ip - ", ip)
+	//ip, _ = common.Config().String("autodep", "ip")
+	//common.Log().Println("common inint ip - ", ip)
 	logger = common.Log()
 }
-*/
+
 func search(url string) string {
 	ret, flag := client.GetHTTP(url)
 	if !flag {
