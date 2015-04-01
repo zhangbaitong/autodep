@@ -91,6 +91,9 @@
                                 <li class="nav-header">Home</li>
                                 <li class="create_image"><a class="ajax-link" href="../index.html"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
                                 <li><a class="ajax-link" href="./query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
+                                <li><a class="query_repository_images" href="./query_repository_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 仓库镜像查询</span></a></li>
+                                <li><a class="query_machine_images" href="./query_machines_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
+                                <li><a class="query_machine_containers" href="./query_machine_container.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器容器查询</span></a></li>
                                 <li><a class="fig_file" href="#"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li> 
                                 <li ><a class="query_machines" href="./query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
                                 <li><a class="register_machine" href="./register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
@@ -121,8 +124,7 @@
                                         <form  id="form_server" action="#">
 	                                         <div class="machine">   
 											     <label class="control-label-title title1">服务器：</label>
-												  <input type="text" class="form-control machine_value" id="machine_value" > 
-                                                  <!--<select class="machine_value" id="machine_value">-->
+                                                  <select class="machine_value" id="machine_value">
 												  </select>
 											</div>
 											<div class="machine">   
@@ -169,7 +171,7 @@
         //注册镜像打包事件
         $("#create_fig").click(create_fig);
 		
-		//query_machines();
+		query_machines();
 
     })(jQuery);  
     
@@ -188,8 +190,8 @@
 			 data.Version="1.0";
 		     data.ServerIP="127.0.0.1";
 			 data.Port=4243;
-			 data.Method="RegisterMachine";
-			 data.Params=JSON.stringify(params);	
+			 data.Method="SearchMachine";
+			 data.Params=JSON.stringify(params);
 
 
 
@@ -199,13 +201,11 @@
                    dataType:"json",
                    type: "post",
                    data:{
-                        method:"query_machines",
-						is_use:"0"
+						request:JSON.stringify(data)
                     },
                    success:function(data) {
-                        var result=$.parseJSON(data);
 
-                        if(1==result.code){
+                        if(1==data.Code){
                            alert("查看服务器出错，请联系管理员");
                            return;
                         }
@@ -213,14 +213,14 @@
                         //删除上次加载的数据
                         $("#query_content").children().remove();
                         
-                        var values=result.data;
+                        var values=$.parseJSON(data.Data);     
                         
                         console.log(values[0]);
                         
                         if(values){
                            var tr="";       
                            for(var i=0;i<values.length;i++){
-						   	 tr +="<option>"+values[i].machine_name+":"+values[i].machine_ip+":"+values[i].docker_port+"</option>";
+						   	 tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
                            } 
                            $("#machine_value").append(tr);   
                         }
