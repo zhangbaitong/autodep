@@ -42,13 +42,17 @@ const (
 
 func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
 	session := sh.NewSession()
-	session.ShowCMD = true
-	err := session.Call(cmd, cmds...)
+	session.ShowCMD = false
+	out,err := session.Command(cmd, cmds...).Output()
+	fmt.Println("out=",string(out),"err=",err)
 	if err != nil {
 		Log().Println(msg, ":", err)
-		return FAILT, msg
+		//return FAILT, err.Error())
+		return FAILT, out
 	}
-	return SUCCESS, SUCCESS_MSG
+	//fmt.Println("out=",out)
+
+	return SUCCESS, string(out)
 }
 
 func TransferFileSSH(strSrcFile string, strDestFile string) (ret int, err string) {
