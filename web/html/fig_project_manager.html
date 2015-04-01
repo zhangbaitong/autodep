@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link href="../css/style.css" rel="stylesheet">
+<link href="../css/query_machines_images.css" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-inner">
+            
+		</div>
+   </div>
+   
+   <div class="ch-container">
+
+       	 <div class="row">
+       	      <div class="col-sm-2 col-lg-2">
+       	            <div class="sidebar-nav">
+       	                <div class="nav-canvas">
+       	                    <ul class="nav nav-pills nav-stacked main-menu">
+                                <li class="nav-header">Home</li>
+                                <li class="create_image"><a class="ajax-link" href="../index.html"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
+                                <li class="query_images"><a class="ajax-link" href="./query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
+                                <li><a class="query_repository_images" href="./query_repository_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 仓库镜像查询</span></a></li>
+                                <li><a class="query_machine_images" href="#"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
+                                <li><a class="query_machine_containers" href="./query_machine_container.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器容器查询</span></a></li>
+								<li><a class="ajax-link" href="./create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
+								<li ><a class="query_machines" href="./query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
+							    <li><a class="register_machine" href="./register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
+							</ul>
+						</div>
+					</div>
+			  </div>
+	  
+			  <div id="content" class="col-lg-10 col-sm-10">
+			         <div>
+					    <ul class="breadcrumb">
+					        <li>
+					            <a href="#">Home </a>
+					        </li>
+					        <li>
+					            <a href="#"> /  服务器镜像列表</a>
+					        </li>
+					    </ul>
+					</div>
+			
+					<div class="row2">
+						 <div class="box col-md-12">
+						 	 <div class="box-inner">
+						 	     <div class="box-header well" data-original-title="">
+						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 服务器镜像列表</h2>
+								 </div>	
+
+								 <div class="box-content">
+	                                    <div class="query">
+											<div class="col-md-6">   
+											     <label class="control-label">服务器：</label>
+                                                  <select class="machine_value" id="machine_value">
+												  </select>
+											</div>
+											 <div class="col-md-7">
+                                                   <button class="btn" id="query_images">服务器镜像查询</button>               
+                                            </div>
+											 <div class="clear"></div>
+	                                    </div>
+
+										<div class="table-content">
+											<table class="table table-bordered">
+												<thead>
+													<tr>
+														<th class="short">编号</th>
+														<th class="long">项目名称</th>
+														<th class="long">操作</th>
+													</tr>
+											    </thead>
+												<tbody class="table_body" id="query_content">
+												    <tr>
+														<td>1</td>
+														<td>微信墙</td>
+														<td><a href="#"  id="container_details">容器运行详情</a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+								 </div>	
+							 </div>
+						 </div>
+					</div>
+			  </div>
+			  
+			  <div class="clear"></div>
+		 </div>   	
+   </div>
+</body>
+</html>
+
+<script src="../lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    
+    (function($){
+        //注册镜像打包事件
+        $("#container_details").click(query_machines);
+
+        })(jQuery);       
+		
+             function query_machines1(){
+				alert("ff");
+			 }
+
+        //定义镜像打包事件
+        function query_machines(){
+
+             var params={};
+             params.fig_directory="/home/docker/fig";
+
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="117.78.19.76";
+			 data.Port=4243;
+			 data.Method="fig/ps";
+			 data.Params=JSON.stringify(params);
+
+
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/fig/ps",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        //$("#query_content").children().remove();
+                        
+                        var values=$.parseJSON(data.Data);     
+                        
+                        console.log(values);
+                        
+           
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            } 
+
+		
+		
+		    //定义镜像打包事件
+        function query_machine_images(){
+        	var machine=$("#machine_value").val().split(":");
+			var data={};
+			data.Version="1.0";
+			data.ServerIP=machine[1];
+			data.Port=parseInt(machine[2]);
+			data.Method="SearchMachineImages";
+			data.Params="";	
+			 
+
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/image/list",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+                      
+                        if(data.Code>0){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        $("#query_content").children().remove();
+                        
+                        var values=$.parseJSON(data.Data);
+                        
+                        if(values){
+                           var tr="";       
+                           var num=1;
+                           for(var i=0;i<values.length;i++){
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].RepoTags+"</td></tr>";
+                           } 
+                           $("#query_content").append(tr);   
+                        }
+           
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            } 
+</script>
