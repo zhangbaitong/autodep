@@ -154,23 +154,6 @@ func FigPS(request common.RequestData) (code int,result string) {
 	return 	code,out
 }
 
-func FigRM(request common.RequestData) (code int,result string) {
-		//获取项目名称
-	strFigDirectory, ok := GetFigDirectory(request.Params)
-	if !ok {
-		return 1, "fig directory empty!!!!"
-	}
-
-	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm")
-	if ret > 0 {
-		fmt.Println("exec fig up is error!")
-		code=1
-	} else {
-		code=0
-	}
-	return 	code,out
-}
-
 func FigRm(request common.RequestData) (code int,result string) {
 		//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
@@ -247,6 +230,23 @@ func FigCreate(request common.RequestData) (code int,result string) {
 	}
 	//common.DisplayJson(params)
 	return code,result
+}
+
+func FigRecreate(request common.RequestData) (code int,result string) {
+		//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop"+"&&"+"fig rm"+"&&"+"fig up -d")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code=1
+	} else {
+		code=0
+	}
+	return 	code,out
 }
 
 //处理从前台传过来的函数
