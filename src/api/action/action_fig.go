@@ -123,6 +123,37 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	return true, "ok"
 }
 
+func GetFigDirectory(params string) (ret string, ok bool){
+	var req interface{}
+	err := json.Unmarshal([]byte(params), &req)
+	if err != nil {
+		return "",false
+	}
+	data, _ := req.(map[string]interface{})
+	strFigDirectory, ok := data["fig_directory"].(string)
+	if !ok {
+		return "",false
+	}
+	return strFigDirectory,true
+}
+
+func FigPS(request common.RequestData) (code int,result string) {
+		//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig ps")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code=1
+	} else {
+		code=0
+	}
+	return 	code,out
+}
+
 func FigCreate(request common.RequestData) (code int,result string) {
 	params := dealParams(request.Params)
 	fmt.Println("params=",params)
@@ -136,13 +167,13 @@ func FigCreate(request common.RequestData) (code int,result string) {
 		if !retFlag {
 			fmt.Println("Get project path is error!")
 		}
-		ret, _ := common.ExecRemoteShell(request.ServerIP, " cd "+strRemoteDir+" && "+" fig up")
+		ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strRemoteDir+" && "+" fig up")
 		if ret > 0 {
 			fmt.Println("exec fig up is error!")
 		} else {
-			result="ok"
 			code=0
 		}
+		result=out
 	}
 	//common.DisplayJson(params)
 	return code,result
