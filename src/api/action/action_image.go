@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/samalba/dockerclient"
+	"strings"
 	"time"
 )
 
-type Image struct {
+type CreateImage struct {
 	Template   string
 	Image_name string
 	Code_path  string
@@ -36,9 +37,7 @@ func ListImages(request common.RequestData) (code int, result string) {
 }
 
 func CreateImage(request common.RequestData) (code int, result string) {
-	code := 0
-	result := ""
-	var image Image
+	var image CreateImage
 	err := json.Unmarshal([]byte(request.Params), &image)
 	if err != nil {
 		logger.Println("json data decode faild :", err)
@@ -79,19 +78,19 @@ func CreateImage(request common.RequestData) (code int, result string) {
 }
 
 func createDockerfile(template, codePath string) string {
-	dockerfile := common.Config().String("image", "dockerfile")
+	dockerfile, _ := common.Config().String("image", "dockerfile")
 	datetime := time.Now().Format("2006-01-02")
 	folder := dockerfile + "/" + datetime + "/" + template
 	pos := strings.LastIndex(codePath, "/")
-	codePathPrev := common.substrBefore(folder, pos)
+	codePathPrev := common.SubstrBefore(folder, pos)
 	if "" == codePathPrev {
 		codePathPrev = "/"
 	}
-	relativePath := "." + common.substrAfter(folder, pos)
+	relativePath := "." + common.SubstrAfter(folder, pos)
 	addContent := "\n" + "ADD  " + relativePath + "  /data/" + template + "_code"
 
 	//读取模版，生成目标Dockerfile文件
-	templateContent := common.readFile(dockerfile + "/" + template + "/Dockerfile")
+	templateContent := common.ReadFile(dockerfile + "/" + template + "/Dockerfile")
 	newContent := addContent(templateContent, "EXPOSE,CMD", addContent)
 	createFile(folder+"/Dockerfile", newContent)
 	createFile(codePathPrev+"/Dockerfile", newContent)
@@ -107,7 +106,7 @@ func createFile(filePath, strData string) (code int, result string) {
 
 	pos := strings.LastIndex(filePath, "/")
 	fileDirectory := substrBefore(filePath, pos)
-	if !common.isDirExists(fileDirectory) {
+	if !common.IsDirExists(fileDirectory) {
 		err := os.MkdirAll(fileDirectory, os.ModePerm) //生成多级目录
 		if err != nil {
 			fmt.Println("创建目录("+fileDirectory+")失败：", err)
@@ -139,7 +138,7 @@ func addContent(oldContent, addFlag, addContent string) string {
 		if pos == -1 {
 			continue
 		}
-		return common.substrBefore(oldContent, pos) + addContent + common.substrAfter(oldContent, pos-1)
+		return common.SubstrBefore(oldContent, pos) + addContent + common.SubstrAfter(oldContent, pos-1)
 	}
 
 	return ""
