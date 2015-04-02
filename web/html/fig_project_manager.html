@@ -100,34 +100,84 @@
 <script type="text/javascript">
     
     (function($){
-        //注册镜像打包事件
-        $("#container_details").click(query_machines);
+        //服务器镜像查询
+        $("#query_images").click(query_figs);
+        query_machines()
 
-        })(jQuery);       
-		
-             function query_machines1(){
-				alert("ff");
-			 }
-
+        })(jQuery);    
         //定义镜像打包事件
-        function query_machines(){
+        function query_figs(){
 
-             var params={};
-             params.fig_directory="/home/docker/fig";
+            var params={};
 
-			 
+            params.project_name="";
+
 			 var data={};
 			 data.Version="1.0";
 		     data.ServerIP="117.78.19.76";
 			 data.Port=4243;
-			 data.Method="fig/ps";
+			 data.Method="fig/getinfo";
+			 data.Params=JSON.stringify(params);
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/fig/getinfo",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+                   		//console.log(data);
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        $("#query_content").children().remove();
+                        
+                        var values=$.parseJSON(data.Data);     
+                        console.log(values[0].ProjectName);
+                        if(values){
+                           var tr="";       
+                           var num=1;
+                           for(var i=0;i<values.length;i++){
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].ProjectName+"</td><td><a href='#''  id='"+"container_details"+(num++)+"'>容器运行详情</a>|<a>删除</a>|<a>停止</a>|<a>重启</a>|<a>重建</a></td></tr>";
+														
+                           } 
+                           $("#query_content").append(tr);
+                           $("#container_details2").click(query_fig_images);
+                        }
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            } 
+
+		//定义镜像打包事件
+        function query_machines(){
+
+             var params={};
+             params.machine_name="";
+             params.machine_ip="";
+             params.docker_port=0;
+             params.is_use=0;
+             params.remark="";
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="127.0.0.1";
+			 data.Port=4243;
+			 data.Method="SearchMachine";
 			 data.Params=JSON.stringify(params);
 
 
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/fig/ps",
+                   url:"http://117.78.19.76:8099/v1/machine/search",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -141,12 +191,19 @@
                         }
                         
                         //删除上次加载的数据
-                        //$("#query_content").children().remove();
+                        $("#query_content").children().remove();
                         
                         var values=$.parseJSON(data.Data);     
                         
-                        console.log(values);
+                        console.log(values[0]);
                         
+                        if(values){
+                           var tr="";       
+                           for(var i=0;i<values.length;i++){
+						   	 tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
+                           } 
+                           $("#machine_value").append(tr);   
+                        }
            
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -154,11 +211,9 @@
                    }
                 });
             } 
-
-		
 		
 		    //定义镜像打包事件
-        function query_machine_images(){
+        function query_fig_images(){
         	var machine=$("#machine_value").val().split(":");
 			var data={};
 			data.Version="1.0";
@@ -171,7 +226,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/image/list",
+                   url:"http://117.78.19.76:8099/v1/fig/ps",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -183,20 +238,7 @@
                            alert("查看服务器出错，请联系管理员");
                            return;
                         }
-                        
-                        //删除上次加载的数据
-                        $("#query_content").children().remove();
-                        
-                        var values=$.parseJSON(data.Data);
-                        
-                        if(values){
-                           var tr="";       
-                           var num=1;
-                           for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].RepoTags+"</td></tr>";
-                           } 
-                           $("#query_content").append(tr);   
-                        }
+                        console.log(data)
            
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){

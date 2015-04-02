@@ -2,13 +2,13 @@ package action
 
 import (
 	"api/common"
+	"database/sql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
+	"log"
 	"strings"
 	"time"
-	"log"
-	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 type FigParams struct {
@@ -26,12 +26,12 @@ type Server struct {
 }
 
 type FigProject struct {
-	ProjectID     int
-	ProjectName  string
-	Machine_ip   string
-	Directory    string
-	Content       string
-	CreateTime   int
+	ProjectID   int
+	ProjectName string
+	Machine_ip  string
+	Directory   string
+	Content     string
+	CreateTime  int
 }
 
 func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, err string) {
@@ -63,7 +63,7 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	//创建远程目录
 	//strRemoteDir = FIG_PATH + strProjectName
 	strRemoteDir = strFigDirectory
-		fmt.Println(strRemoteDir);
+	fmt.Println(strRemoteDir)
 
 	//删除远程目录
 	_, _ = common.ExecRemoteRM(strServerIP, strRemoteDir)
@@ -83,9 +83,9 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 
 	//创建启动文件
 	//mapCommands, ok := params["commands"].(map[string]interface{})
-	fmt.Println("commands=",params["commands"].([]map[string]string))
-	commands:=params["commands"].([]map[string]string);
-	if(len(commands)>0){
+	fmt.Println("commands=", params["commands"].([]map[string]string))
+	commands := params["commands"].([]map[string]string)
+	if len(commands) > 0 {
 		//strRemoteDir = FIG_PATH + strProjectName + "/startup"
 		strRemoteDir = strFigDirectory + "/startup"
 		//创建远程目录
@@ -95,9 +95,9 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 		}
 
 		for i := 0; i < len(commands); i++ {
-			for k,v := range commands[i] {
+			for k, v := range commands[i] {
 				//保存启动文件
-				strStartDir := strRemoteDir+ "/"+k
+				strStartDir := strRemoteDir + "/" + k
 				ret1, _ = common.ExecRemoteCMD(strServerIP, "mkdir -p", strStartDir)
 				if ret1 > 0 {
 					return false, "Create fig Remote Path faild!!!!"
@@ -123,7 +123,7 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 				if ret1 > 0 {
 					return false, "Exec Remote Shell faild!!!!"
 				}
-		}		
+			}
 		}
 	}
 
@@ -132,86 +132,87 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	return true, "ok"
 }
 
-
-func FigCreate(request common.RequestData) (code int,result string) {
-	fmt.Println("request.Params=",request.Params)
-	params := dealParams(request.ServerIP,request.Params)
+func FigCreate(request common.RequestData) (code int, result string) {
+	fmt.Println("request.Params=", request.Params)
+	params := dealParams(request.ServerIP, request.Params)
 	//fmt.Println("params=",params)
 	ok, _ := fig_transfer(request.ServerIP, params)
-	code=1;result="faild"
+	code = 1
+	result = "faild"
 	if ok {
-		code=0;result="ok"
+		code = 0
+		result = "ok"
 	}
 	//common.DisplayJson(params)
-	return code,result
+	return code, result
 }
 
-func GetFigDirectory(params string) (ret string, ok bool){
+func GetFigDirectory(params string) (ret string, ok bool) {
 	var req interface{}
 	err := json.Unmarshal([]byte(params), &req)
 	if err != nil {
-		return "",false
+		return "", false
 	}
 	data, _ := req.(map[string]interface{})
 	strFigDirectory, ok := data["fig_directory"].(string)
 	if !ok {
-		return "",false
+		return "", false
 	}
-	return strFigDirectory,true
+	return strFigDirectory, true
 }
 
-func GetProjectName(params string) (ret string, ok bool){
+func GetProjectName(params string) (ret string, ok bool) {
 	var req interface{}
 	err := json.Unmarshal([]byte(params), &req)
 	if err != nil {
-		return "",false
+		return "", false
 	}
 	data, _ := req.(map[string]interface{})
 	strProjectName, ok := data["project_name"].(string)
 	if !ok {
-		return "",false
+		return "", false
 	}
-	return strProjectName,true
+	return strProjectName, true
 }
 
-func GetProjectInfo(request common.RequestData)(code int,result string)  {
+func GetProjectInfo(request common.RequestData) (code int, result string) {
 	strProjectName, ok := GetProjectName(request.Params)
 	if !ok {
-		return 1,"faild"
+		return 1, "faild"
 	}
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
 		log.Fatal(err)
-		return 1,"faild"
+		return 1, "faild"
 	}
 	defer db.Close()
-	strSql:=fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_content, create_time from fig_project where project_name like '%%%s%%' " ,strProjectName)
+	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_content, create_time from fig_project where project_name like '%%%s%%' ", strProjectName)
 	rows, err := db.Query(strSql)
 	if err != nil {
 		log.Fatal(err)
-		return 1,"faild"
+		return 1, "faild"
 	}
 	defer rows.Close()
 
 	var infoList []FigProject = make([]FigProject, 0)
 	for rows.Next() {
 		var m FigProject
-		rows.Scan(&m.ProjectID,&m.ProjectName, &m.Machine_ip, &m.Directory, &m.Content, &m.CreateTime)
+		rows.Scan(&m.ProjectID, &m.ProjectName, &m.Machine_ip, &m.Directory, &m.Content, &m.CreateTime)
 		infoList = append(infoList, m)
 	}
 
 	strInfo, err := json.Marshal(infoList)
 	if err != nil {
 		log.Fatal(err)
-		return 1,"faild"
+		return 1, "faild"
 	}
 
-	return 0,string(strInfo)
+	return 0, string(strInfo)
 }
 
-func FigPS(request common.RequestData) (code int,result string) {
-		//获取项目名称
+func FigPS(request common.RequestData) (code int, result string) {
+	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
 	if !ok {
 		return 1, "fig directory empty!!!!"
@@ -220,15 +221,15 @@ func FigPS(request common.RequestData) (code int,result string) {
 	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig ps")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
-		code=1
+		code = 1
 	} else {
-		code=0
+		code = 0
 	}
-	return 	code,out
+	return code, out
 }
 
-func FigRm(request common.RequestData) (code int,result string) {
-		//获取项目名称
+func FigRm(request common.RequestData) (code int, result string) {
+	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
 	if !ok {
 		return 1, "fig directory empty!!!!"
@@ -237,15 +238,15 @@ func FigRm(request common.RequestData) (code int,result string) {
 	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
-		code=1
+		code = 1
 	} else {
-		code=0
+		code = 0
 	}
-	return 	code,out
+	return code, out
 }
 
-func FigStop(request common.RequestData) (code int,result string) {
-		//获取项目名称
+func FigStop(request common.RequestData) (code int, result string) {
+	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
 	if !ok {
 		return 1, "fig directory empty!!!!"
@@ -254,15 +255,15 @@ func FigStop(request common.RequestData) (code int,result string) {
 	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
-		code=1
+		code = 1
 	} else {
-		code=0
+		code = 0
 	}
-	return 	code,out
+	return code, out
 }
 
-func FigRestart(request common.RequestData) (code int,result string) {
-		//获取项目名称
+func FigRestart(request common.RequestData) (code int, result string) {
+	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
 	if !ok {
 		return 1, "fig directory empty!!!!"
@@ -271,15 +272,15 @@ func FigRestart(request common.RequestData) (code int,result string) {
 	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig restart")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
-		code=1
+		code = 1
 	} else {
-		code=0
+		code = 0
 	}
-	return 	code,out
+	return code, out
 }
 
-func FigRecreate(request common.RequestData) (code int,result string) {
-		//获取项目名称
+func FigRecreate(request common.RequestData) (code int, result string) {
+	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
 	if !ok {
 		return 1, "fig directory empty!!!!"
@@ -288,15 +289,15 @@ func FigRecreate(request common.RequestData) (code int,result string) {
 	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop"+"&&"+"fig rm"+"&&"+"fig up -d")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
-		code=1
+		code = 1
 	} else {
-		code=0
+		code = 0
 	}
-	return 	code,out
+	return code, out
 }
 
 //处理从前台传过来的函数
-func dealParams(strServerIp string,strParam string) map[string]interface{} {
+func dealParams(strServerIp string, strParam string) map[string]interface{} {
 	ret := map[string]interface{}{}
 	figData := ""
 	commands := []map[string]string{}
@@ -342,7 +343,7 @@ func dealParams(strServerIp string,strParam string) map[string]interface{} {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(params.Project_name,strServerIp,figDirectory, figData,time.Now().Unix())
+	_, err = stmt.Exec(params.Project_name, strServerIp, figDirectory, figData, time.Now().Unix())
 
 	if err != nil {
 		log.Fatal("参数1", err)
