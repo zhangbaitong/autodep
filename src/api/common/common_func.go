@@ -43,8 +43,8 @@ const (
 func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
 	session := sh.NewSession()
 	session.ShowCMD = false
-	out,err := session.Command(cmd, cmds...).Output()
-	fmt.Println("out=",string(out),"err=",err)
+	out, err := session.Command(cmd, cmds...).Output()
+	fmt.Println("out=", string(out), "err=", err)
 	if err != nil {
 		Log().Println(msg, ":", err)
 		return FAILT, string(out)
@@ -98,4 +98,70 @@ func Log() *log.Logger {
 	logger := log.New(os.Stdout, "autodep log : ", log.Ldate|log.Ltime|log.Lshortfile)
 	logger.Print("logger init success ...")
 	return logger
+}
+
+//截取固定位置以前的字符串
+func substrBefore(s string, l int) string {
+	if len(s) <= l {
+		return s
+	}
+	ret, rs := "", []rune(s)
+
+	for i, r := range rs {
+		if i >= l {
+			break
+		}
+
+		ret += string(r)
+	}
+	return ret
+}
+
+//截取固定位置以后的字符串
+func substrAfter(s string, l int) string {
+	if len(s) <= l {
+		return s
+	}
+	ret, rs := "", []rune(s)
+
+	for i, r := range rs {
+		if i <= l {
+			continue
+		}
+
+		ret += string(r)
+	}
+	return ret
+}
+
+//判断文件夹是否存在
+func isDirExists(path string) bool {
+	fi, err := os.Stat(path)
+
+	if err != nil {
+		return os.IsExist(err)
+	} else {
+		return fi.IsDir()
+	}
+}
+
+//判断文件是否存在
+func isFileExists(path string) bool {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	} else {
+		return !fi.IsDir()
+	}
+}
+
+//从文件中读取内容
+func readFile(filePth string) string {
+	bytes, err := ioutil.ReadFile("./a/b/c/yy.sh")
+	if err != nil {
+		fmt.Println("读取文件失败: ", err)
+		return ""
+	}
+
+	return string(bytes)
 }
