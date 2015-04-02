@@ -1,6 +1,8 @@
 # AutoDEP
 It's a auto deployment tool with docker.
 
+![AutoDEP screen shot](screeshot1s.gif?raw=true "AutoDEP scree shot")
+
 #How to get
 git clone https://github.com/zhangbaitong/autodep.git
 
