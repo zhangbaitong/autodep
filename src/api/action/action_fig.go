@@ -5,24 +5,33 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
+	"log"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-const FIG_PATH = "/home/tomzhao/fig/"
+type FigParams struct {
+	Project_name string
+	Servers      []Server
+}
 
-func getProPath(params map[string]interface{}) (ret bool, err string) {
-	//获取项目名称
-	strFigDirectory, ok := params["fig_directory"].(string)
-	if !ok {
-		return false, "fig directory empty!!!!"
-	}
-	str := strings.Split(strFigDirectory, "/")
+type Server struct {
+	Server_name string
+	Image       string
+	Ports       []string
+	Links       []string
+	Volumes     []string
+	Command     string
+}
 
-	strProjectName := str[len(str)-1]
-
-	strRemoteDir := FIG_PATH + strProjectName
-
-	return true, strRemoteDir
-
+type FigProject struct {
+	ProjectID     int
+	ProjectName  string
+	Machine_ip   string
+	Directory    string
+	Content       string
+	CreateTime   int
 }
 
 func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, err string) {
@@ -123,6 +132,20 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	return true, "ok"
 }
 
+
+func FigCreate(request common.RequestData) (code int,result string) {
+	fmt.Println("request.Params=",request.Params)
+	params := dealParams(request.ServerIP,request.Params)
+	//fmt.Println("params=",params)
+	ok, _ := fig_transfer(request.ServerIP, params)
+	code=1;result="faild"
+	if ok {
+		code=0;result="ok"
+	}
+	//common.DisplayJson(params)
+	return code,result
+}
+
 func GetFigDirectory(params string) (ret string, ok bool){
 	var req interface{}
 	err := json.Unmarshal([]byte(params), &req)
@@ -135,6 +158,56 @@ func GetFigDirectory(params string) (ret string, ok bool){
 		return "",false
 	}
 	return strFigDirectory,true
+}
+
+func GetProjectName(params string) (ret string, ok bool){
+	var req interface{}
+	err := json.Unmarshal([]byte(params), &req)
+	if err != nil {
+		return "",false
+	}
+	data, _ := req.(map[string]interface{})
+	strProjectName, ok := data["project_name"].(string)
+	if !ok {
+		return "",false
+	}
+	return strProjectName,true
+}
+
+func GetProjectInfo(request common.RequestData)(code int,result string)  {
+	strProjectName, ok := GetProjectName(request.Params)
+	if !ok {
+		return 1,"faild"
+	}
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		log.Fatal(err)
+		return 1,"faild"
+	}
+	defer db.Close()
+	strSql:=fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_content, create_time from fig_project where project_name like '%%%s%%' " ,strProjectName)
+	rows, err := db.Query(strSql)
+	if err != nil {
+		log.Fatal(err)
+		return 1,"faild"
+	}
+	defer rows.Close()
+
+	var infoList []FigProject = make([]FigProject, 0)
+	for rows.Next() {
+		var m FigProject
+		rows.Scan(&m.ProjectID,&m.ProjectName, &m.Machine_ip, &m.Directory, &m.Content, &m.CreateTime)
+		infoList = append(infoList, m)
+	}
+
+	strInfo, err := json.Marshal(infoList)
+	if err != nil {
+		log.Fatal(err)
+		return 1,"faild"
+	}
+
+	return 0,string(strInfo)
 }
 
 func FigPS(request common.RequestData) (code int,result string) {
@@ -205,33 +278,6 @@ func FigRestart(request common.RequestData) (code int,result string) {
 	return 	code,out
 }
 
-func FigCreate(request common.RequestData) (code int,result string) {
-	params := dealParams(request.Params)
-	fmt.Println("params=",params)
-	ok, _ := fig_transfer(request.ServerIP, params)
-	code=1;result="faild"
-	if ok {
-		code=0;result="ok"
-		//执行fig命令
-		//TODO:exec multi cmd
-		/*
-		retFlag, strRemoteDir := getProPath(params)
-		if !retFlag {
-			fmt.Println("Get project path is error!")
-		}
-		ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strRemoteDir+" && "+" fig up")
-		if ret > 0 {
-			fmt.Println("exec fig up is error!")
-		} else {
-			code=0
-		}
-		result=out
-		*/
-	}
-	//common.DisplayJson(params)
-	return code,result
-}
-
 func FigRecreate(request common.RequestData) (code int,result string) {
 		//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
@@ -250,7 +296,7 @@ func FigRecreate(request common.RequestData) (code int,result string) {
 }
 
 //处理从前台传过来的函数
-func dealParams(strParam string) map[string]interface{} {
+func dealParams(strServerIp string,strParam string) map[string]interface{} {
 	ret := map[string]interface{}{}
 	figData := ""
 	commands := []map[string]string{}
@@ -279,6 +325,31 @@ func dealParams(strParam string) map[string]interface{} {
 	ret["fig_data"] = figData
 	ret["commands"] = commands
 	ret["fig_directory"] = figDirectory
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	stmt, err := tx.Prepare("insert into fig_project(project_name,machine_ip,fig_directory,fig_content,create_time) values(?, ?, ?, ?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(params.Project_name,strServerIp,figDirectory, figData,time.Now().Unix())
+
+	if err != nil {
+		log.Fatal("参数1", err)
+	}
+
+	tx.Commit()
+
 	return ret
 }
 
@@ -327,18 +398,4 @@ func dealCommandContent(serverName, command string) map[string]string {
 		ret[serverName] = tmpcommand
 	}
 	return ret
-}
-
-type FigParams struct {
-	Project_name string
-	Servers      []Server
-}
-
-type Server struct {
-	Server_name string
-	Image       string
-	Ports       []string
-	Links       []string
-	Volumes     []string
-	Command     string
 }
