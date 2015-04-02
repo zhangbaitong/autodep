@@ -46,10 +46,11 @@ func httpPost() {
                 //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/remove",Params:"{\"id\":\"3fb5c4080f37\"}"}
                 //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/kill",Params:"{\"id\":\"ad7be2d3c897\"}"}
                 //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"container/create",Params:""}
-                post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"image/list",Params:""}
+                //post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"image/list",Params:""}
+                post_data:=RequestData{Version:"1.0",ServerIP:"192.168.1.117",Port:4243,Method:"fig/getinfo",Params:"{\"project_name\":\"test\"}"}
                 strPostData, _ := json.Marshal(post_data)
                 strTemp:="request="+string(strPostData)
-	resp, err := http.Post("http://127.0.0.1:8080/v1/image/list",
+	resp, err := http.Post("http://127.0.0.1:8080/v1/fig/getinfo",
 		"application/x-www-form-urlencoded",strings.NewReader(strTemp))
 		//"application/json",strings.NewReader(strTemp))
 	if err != nil {
