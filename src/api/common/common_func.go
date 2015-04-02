@@ -43,7 +43,7 @@ const (
 
 func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
 	session := sh.NewSession()
-	session.ShowCMD = false
+	session.ShowCMD = true
 	out, err := session.Command(cmd, cmds...).Output()
 	fmt.Println("out=", string(out), "err=", err)
 	if err != nil {
@@ -52,6 +52,10 @@ func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string
 	}
 
 	return SUCCESS, string(out)
+}
+
+func Execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
+	return execsh(msg, cmd, cmds)
 }
 
 func TransferFileSSH(strSrcFile string, strDestFile string) (ret int, err string) {
@@ -158,7 +162,7 @@ func IsFileExists(path string) bool {
 
 //从文件中读取内容
 func ReadFile(filePth string) string {
-	bytes, err := ioutil.ReadFile("./a/b/c/yy.sh")
+	bytes, err := ioutil.ReadFile(filePth)
 	if err != nil {
 		fmt.Println("读取文件失败: ", err)
 		return ""
