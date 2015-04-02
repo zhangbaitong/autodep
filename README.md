@@ -8,25 +8,16 @@ git clone https://github.com/zhangbaitong/autodep.git
 
 #Install
 
-run install.sh
+1. install dependence package and tools.
 
-1.install package
-
-go get github.com/codeskyblue/go-sh
-
-go get github.com/samalba/dockerclient
-
-go get github.com/robfig/config
-
-2.install gcc
-
-yum install gcc
-
-3.create your ssh keygen
+```
+$ ./dependence.sh
+```
+2. create your ssh keygen for connection of other machine.
 
 #Test
 
-go test api/common -v
+go test api/common -v(no support now)
 
 #feature
 
