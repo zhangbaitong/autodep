@@ -123,24 +123,35 @@
             
              $("#show").css("display","block");
 			
+			
+			 var params={};
+             params.template=template;
+             params.image_name=image_name;
+             params.code_path=code_path;
+             params.Creator="admin";
+             params.remark="";
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="127.0.0.1";
+			 data.Port=4243;
+			 data.Method="SearchMachine";
+			 data.Params=JSON.stringify(params);
+			
   
             //通过ajax请求后台服务
               $.ajax({
-                   url:"../php/images_package.php",
+                   url:"http://117.78.19.76:8099/v1/image/create",
                    dataType:"json",
                    type: "post",
                    data:{
-                        method:"images_package",
-						template:template,
-						image_name:image_name,
-						code_path:code_path
+						request:JSON.stringify(data)
                     },
                    success:function(data) {
-				   	    var relust=$.parseJSON(data);
 					    
 						$("#show").css("display","none");
 					
-                        if(0==relust["code"]){
+                        if(0==data.Code){
                            alert("创建镜像成功");
                         }else{
 						   alert("创建镜像失败");	

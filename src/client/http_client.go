@@ -1,6 +1,7 @@
-package main
+package client
 
 import (
+	"api/common"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -109,8 +110,11 @@ func httpDo() {
 
 //
 func main() {
+
+	common.Execsh("build image error", "/usr/bin/docker", "build", "-t", "test", "/data")
+
 	//httpGet()
-	httpPost()
+	// httpPost()
 	//httpPostForm()
 	//httpDo()
 }
