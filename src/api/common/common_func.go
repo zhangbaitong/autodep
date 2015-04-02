@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codeskyblue/go-sh"
 	"github.com/robfig/config"
+	"io/ioutil"
 	"log"
 	"os"
 )
@@ -101,7 +102,7 @@ func Log() *log.Logger {
 }
 
 //截取固定位置以前的字符串
-func substrBefore(s string, l int) string {
+func SubstrBefore(s string, l int) string {
 	if len(s) <= l {
 		return s
 	}
@@ -118,7 +119,7 @@ func substrBefore(s string, l int) string {
 }
 
 //截取固定位置以后的字符串
-func substrAfter(s string, l int) string {
+func SubstrAfter(s string, l int) string {
 	if len(s) <= l {
 		return s
 	}
@@ -135,7 +136,7 @@ func substrAfter(s string, l int) string {
 }
 
 //判断文件夹是否存在
-func isDirExists(path string) bool {
+func IsDirExists(path string) bool {
 	fi, err := os.Stat(path)
 
 	if err != nil {
@@ -146,7 +147,7 @@ func isDirExists(path string) bool {
 }
 
 //判断文件是否存在
-func isFileExists(path string) bool {
+func IsFileExists(path string) bool {
 	fi, err := os.Stat(path)
 	if err != nil {
 		return os.IsExist(err)
@@ -156,7 +157,7 @@ func isFileExists(path string) bool {
 }
 
 //从文件中读取内容
-func readFile(filePth string) string {
+func ReadFile(filePth string) string {
 	bytes, err := ioutil.ReadFile("./a/b/c/yy.sh")
 	if err != nil {
 		fmt.Println("读取文件失败: ", err)
