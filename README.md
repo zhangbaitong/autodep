@@ -9,11 +9,9 @@ git clone https://github.com/zhangbaitong/autodep.git
 #安装依赖和环境设置
 
 1. 安装依赖包和工具。
-
 ```
 $ ./dependence.sh
 ```
-
 2. 创建你的ssh keygen以便连接你需要连接的机器。
 
 详情查看[ssh keygen create](./docs/sshkeygen.md)
