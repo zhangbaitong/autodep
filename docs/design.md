@@ -17,3 +17,13 @@
 
 ![architecture](../architecture.png?raw=true "architecture")
 
+#使用场景（待续-开发到测试到生产环境的流程管理）
+
+1.开发环境使用
+
+2.测试环境使用
+
+3.生产环境使用
+
+
+
