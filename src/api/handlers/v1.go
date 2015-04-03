@@ -114,6 +114,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			code, ret = action.ListImages(request)
 		}
+	case "createImage/list":
+		{
+			code, ret = action.ListCreateImages(request)
+		}
 	case "image/create":
 		{
 			code, ret = action.CreateImage(request)

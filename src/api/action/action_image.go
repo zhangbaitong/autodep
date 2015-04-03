@@ -21,6 +21,19 @@ type CreateImageStru struct {
 	Remark     string
 }
 
+type ListCreateImage struct {
+	Image_name string
+	Start_time string
+	End_time   string
+}
+
+type QueryImages struct {
+	Image_name  string
+	Creator     string
+	Create_time string
+	Remark      string
+}
+
 func ListImages(request common.RequestData) (code int, result string) {
 	strDockerServer := fmt.Sprintf("%s:%d", request.ServerIP, request.Port)
 	fmt.Println("strDockerServer=", strDockerServer)
@@ -38,6 +51,61 @@ func ListImages(request common.RequestData) (code int, result string) {
 	strRet, _ := json.Marshal(images)
 	result = string(strRet)
 	return code, result
+}
+
+func ListCreateImages(request common.RequestData) (code int, result string) {
+	var image ListCreateImage
+	err := json.Unmarshal([]byte(request.Params), &image)
+	if err != nil {
+		logger.Println("json data decode faild :", err)
+	}
+
+	where := "where 1=1 "
+
+	//参数校验
+
+	if image.Image_name != "" {
+		where += fmt.Sprintf(" and image_name like '%%%s%%' ", image.Image_name)
+	}
+
+	if image.Start_time != "" {
+		where += fmt.Sprintf(" and create_time > '%s' ", image.Start_time)
+	}
+
+	if image.End_time != "" {
+		where += fmt.Sprintf(" and create_time < '%s' ", image.End_time)
+	}
+
+	fmt.Println("where", where)
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "faild"
+	}
+	defer db.Close()
+
+	rows, err := db.Query("select image_name,creator,create_time,remark from images " + where)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "faild"
+	}
+	defer rows.Close()
+	var images []QueryImages = make([]QueryImages, 0)
+	for rows.Next() {
+		var i QueryImages
+		rows.Scan(&i.Image_name, &i.Creator, &i.Create_time, &i.Remark)
+
+		images = append(images, i)
+	}
+
+	strImages, err := json.Marshal(images)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "faild"
+	}
+
+	return 0, string(strImages)
 }
 
 func CreateImage(request common.RequestData) (code int, result string) {

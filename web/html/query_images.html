@@ -111,8 +111,7 @@
     (function($){
         //注册镜像打包事件
         $("#query_images").click(query_images);
-        
-        
+		
        //定义镜像打包事件
         function query_images(){
   		
@@ -120,26 +119,31 @@
 			var start_time = $("#start_time").val();
 			var end_time = $("#end_time").val();
        
+	           
+		  var params={};
+             params.image_name=$("#image_name").val();
+             params.start_time=$("#start_time").val();
+             params.end_time=$("#end_time").val();
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="127.0.0.1";
+			 data.Port=4243;
+			 data.Method="SearchCreateImages";
+			 data.Params=JSON.stringify(params);
 
 
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"../../php/query_images.php",
+                   url:"http://117.78.19.76:8099/v1/createImage/list",
                    dataType:"json",
                    type: "post",
                    data:{
-                        method:"query_images",
-						image_name:image_name,
-						start_time:start_time,
-						end_time:end_time
+                     request:JSON.stringify(data)
                     },
                    success:function(data) {
-				   	    var result=$.parseJSON(data);
-						
-			            console.log(result);
-					  
-                        if(1==result.code){
+                        if(1==data.Code){
                            alert("查看镜像出错，请联系管理员");
 						   return;
                         }
@@ -147,7 +151,7 @@
 						//删除上次加载的数据
                         $("#query_content").children().remove();
 						
-						var values=result.data;
+						var values=$.parseJSON(data.Data);     
 						
 						console.log(values[0]);
 						
@@ -155,7 +159,7 @@
 						   var tr="";		
 						   var num=1;
 						   for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].image_name+"</td><td>"+values[i].creator+"</td><td>"+values[i].create_time+"</td><td>"+values[i].remark+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Image_name+"</td><td>"+values[i].Creator+"</td><td>"+values[i].Create_time+"</td><td>"+values[i].Remark+"</td></tr>";
                            } 
                            $("#query_content").append(tr);   
 						}
