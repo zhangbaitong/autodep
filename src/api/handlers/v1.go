@@ -62,6 +62,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			code, ret = action.FigRestart(request)
 		}
+	case "fig/start":
+		{
+			code, ret = action.FigStart(request)
+		}
 	case "fig/recreate":
 		{
 			code, ret = action.FigRecreate(request)

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <link href="../css/style.css" rel="stylesheet">
-<link href="../css/query_machines_images.css" rel="stylesheet">
+<link href="../css/fig_project_manager.css" rel="stylesheet">
 </head>
 <body>
     <div class="navbar navbar-default" role="navigation">
@@ -24,9 +24,10 @@
                                 <li class="create_image"><a class="ajax-link" href="../index.html"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
                                 <li class="query_images"><a class="ajax-link" href="./query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
                                 <li><a class="query_repository_images" href="./query_repository_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 仓库镜像查询</span></a></li>
-                                <li><a class="query_machine_images" href="#"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
+                                <li><a class="query_machine_images" href="./query_machines_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
                                 <li><a class="query_machine_containers" href="./query_machine_container.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器容器查询</span></a></li>
 								<li><a class="ajax-link" href="./create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
+                <li><a class="fig_project_manager" href="#"><i class="glyphicon glyphicon-edit"></i><span> fig项目管理</span></a></li>
 								<li ><a class="query_machines" href="./query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
 							    <li><a class="register_machine" href="./register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
 							</ul>
@@ -76,11 +77,7 @@
 													</tr>
 											    </thead>
 												<tbody class="table_body" id="query_content">
-												    <tr>
-														<td>1</td>
-														<td>微信墙</td>
-														<td><a href="#"  id="container_details">容器运行详情</a></td>
-													</tr>
+												
 												</tbody>
 											</table>
 										</div>
@@ -93,6 +90,14 @@
 			  <div class="clear"></div>
 		 </div>   	
    </div>
+
+
+ <div id="show" style="display:none;width:100%;height:100%;padding-top:7%;background:rgba(0, 0, 0, 0.0) none repeat scroll 0 0 !important;position: fixed;top: 0;">
+        <div style="width:400px;height:100px;line-height:100px;text-align:center;margin:0 auto;background-color:#00f;font-size:25px;">
+                    操作正在进行，请稍后...
+        </div>    
+    </div>
+
 </body>
 </html>
 
@@ -102,22 +107,22 @@
     (function($){
         //服务器镜像查询
         $("#query_images").click(query_figs);
-        query_machines()
+          query_machines();
 
         })(jQuery);    
         //定义镜像打包事件
         function query_figs(){
+             var machine=$("#machine_value").val().split(":");
 
-            var params={};
+             var params={};
+             params.project_name="";
 
-            params.project_name="";
-
-			 var data={};
-			 data.Version="1.0";
-		     data.ServerIP="117.78.19.76";
-			 data.Port=4243;
-			 data.Method="fig/getinfo";
-			 data.Params=JSON.stringify(params);
+      			 var data={};
+      			 data.Version="1.0";
+      		   data.ServerIP=machine[1];
+      			 data.Port=parseInt(machine[2]);
+      			 data.Method="fig/getinfo";
+      			 data.Params=JSON.stringify(params);
 
             //通过ajax请求后台服务
               $.ajax({
@@ -125,7 +130,7 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						request:JSON.stringify(data)
+						          request:JSON.stringify(data)
                     },
                    success:function(data) {
                    		//console.log(data);
@@ -143,11 +148,11 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].ProjectName+"</td><td><a href='#''  id='"+"container_details"+(num++)+"'>容器运行详情</a>|<a>删除</a>|<a>停止</a>|<a>重启</a>|<a>重建</a></td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td id='project_name'>"+values[i].ProjectName+"</td><td id='machine_ip'>"+values[i].Machine_ip+"</td><td id='directory'>"+values[i].Directory+"</td><td id='fig_content'>"+values[i].Content+"</td><td><a href='#' class='container_details'>容器详情</a>|<a href='#'  class='btn_fig_content'>fig文件</a>|<a href='#'  class='btn_start'>启动</a>|<a href='#'  class='btn_recreate'>重建</a>|<a href='#'  class='btn_restart'>重启</a>|<a href='#'  class='btn_stop'>停止</a>|<a href='#'class='btn_rm'>删除</a></td></tr>";
 														
                            } 
                            $("#query_content").append(tr);
-                           $("#container_details2").click(query_fig_images);
+                           btn_click();
                         }
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -155,6 +160,146 @@
                    }
                 });
             } 
+
+     
+     function btn_click(){
+
+          $(".container_details").click(function(){
+                var machine_ip = $(this).parent().parent().find("#machine_ip").html();
+                var directory = $(this).parent().parent().find("#directory").html();
+                about_fig(machine_ip,directory,"container_details");
+          });
+
+
+          $(".btn_fig_content").click(function(){
+                var val= $(this).parent().parent().find("#fig_content").html();
+                alert(val);
+          });
+
+          $(".btn_recreate").click(function(){
+                var machine_ip = $(this).parent().parent().find("#machine_ip").html();
+                var directory = $(this).parent().parent().find("#directory").html();
+               about_fig(machine_ip,directory,"btn_recreate");
+          });
+
+          $(".btn_restart").click(function(){
+               var machine_ip = $(this).parent().parent().find("#machine_ip").html();
+               var directory = $(this).parent().parent().find("#directory").html();
+               about_fig(machine_ip,directory,"btn_restart");
+          });
+          
+          $(".btn_stop").click(function(){
+               var machine_ip = $(this).parent().parent().find("#machine_ip").html();
+               var directory = $(this).parent().parent().find("#directory").html();
+               about_fig(machine_ip,directory,"btn_stop");
+          });
+
+          $(".btn_rm").click(function(){
+               var machine_ip = $(this).parent().parent().find("#machine_ip").html();
+               var directory = $(this).parent().parent().find("#directory").html();
+               about_fig(machine_ip,directory,"btn_rm");
+          });
+
+
+          $(".btn_start").click(function(){
+               var machine_ip = $(this).parent().parent().find("#machine_ip").html();
+               var directory = $(this).parent().parent().find("#directory").html();
+               about_fig(machine_ip,directory,"btn_start");
+          });
+
+
+          
+     }
+
+
+     function about_fig(machine_ip,directory,class_name){
+    
+          var params={};
+          params.fig_directory=directory;
+      
+          var data={};
+          data.Version="1.0";
+          data.ServerIP=machine_ip
+          data.Port=4243
+          data.Method="FigPS";
+          data.Params=JSON.stringify(params); 
+
+
+          var url="";
+          if(class_name=="container_details"){
+            url="http://117.78.19.76:8099/v1/fig/ps";
+          }else if(class_name=="btn_recreate"){
+            url="http://117.78.19.76:8099/v1/fig/recreate";
+          }else if(class_name=="btn_restart"){
+            url="http://117.78.19.76:8099/v1/fig/restart";
+          }else if(class_name=="btn_stop"){
+            url="http://117.78.19.76:8099/v1/fig/stop";
+          }else if(class_name=="btn_rm"){
+            url="http://117.78.19.76:8099/v1/fig/rm";
+          }else if(class_name=="btn_start"){
+            url="http://117.78.19.76:8099/v1/fig/start";
+          }
+
+          if(class_name!="container_details"){
+              $("#show").css("display","block");
+          }
+
+
+
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:url,
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                      request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+                      if(class_name!="container_details"){
+                          $("#show").css("display","none");
+                      }
+
+                      
+                        if(data.Code>0){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                          
+
+                        if(data.Data=="" || data.Data.indexOf("Going to remove")>=0) {
+                            alert("操作成功，请查看容器详情");
+                        }else{
+                          if(class_name=="container_details"){
+                              alert(data.Data);   
+                          }else{
+                             alert("操作失败："+data.Data); 
+                          }
+                        }
+/*
+                       if(class_name=="container_details"){
+                           alert(data.Data);
+                        }else if(class_name=="btn_recreate"){
+                           
+                        }else if(class_name=="btn_restart"){
+                          url="http://117.78.19.76:8099/v1/fig/restart";
+                        }else if(class_name=="btn_stop"){
+                          url="http://117.78.19.76:8099/v1/fig/stop";
+                        }else if(class_name=="btn_rm"){
+                          url="http://117.78.19.76:8099/v1/fig/rm";
+                        }
+           */
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            } 
+
+
+  
+
+
 
 		//定义镜像打包事件
         function query_machines(){
@@ -181,7 +326,7 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						request:JSON.stringify(data)
+						                request:JSON.stringify(data)
                     },
                    success:function(data) {
 
@@ -204,41 +349,6 @@
                            } 
                            $("#machine_value").append(tr);   
                         }
-           
-                   },          
-                   error:function(XMLHttpRequest, textStatus, errorThrown){
-                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
-                   }
-                });
-            } 
-		
-		    //定义镜像打包事件
-        function query_fig_images(){
-        	var machine=$("#machine_value").val().split(":");
-			var data={};
-			data.Version="1.0";
-			data.ServerIP=machine[1];
-			data.Port=parseInt(machine[2]);
-			data.Method="SearchMachineImages";
-			data.Params="";	
-			 
-
-
-            //通过ajax请求后台服务
-              $.ajax({
-                   url:"http://117.78.19.76:8099/v1/fig/ps",
-                   dataType:"json",
-                   type: "post",
-                   data:{
-						request:JSON.stringify(data)
-                    },
-                   success:function(data) {
-                      
-                        if(data.Code>0){
-                           alert("查看服务器出错，请联系管理员");
-                           return;
-                        }
-                        console.log(data)
            
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){

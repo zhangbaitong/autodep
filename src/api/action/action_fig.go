@@ -148,6 +148,8 @@ func FigCreate(request common.RequestData) (code int, result string) {
 }
 
 func GetFigDirectory(params string) (ret string, ok bool) {
+	fmt.Println("GetFigDirectory params", params)
+
 	var req interface{}
 	err := json.Unmarshal([]byte(params), &req)
 	if err != nil {
@@ -212,6 +214,7 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 }
 
 func FigPS(request common.RequestData) (code int, result string) {
+
 	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
 	if !ok {
@@ -235,7 +238,7 @@ func FigRm(request common.RequestData) (code int, result string) {
 		return 1, "fig directory empty!!!!"
 	}
 
-	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm")
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm  --force")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
 		code = 1
@@ -279,6 +282,23 @@ func FigRestart(request common.RequestData) (code int, result string) {
 	return code, out
 }
 
+func FigStart(request common.RequestData) (code int, result string) {
+	//获取项目名称
+	strFigDirectory, ok := GetFigDirectory(request.Params)
+	if !ok {
+		return 1, "fig directory empty!!!!"
+	}
+
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig up -d")
+	if ret > 0 {
+		fmt.Println("exec fig up is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+	return code, out
+}
+
 func FigRecreate(request common.RequestData) (code int, result string) {
 	//获取项目名称
 	strFigDirectory, ok := GetFigDirectory(request.Params)
@@ -286,7 +306,7 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 		return 1, "fig directory empty!!!!"
 	}
 
-	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop"+"&&"+"fig rm"+"&&"+"fig up -d")
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop"+"&&"+"fig rm --force"+"&&"+"fig up -d")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
 		code = 1

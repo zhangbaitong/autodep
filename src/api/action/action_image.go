@@ -231,7 +231,8 @@ func addNewContent(oldContent, addFlag, addContent string) string {
 }
 
 func createDockerfile(template, codePath string) string {
-	dockerfile, _ := common.Config().String("image", "dockerfile_template")
+	dockerfile_template, _ := common.Config().String("image", "dockerfile_template")
+	dockerfile, _ := common.Config().String("image", "dockerfile")
 	datetime := time.Now().Format("2006-01-02")
 	folder := dockerfile + "/" + datetime + "/" + template
 	pos := strings.LastIndex(codePath, "/")
@@ -243,7 +244,7 @@ func createDockerfile(template, codePath string) string {
 	addContent := "\n" + "ADD  " + relativePath + "  /data/" + template + "_code" + "\n"
 
 	//读取模版，生成目标Dockerfile文件
-	templateContent := common.ReadFile(dockerfile + "/" + template + "/Dockerfile")
+	templateContent := common.ReadFile(dockerfile_template + "/" + template + "/Dockerfile")
 	newContent := addNewContent(templateContent, "EXPOSE,CMD", addContent)
 	createFile(folder+"/Dockerfile", newContent)
 	createFile(codePathPrev+"/Dockerfile", newContent)
