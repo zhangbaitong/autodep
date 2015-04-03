@@ -15,5 +15,5 @@
 #架构设计图
 
 
-![architecture](architecture.png?raw=true "architecture")
+![architecture](../architecture.png?raw=true "architecture")
 
