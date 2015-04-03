@@ -10,10 +10,10 @@
 
 2.后端
 
-技术：Docker，fig，ssh，docker-registery，shell，http，sqlite3
+技术：Docker，fig，ssh，docker-Registry，shell，http，sqlite3
 
 #架构设计图
 
 
-![architecture](architecture.gif?raw=true "architecture")
+![architecture](architecture.png?raw=true "architecture")
 
