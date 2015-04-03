@@ -165,13 +165,13 @@
 		
 		    //定义镜像打包事件
         function query_machine_containers(){
-        
-			 var data={};
-			 data.Version="1.0";
-		     data.ServerIP="117.78.19.76";
-			 data.Port=4243;
-			 data.Method="SearchMachineContainer";
-			 data.Params="";	
+          var machine=$("#machine_value").val().split(":");
+			    var data={};
+			    data.Version="1.0";
+		      data.ServerIP=machine[1];
+			    data.Port=parseInt(machine[2]);
+			    data.Method="SearchMachineContainer";
+			    data.Params="";	
 			 
 
 
@@ -209,7 +209,7 @@
 								console.log(ports);
 							}
 
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Names+"</td><td>"+values[i].Image+"</td><td>"+values[i].Status+"</td><td>"+ports+"</td><td>"+values[i].Command+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Names[0].split(",")[0]+"</td><td>"+values[i].Image+"</td><td>"+values[i].Status+"</td><td>"+ports+"</td><td>"+values[i].Command+"</td></tr>";
                            } 
                            $("#query_content").append(tr);   
                         }
