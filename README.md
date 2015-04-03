@@ -16,6 +16,8 @@ $ ./dependence.sh
 
 2. 创建你的ssh keygen以便连接你需要连接的机器。
 
+详情查看[ssh keygen create](./docs/sshkeygen.md)
+
 #测试代码
 
 go test api/common -v(暂不提供)
@@ -50,3 +52,11 @@ go test api/common -v(暂不提供)
 [show168](https://github.com/show168)
 
 [tomzhaogy](https://github.com/tomzhaogy)
+
+#其他
+
+欢迎提出宝贵意见并参与项目改进
+
+[MD格式小记](./docs/markdown.md)
+
+[代码贡献常见操作](./docs/contributor.md)
