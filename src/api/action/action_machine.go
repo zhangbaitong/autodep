@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 	"strings"
 )
 
@@ -32,24 +31,24 @@ func RegisterMachine(request common.RequestData) string {
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 	}
 	defer db.Close()
 
 	tx, err := db.Begin()
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 	}
 	stmt, err := tx.Prepare("insert into machines(machine_name,machine_ip,docker_port,is_use,remark) values(?, ?, ?, ?, ?)")
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 	}
 	defer stmt.Close()
 
 	_, err = stmt.Exec(params.Machine_name, params.Machine_ip, params.Docker_port, params.Is_use, params.Remark)
 
 	if err != nil {
-		log.Fatal("参数1", err)
+		logger.Println("参数1", err)
 	}
 
 	tx.Commit()
@@ -67,7 +66,7 @@ func SearchMachine(request common.RequestData) string {
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return "faild"
 	}
 	defer db.Close()
@@ -88,7 +87,7 @@ func SearchMachine(request common.RequestData) string {
 
 	rows, err := db.Query("select machine_name, machine_ip, docker_port, is_use, remark from machines " + where)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return "faild"
 	}
 	defer rows.Close()
@@ -101,7 +100,7 @@ func SearchMachine(request common.RequestData) string {
 
 	strMachines, err := json.Marshal(machines)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return "faild"
 	}
 

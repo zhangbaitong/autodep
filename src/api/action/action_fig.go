@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 	"strings"
 	"time"
 )
@@ -185,14 +184,14 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "faild"
 	}
 	defer db.Close()
 	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_content, create_time from fig_project where project_name like '%%%s%%' ", strProjectName)
 	rows, err := db.Query(strSql)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "faild"
 	}
 	defer rows.Close()
@@ -206,7 +205,7 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 
 	strInfo, err := json.Marshal(infoList)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "faild"
 	}
 
@@ -349,24 +348,24 @@ func dealParams(strServerIp string, strParam string) map[string]interface{} {
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 	}
 	defer db.Close()
 
 	tx, err := db.Begin()
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 	}
 	stmt, err := tx.Prepare("insert into fig_project(project_name,machine_ip,fig_directory,fig_content,create_time) values(?, ?, ?, ?, ?)")
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 	}
 	defer stmt.Close()
 
 	_, err = stmt.Exec(params.Project_name, strServerIp, figDirectory, figData, time.Now().Unix())
 
 	if err != nil {
-		log.Fatal("参数1", err)
+		logger.Println("参数1", err)
 	}
 
 	tx.Commit()
