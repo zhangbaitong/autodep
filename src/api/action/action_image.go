@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/codeskyblue/go-sh"
 	"github.com/samalba/dockerclient"
 	"os"
 	"strings"
@@ -211,14 +210,16 @@ func buildImage(strServerIP ,imageName, dockerfileDirectory string) (ret int, er
 	fmt.Println("dockerfileDirectory", dockerfileDirectory)
 	//return common.Execsh("build image error", "docker build -t  "+imageName+"  "+dockerfileDirectory)
 	//sh.Command("docker", "build", "-t", imageName, dockerfileDirectory).Run()
-	err1:=sh.Command("ssh",strServerIP,"cd",dockerfileDirectory,"&&","docker", "build", "-t", imageName, dockerfileDirectory).Run()
-	if err1 != nil {
-		log.Println("参数1", err)
-		fmt.Println("err", err1)
-		return 1, "docker build error:"+err1.Error()
+	strCMD:=fmt.Sprintf("docker build -t %s %s",imageName,dockerfileDirectory)
+	ret, out := common.ExecRemoteCMD(strServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker push  is error!")
+		ret = 1
+	} else {
+		ret = 0
 	}
 
-	return 0, ""
+	return ret, string(out)
 }
 
 func addNewContent(oldContent, addFlag, addContent string) string {
@@ -287,4 +288,25 @@ func createFile(filePath, strData string) (code int, result string) {
 	}
 
 	return 0, "创建文件成功"
+}
+
+func ImageRMI(request common.RequestData) (code int,result string) {
+	strLocalTag, _ := GetTag(request.Params)
+	if len(strLocalTag)==0{
+		return 1, "faild"
+	}
+	strCMD:=fmt.Sprintf("docker rmi %s",strLocalTag)
+	ret, out := common.ExecRemoteCMD(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker push  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+	}
+
+	return code,out
 }
