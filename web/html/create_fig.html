@@ -33,45 +33,16 @@
        <div class="server_header">
              <div class="server_title">
                 <label class="control-label-title">服务名称：</label>
-                <input type="text"  class="form-control server_name">
+                <input type="radio" name="template" class="form-redio"  value="nginx"> nginx
+                <input type="radio" name="template" class="form-redio"  value="gearman"> gearman
+                <input type="radio" name="template" class="form-redio"  value="zeromq"> zeromq
+                <input type="radio" name="template" class="form-redio"  value="nodejs"> nodejs
+                <input type="radio" name="template" class="form-redio"  value="mysql"> mysql
+                <input type="radio" name="template" class="form-redio"  value="redis"> redis       
                 <a href="#"  class="bth add_server">增加</a>
                 <a href="#"  class="bth del_server">删除</a>
             </div>
-        </div>
-        <div class="server_body">
-             <div class="server_content">
-                <label class="control-label">镜像名称：</label>
-                <input type="text" class="form-control image">
-             </div>                               
-             <div class="server_content">
-                <div class="port">
-                    <label class="control-label">端口映射：</label>
-                    <input type="text" class="form-control ports">
-                     <a href="#" class="bth add_port">增加</a>
-                     <!--<a href="#" class="bth del_port">删除</a>-->                   
-                </div>
-             </div>
-              <div class="server_content">
-                <div  class="link">
-                    <label class="control-label">连接的服务：</label>
-                    <input type="text" class="form-control links">
-                    <a href="#"  class="bth add_link">增加</a>
-                    <!--<a href="#" class="bth del_link">删除</a>-->
-               </div>
-             </div>
-             <div class="server_content">
-                <div  class="volume">
-                    <label class="control-label">挂载卷：</label>
-                    <input type="text" class="form-control volumes"> 
-                     <a href="#" class="bth add_volume">增加</a>
-                     <!--<a href="#" class="bth del_volume">删除</a>-->
-                </div>
-             </div>
-             <div class="server_content">
-                 <label class="control-label" >启动命令：</label>
-                 <textarea class="form-control command"></textarea>
-             </div>
-        </div>                             
+        </div>      
     </div>
 	
 	
@@ -130,7 +101,7 @@
 											</div>
 											<div class="machine">   
                                                  <label class="control-label-title title1">项目名：</label>
-                                                 <input type="text" class="form-control  project_name"> 
+                                                 <input type="text" class="form-control  project_name"><span class="tip">*请先填写项目名称</span>
                                             </div>
                                         </form>
                                         <div class="form-btn">
@@ -161,20 +132,113 @@
 
 <script src="../lib/jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
+    var flag=0;
     
     (function($){
-		 add_server();
+    		 add_server();
          $(".add_server").click();
-		 add("port");
-		 add("link");
-		 add("volume");
-		 
+    		 add("port");
+    		 add("link");
+    		 add("volume");
+
         //注册镜像打包事件
         $("#create_fig").click(create_fig);
 		
-		query_machines();
+		    query_machines();
 
     })(jQuery);  
+
+
+      //查询模版
+      function query_template(radio){
+            var params={};
+             params.template_name=$(radio).val();
+             params.template_type="fig";
+
+       
+             var data={};
+             data.Version="1.0";
+             data.ServerIP="127.0.0.1";
+             data.Port=4243;
+             data.Method="SearchTemplate";
+             data.Params=JSON.stringify(params);
+
+             //var label_name=["image":"镜像名称：","ports":"端口映射：","links":"连接的服务：","volumes":"挂载卷：","command":"启动命令："];
+              var label_name={"image":"镜像名称：","ports":"端口映射：","links":"连接的服务：","volumes":"挂载卷：","command":"启动命令："};
+ 
+
+              //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/fig/template",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                      request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        //$("#query_content").children().remove();
+                        $(radio).parent().parent().parent().find(".server_body").remove();
+
+                        var value=$.parseJSON(data.Data)[0];     
+                        
+                        if(value){
+                            var template = $.parseJSON(value.Template_content.replaceAll("project_name",$(".project_name").val()));
+                            var str='<div class="server_body">'+'\n';
+                            for(var key in template){
+                                str+='<div class="server_content">'+'\n';
+                    
+                                if(typeof template[key] == "string"){
+                                  str+='<label class="control-label">'+label_name[key]+'</label>'+'\n';
+                                  if(key=="command"){
+                                      str+='<textarea class="form-control command">'+template[key]+'</textarea>'+'\n';
+                                  }else{
+                                      str+='<input type="text" class="form-control image" value="'+template[key]+'">'+'\n';
+                                  }
+                                }else if(typeof template[key] == "object"){
+                                   var temp=key.substr(0,key.length-1);
+                                   for(var i=0,v=template[key];i<v.length;i++){
+                                        if(i==0){
+                                            str+='<div  class="'+temp+'">'+'\n';
+                                            str+='<label class="control-label">'+label_name[key]+'</label>'+'\n';
+                                        }else if(i>0){
+                                            str+='<div  class="'+temp+'">'+'\n';
+                                            str+='<label class="control-label"></label>'+'\n';
+                                        }
+
+                                        str+='<input type="text" class="form-control '+key+'" value="'+v[i]+'">'+'\n';
+                                        str+='<a href="#" class="bth add_'+temp+'">增加</a>'+'\n';
+                                        if(i>0){
+                                          str+='<a href="#" class="bth del_'+temp+'">删除</a>'+'\n';
+                                        }
+                                       str+='</div>'+'\n';
+                                   }
+                                }
+ 
+                                str+='</div>'+'\n';
+                            }
+                            
+                           $(radio).parent().parent().parent().append(str);
+                            add("port");
+                            add("link");
+                            add("volume");
+                        }else{
+                          alert("template is not exist");
+                        }
+           
+                      console.log(str);
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+      }
     
 	
         //定义镜像打包事件
@@ -187,14 +251,12 @@
              params.is_use=0;
              params.remark="";
 			 
-			 var data={};
-			 data.Version="1.0";
-		     data.ServerIP="127.0.0.1";
-			 data.Port=4243;
-			 data.Method="SearchMachine";
-			 data.Params=JSON.stringify(params);
-
-
+        		 var data={};
+        		 data.Version="1.0";
+        	   data.ServerIP="127.0.0.1";
+        		 data.Port=4243;
+        		 data.Method="SearchMachine";
+        		 data.Params=JSON.stringify(params);
 
             //通过ajax请求后台服务
               $.ajax({
@@ -202,7 +264,7 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						request:JSON.stringify(data)
+						          request:JSON.stringify(data)
                     },
                    success:function(data) {
 
@@ -216,12 +278,10 @@
                         
                         var values=$.parseJSON(data.Data);     
                         
-                        console.log(values[0]);
-                        
                         if(values){
                            var tr="";       
                            for(var i=0;i<values.length;i++){
-						   	 tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
+						   	              tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
                            } 
                            $("#machine_value").append(tr);   
                         }
@@ -235,31 +295,39 @@
 	
 	
 	
-	function add_server(){		
+	function add_server(){	
+        $('input[name^=template]').unbind('click');       
+        $('input[name^=template]').click(function(){
+           query_template(this);
+        });
+
+
         $(".add_server").unbind('click');
         $(".add_server").click(function(){
-              var clone=$("#server_template").clone();
-              $(clone).css("display","block");
-              $("#form_server").append($(clone));
-			  
-              add_server();
-			  del_server();
-              add("port");
-			  add("link");
-			  add("volume");
-			  return false;
+            var clone=$("#server_template").clone();
+            clone.find("input[name=template]").attr("name","template_"+(++flag));
+            $(clone).css("display","block");
+            $("#form_server").append($(clone));
+    			  
+            add_server();
+    			  del_server();
+            add("port");
+    			  add("link");
+    			  add("volume");
+    			  return false;
         });
 	}     
 	
 	function del_server(){    
 	    $(".del_server").unbind('click');  
-        $(".del_server").click(function(){		
-			var servers = $(".server");
-			if(servers.length>2){
-			      $(this).parent().parent().parent().remove();
-			      return false;
-			}
-        });
+          $(".del_server").click(function(){		
+    			var servers = $(".server");
+    			if(servers.length>2){
+    			      $(this).parent().parent().parent().remove();
+                 --flag;
+    			      return false;
+          }
+      });
     }  
 	
 	
@@ -292,68 +360,71 @@
 		var data={};
 		var servers_arr=[];
 		var servers=$(".server");
+   
+    var project_name=$.trim($(".project_name").val());
+    if(!project_name){
+        alert("《项目名称》不能为空");
+        return;
+    }
+
+
 		for(var i=1,j=0;i<servers.length;i++,j++){
-			var server={};
-				
-			server.server_name=$.trim($(servers[i]).find(".server_name").val());
-	        if(!server.server_name){
-	            alert("第"+(i)+"部分《服务名称》不能为空");
-	            return;
-	        }
-			
-			server.image=$.trim($(servers[i]).find(".image").val());
-			if(!server.image){
-                alert("第"+(i)+"部分《镜像名称》不能为空");
-                return;
-            }
+  			var server={};
 
-			
-			var ports=$(servers[i]).find(".ports");
-		    var ports_arr=[];
-			for(var k=0;k<ports.length;k++){
-				ports_arr[k]=$.trim($(ports[k]).val());
-			}
-			server.ports=ports_arr;
-			
-			
-			var links=$(servers[i]).find(".links");
-            var links_arr=[];
-            for(var k=0;k<links.length;k++){
-                links_arr[k]=$.trim($(links[k]).val());
-            }
-			server.links=links_arr;
-			
-			
-			var volumes=$(servers[i]).find(".volumes");
-            var volumes_arr=[];
-            for(var k=0;k<volumes.length;k++){
-                volumes_arr[k]=$.trim($(volumes[k]).val());
-            }
-            server.volumes=volumes_arr;
-			
+  			server.server_name=$.trim($(servers[i]).find('input[name="template_"+i]:checked').val());
+        if(!server.server_name){
+            alert("第"+(i)+"部分《服务名称》不能为空");
+            return;
+        }
+  			
+  			server.image=$.trim($(servers[i]).find(".image").val());
+  			if(!server.image){
+            alert("第"+(i)+"部分《镜像名称》不能为空");
+            return;
+        }
 
-            server.command=$.trim($(servers[i]).find(".command").val());
-			servers_arr[j]=server;
-		}
-		
+  			
+  			var ports=$(servers[i]).find(".ports");
+  		  var ports_arr=[];
+  			for(var k=0;k<ports.length;k++){
+  				ports_arr[k]=$.trim($(ports[k]).val());
+  			}
+  			server.ports=ports_arr;
+  			
+  			
+  			var links=$(servers[i]).find(".links");
+        var links_arr=[];
+        for(var k=0;k<links.length;k++){
+            links_arr[k]=$.trim($(links[k]).val());
+        }
+  			server.links=links_arr;
+  			
+  			
+  			var volumes=$(servers[i]).find(".volumes");
+        var volumes_arr=[];
+        for(var k=0;k<volumes.length;k++){
+            volumes_arr[k]=$.trim($(volumes[k]).val());
+        }
+        server.volumes=volumes_arr;
+	
 
-    var params={};
-    params.project_name=$(".project_name").val();
-    params.servers=servers_arr;
-                
-		
-		var machine=$("#machine_value").val().split(":");
-		data.Version="1.0";
-		data.ServerIP=machine[1];
-		data.Port=parseInt(machine[2]);
-		data.Method="create_fig";
-	    data.Params=JSON.stringify(params);		
+        server.command=$.trim($(servers[i]).find(".command").val());
+  			servers_arr[j]=server;
+  		}
+  		
 
-        console.log(data);
-	//var rdata= "request="+JSON.stringify(data);
-	var rdata= JSON.stringify(data);
-	//var rdata= data;
-	//var rdata= "request=hhhh";
+          var params={};
+          params.project_name=$(".project_name").val();
+          params.servers=servers_arr;
+                      
+      		
+      		var machine=$("#machine_value").val().split(":");
+      		data.Version="1.0";
+      		data.ServerIP=machine[1];
+      		data.Port=parseInt(machine[2]);
+      		data.Method="create_fig";
+      	  data.Params=JSON.stringify(params);		
+
 
         //通过ajax请求后台服务
           $.ajax({
@@ -361,21 +432,23 @@
                dataType:"json",
                type: "post",
                data:{
-		 request:rdata
-		},
+		               request:JSON.stringify(data)
+		           },
                success:function(data) {
-                
-                    if(0==data.Code){
-                       alert("创建fig文件成功");
-                    }else{
-                       alert("创建fig文件失败"); 
-                    }
-                    
-
+                  if(0==data.Code){
+                     alert("创建fig文件成功");
+                  }else{
+                     alert("创建fig文件失败"); 
+                  }
                },          
                error:function(XMLHttpRequest, textStatus, errorThrown){
                    //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
                }
             });
-        }  
+        } 
+
+
+        String.prototype.replaceAll = function(s1,s2){
+　　return this.replace(new RegExp(s1,"gm"),s2);
+　　} 
 </script>

@@ -12,8 +12,9 @@ import (
 )
 
 type FigParams struct {
-	Project_name string
-	Servers      []Server
+	Project_name   string
+	Fig_project_id string
+	Servers        []Server
 }
 
 type Server struct {
@@ -30,8 +31,26 @@ type FigProject struct {
 	ProjectName string
 	Machine_ip  string
 	Directory   string
+	Param       string
 	Content     string
 	CreateTime  int
+}
+
+type Template struct {
+	Template_name    string
+	Template_type    string
+	Template_content string
+	Create_time      int
+	Remark           string
+}
+
+type QueryTemplate struct {
+	Template_name string
+	Template_type string
+}
+
+type UpdateFigStr struct {
+	Fig_project_id string
 }
 
 func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, err string) {
@@ -189,7 +208,7 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 		return 1, "faild"
 	}
 	defer db.Close()
-	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_content, create_time from fig_project where project_name like '%%%s%%' ", strProjectName)
+	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_param, fig_content, create_time from fig_project where project_name like '%%%s%%' ", strProjectName)
 	rows, err := db.Query(strSql)
 	if err != nil {
 		log.Fatal(err)
@@ -200,7 +219,48 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 	var infoList []FigProject = make([]FigProject, 0)
 	for rows.Next() {
 		var m FigProject
-		rows.Scan(&m.ProjectID, &m.ProjectName, &m.Machine_ip, &m.Directory, &m.Content, &m.CreateTime)
+		rows.Scan(&m.ProjectID, &m.ProjectName, &m.Machine_ip, &m.Directory, &m.Param, &m.Content, &m.CreateTime)
+		infoList = append(infoList, m)
+	}
+
+	strInfo, err := json.Marshal(infoList)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "faild"
+	}
+
+	return 0, string(strInfo)
+}
+
+func GetInfoById(request common.RequestData) (code int, result string) {
+
+	var params UpdateFigStr
+
+	err := json.Unmarshal([]byte(request.Params), &params)
+	if err != nil {
+		logger.Println("json data decode faild :", err)
+	}
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "faild"
+	}
+	defer db.Close()
+	strSql := fmt.Sprintf("select fig_param from fig_project where fig_project_id = '%s' ", params.Fig_project_id)
+
+	fmt.Println(strSql)
+	rows, err := db.Query(strSql)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "faild"
+	}
+	defer rows.Close()
+
+	var infoList []FigProject = make([]FigProject, 0)
+	for rows.Next() {
+		var m FigProject
+		rows.Scan(&m.Param)
 		infoList = append(infoList, m)
 	}
 
@@ -318,6 +378,9 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 
 //处理从前台传过来的函数
 func dealParams(strServerIp string, strParam string) map[string]interface{} {
+
+	fmt.Println("传来的参数：", strParam)
+
 	ret := map[string]interface{}{}
 	figData := ""
 	commands := []map[string]string{}
@@ -357,16 +420,31 @@ func dealParams(strServerIp string, strParam string) map[string]interface{} {
 	if err != nil {
 		log.Fatal(err)
 	}
-	stmt, err := tx.Prepare("insert into fig_project(project_name,machine_ip,fig_directory,fig_content,create_time) values(?, ?, ?, ?, ?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
 
-	_, err = stmt.Exec(params.Project_name, strServerIp, figDirectory, figData, time.Now().Unix())
+	if params.Fig_project_id != "" {
+		stmt, err := tx.Prepare("update fig_project  set fig_param=?,fig_content=?,create_time=? where fig_project_id=?")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
 
-	if err != nil {
-		log.Fatal("参数1", err)
+		_, err = stmt.Exec(strParam, figData, time.Now().Unix(), params.Fig_project_id)
+
+		if err != nil {
+			log.Fatal("参数1", err)
+		}
+	} else {
+		stmt, err := tx.Prepare("insert into fig_project(project_name,machine_ip,fig_directory,fig_param,fig_content,create_time) values(?, ?, ?, ?, ?, ?)")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+
+		_, err = stmt.Exec(params.Project_name, strServerIp, figDirectory, strParam, figData, time.Now().Unix())
+
+		if err != nil {
+			log.Fatal("参数1", err)
+		}
 	}
 
 	tx.Commit()
@@ -419,4 +497,48 @@ func dealCommandContent(serverName, command string) map[string]string {
 		ret[serverName] = tmpcommand
 	}
 	return ret
+}
+
+func GetFigTemplate(request common.RequestData) (code int, result string) {
+
+	var params QueryTemplate
+	err := json.Unmarshal([]byte(request.Params), &params)
+	if err != nil {
+		logger.Println("json data decode faild :", err)
+	}
+
+	templateName := "fig_" + params.Template_name
+
+	if templateName == "" {
+		return 1, "tempalteName can't be empty"
+	}
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "open db error"
+	}
+	defer db.Close()
+	strSql := fmt.Sprintf("select template_name, template_type,template_content, create_time, remark from template where template_name = '%s' and template_type='fig'", templateName)
+	rows, err := db.Query(strSql)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "perform sql error"
+	}
+	defer rows.Close()
+
+	var templates []Template = make([]Template, 0)
+	for rows.Next() {
+		var t Template
+		rows.Scan(&t.Template_name, &t.Template_type, &t.Template_content, &t.Create_time, &t.Remark)
+		templates = append(templates, t)
+	}
+
+	strInfo, err := json.Marshal(templates)
+	if err != nil {
+		log.Fatal(err)
+		return 1, "query result turn json error"
+	}
+
+	return 0, string(strInfo)
 }
