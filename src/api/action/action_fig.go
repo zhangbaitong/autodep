@@ -210,7 +210,7 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_param, fig_content, create_time from fig_project where project_name like '%%%s%%' ", strProjectName)
 	rows, err := db.Query(strSql)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "faild"
 	}
 	defer rows.Close()
@@ -224,7 +224,7 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 
 	strInfo, err := json.Marshal(infoList)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "faild"
 	}
 
@@ -242,7 +242,7 @@ func GetInfoById(request common.RequestData) (code int, result string) {
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "faild"
 	}
 	defer db.Close()
@@ -513,14 +513,14 @@ func GetFigTemplate(request common.RequestData) (code int, result string) {
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "open db error"
 	}
 	defer db.Close()
 	strSql := fmt.Sprintf("select template_name, template_type,template_content, create_time, remark from template where template_name = '%s' and template_type='fig'", templateName)
 	rows, err := db.Query(strSql)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "perform sql error"
 	}
 	defer rows.Close()
@@ -534,7 +534,7 @@ func GetFigTemplate(request common.RequestData) (code int, result string) {
 
 	strInfo, err := json.Marshal(templates)
 	if err != nil {
-		log.Fatal(err)
+		logger.Println(err)
 		return 1, "query result turn json error"
 	}
 
