@@ -1,4 +1,4 @@
-package clinet
+package client
 
 import (
 	_ "api/common"
