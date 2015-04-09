@@ -52,6 +52,30 @@ type UpdateFigStr struct {
 	Fig_project_id string
 }
 
+func project_count(strServerIP string,strProjectName string) nCount int {
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		logger.Println(err)
+		return 1, "faild"
+	}
+	defer db.Close()
+	strSql := fmt.Sprintf("select count(fig_project_id) from fig_project where machine_ip= '%s' and project_name = '%s' ", strServerIP,strProjectName)
+	fmt.Println("strSql=",strSql)
+	rows, err := db.Query(strSql)
+	if err != nil {
+		logger.Println(err)
+		return 1, "faild"
+	}
+	defer rows.Close()
+
+	nCount=0
+	for rows.Next() {
+		rows.Scan(&nCount)
+	}
+
+	return nCount
+}
+
 func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, err string) {
 	var (
 		strRemoteDir string
@@ -62,9 +86,13 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	if !ok {
 		return false, "fig directory empty!!!!"
 	}
-	//str := strings.Split(strFigDirectory, "/")
+	str := strings.Split(strFigDirectory, "/")
 
-	//strProjectName := str[len(str)-1]
+	strProjectName := str[len(str)-1]
+	nCount:=project_count(strServerIP,strProjectName)
+	if nCount>0 {
+		return false, "project was existed"
+	}
 
 	strFigData, ok := params["fig_data"].(string)
 	if !ok {
@@ -154,9 +182,9 @@ func FigCreate(request common.RequestData) (code int, result string) {
 	fmt.Println("request.Params=", request.Params)
 	params := dealParams(request.ServerIP, request.Params)
 	//fmt.Println("params=",params)
-	ok, _ := fig_transfer(request.ServerIP, params)
+	ok, err := fig_transfer(request.ServerIP, params)
 	code = 1
-	result = "faild"
+	result = err
 	if ok {
 		code = 0
 		result = "ok"
