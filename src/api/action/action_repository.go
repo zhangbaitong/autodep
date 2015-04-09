@@ -231,15 +231,29 @@ func RegDelete(request common.RequestData) (code int,result string) {
 	if len(strRepository)==0 || len(strTags)==0 {
 		return 1, "faild"
 	}
+	logger.Println("strRepository=", strRepository)
+	logger.Println("strTags=", strTags)
+
 	strURL:=fmt.Sprintf("http://%s:%d/v1/repositories/library/%s/tags/%s",request.ServerIP,request.Port,strRepository,strTags)
-	resp, err := http.NewRequest("DELETE", strURL, nil)
+	req, err := http.NewRequest("DELETE", strURL,nil)
 	if err != nil {
 		return 1,"faild"
 	}
-	
+
+	resp, err := http.DefaultClient.Do(req)	
+	if err != nil {
+		return 1,"faild"
+	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		return 1,"faild"
+	}
+
+	if resp.StatusCode == 404 {
+		return 1,"faild"
+	}
+	if resp.StatusCode >= 400 {
 		return 1,"faild"
 	}
 

@@ -1,4 +1,4 @@
-package client
+package main
 
 import (
 	_ "api/common"
@@ -52,10 +52,11 @@ func httpPost() {
 	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"reg/tag",Params:"{\"local_tag\":\"centos:latest\",\"remote_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
 	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"reg/push",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
 	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"reg/pull",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
-	post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"image/rmi",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
+	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"image/rmi",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
+	post_data:=RequestData{Version:"1.0",ServerIP:"10.122.75.228",Port:5000,Method:"reg/delete",Params:"{\"repository\":\"centos\",\"tags\":\"latest\"}"}
 	strPostData, _ := json.Marshal(post_data)
 	strTemp := "request=" + string(strPostData)
-	resp, err := http.Post("http://127.0.0.1:8080/v1/image/rmi",
+	resp, err := http.Post("http://127.0.0.1:8080/v1/reg/delete",
 		"application/x-www-form-urlencoded", strings.NewReader(strTemp))
 	//"application/json",strings.NewReader(strTemp))
 	if err != nil {
