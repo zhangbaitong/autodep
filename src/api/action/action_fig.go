@@ -402,7 +402,7 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 }
 
 //处理从前台传过来的函数
-func dealParams(strServerIp string, strParam string) (code int,map[string]interface{}) {
+func dealParams(strServerIp string, strParam string) (code int,result map[string]interface{}) {
 
 	fmt.Println("传来的参数：", strParam)
 
