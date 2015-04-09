@@ -87,13 +87,9 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	if !ok {
 		return false, "fig directory empty!!!!"
 	}
-	str := strings.Split(strFigDirectory, "/")
+	//str := strings.Split(strFigDirectory, "/")
 
-	strProjectName := str[len(str)-1]
-	nCount:=project_count(strServerIP,strProjectName)
-	if nCount>0 {
-		return false, "project was existed"
-	}
+	//strProjectName := str[len(str)-1]
 
 	strFigData, ok := params["fig_data"].(string)
 	if !ok {
@@ -180,8 +176,10 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 }
 
 func FigCreate(request common.RequestData) (code int, result string) {
-	params := dealParams(request.ServerIP, request.Params)
-	fmt.Println("params=",params)
+	ret,params := dealParams(request.ServerIP, request.Params)
+	if ret==1{
+		return 1, "project was existed"
+	}
 	ok, err := fig_transfer(request.ServerIP, params)
 	code = 1
 	result = err
@@ -404,7 +402,7 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 }
 
 //处理从前台传过来的函数
-func dealParams(strServerIp string, strParam string) map[string]interface{} {
+func dealParams(strServerIp string, strParam string) (code int,map[string]interface{}) {
 
 	fmt.Println("传来的参数：", strParam)
 
@@ -417,6 +415,11 @@ func dealParams(strServerIp string, strParam string) map[string]interface{} {
 	err := json.Unmarshal([]byte(strParam), &params)
 	if err != nil {
 		logger.Println("json data decode faild :", err)
+	}
+
+	nCount:=project_count(strServerIP,params.Project_name)
+	if nCount>0 {
+		return 1, nil
 	}
 
 	figDirectory := temp + "/" + params.Project_name
@@ -475,7 +478,7 @@ func dealParams(strServerIp string, strParam string) map[string]interface{} {
 	}
 	tx.Commit()
 
-	return ret
+	return 0,ret
 }
 
 //处理fig.yml中的服务名格式
