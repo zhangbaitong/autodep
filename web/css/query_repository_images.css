@@ -22,6 +22,8 @@
     margin:0 auto;
     padding: 10px;
 }
+
+
  
 .query
 {
@@ -30,7 +32,7 @@
  
 .col-md-6
 {
-	width:40%;
+	width:80%;
 	float:left;
 	margin-left:8px;
 	font-size: 14px;
@@ -122,4 +124,24 @@
 .table .long
 {
     width:250px;
+}
+
+
+
+.control-label
+{
+    display: inline-block;
+    text-align:right;   
+    width:120px;
+}
+
+.machine_value {
+  width: 70%;
+  font-size: 16px;
+  line-height: 15px;
+  color: #555555;
+  border: 1px solid #cccccc;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  border-radius: 4px;
+  padding: 5px 5px;
 }

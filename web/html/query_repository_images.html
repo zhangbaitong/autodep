@@ -33,6 +33,8 @@
 						</div>
 					</div>
 			  </div>
+
+
 			  
 			  <div id="content" class="col-lg-10 col-sm-10">
 			         <div>
@@ -45,6 +47,7 @@
 					        </li>
 					    </ul>
 					</div>
+
 					
 					<div class="row2">
 						 <div class="box col-md-12">
@@ -52,6 +55,15 @@
 						 	     <div class="box-header well" data-original-title="">
 						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 查询仓库镜像</h2>
 								 </div>	
+
+									<div class="query">
+										<div class="col-md-6">   
+												<label class="control-label">服务器：</label>
+										        <select class="machine_value" id="machine_value"></select>
+										 </div>
+										 <div class="clear"></div>
+									</div>
+
 										<div class="table-content">
 											<table class="table table-bordered">
 												<thead>
@@ -59,6 +71,7 @@
 														<th class="short">编号</th>
 														<th class="long">镜像名称</th>
 														<th class="middle">镜像标签</th>
+														<th class="short">操作</th>
 													</tr>
 											    </thead>
 												<tbody class="table_body" id="query_content">
@@ -84,13 +97,15 @@
     (function($){
         //注册镜像打包事件
         //$("#query_images").click(query_machines);
-        query_machines();
-        })(jQuery);       
+                query_machines();
+        query_images();
+
+    })(jQuery);       
 		
 		
 		
 		    //定义镜像打包事件
-        function query_machines(){
+        function query_images(){
         
 			 var data={};
 			 data.Version="1.0";
@@ -127,9 +142,10 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Name+"</td><td>"+values[i].Tag+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td class='image_name'>"+values[i].Name+"</td><td class='image_tag'>"+values[i].Tag+"</td><td><a href='#'  class='btn_push'>拉取</a>|<a href='#'  class='btn_rmi'>删除</a></td></tr>";
                            } 
                            $("#query_content").append(tr);   
+                           btn_click();
                         }
            
                    },          
@@ -138,4 +154,150 @@
                    }
                 });
             } 
+
+	    //定义镜像打包事件
+        function query_machines(){
+
+             var params={};
+             params.machine_name="";
+             params.machine_ip="";
+             params.docker_port=0;
+             params.is_use=0;
+             params.remark="";
+			 
+      			 var data={};
+      			 data.Version="1.0";
+      		   data.ServerIP="127.0.0.1";
+      			 data.Port=4243;
+      			 data.Method="SearchMachine";
+      			 data.Params=JSON.stringify(params);
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						                request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        $("#query_content").children().remove();
+                        
+                        var values=$.parseJSON(data.Data);     
+                        
+                        
+                        if(values){
+                           var tr="";       
+                           for(var i=0;i<values.length;i++){
+						   	 tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
+                           } 
+                           $("#machine_value").append(tr);   
+                        }
+           
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            } 
+
+
+            function btn_click(){
+            	$(".btn_push").click(function(){
+            		image_push(this);
+            	});
+
+          		$(".btn_rmi").click(function(){
+            		image_del(this);
+            	});
+
+            }
+            //拉取镜像
+
+            function image_push(btn){
+			var machine=$("#machine_value").val().split(":");
+
+             var params={};
+             var image_name=$(btn).parent().parent().find(".image_name").html();
+             var image_tag=$(btn).parent().parent().find(".image_tag").html();
+             params.local_tag="10.122.75.228:5000/"+image_name+":"+image_tag;
+
+  
+      		 var data={};
+      		 data.Version="1.0";
+      		 data.ServerIP=machine[1];
+  			 data.Port=parseInt(machine[2]);
+  			 data.Method="Image_push";
+  			 data.Params=JSON.stringify(params);
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/reg/push",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						 request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(0==data.Code){
+                           alert("拉取镜像成功，请到服务器镜像查询页面查看");
+                           return;
+                        }else{
+                    	   alert("拉取镜像失败");
+                           return;
+                        }
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            }
+
+
+            //删除镜像
+            function image_del(btn){
+
+	          var params={};
+	          params.repository=$(btn).parent().parent().find(".image_name").html();
+	          params.tags=$(btn).parent().parent().find(".image_tag").html();
+
+  
+      		 var data={};
+      		 data.Version="1.0";
+      		 data.ServerIP="10.122.75.228";
+  			 data.Port=5000;
+  			 data.Method="Image_rmi";
+  			 data.Params=JSON.stringify(params);
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/reg/delete",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						 request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(0==data.Code){
+                           alert("删除镜像成功");
+                           return;
+                        }else{
+                    	   alert("删除镜像失败");
+                           return;
+                        }
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            }
 </script>
