@@ -25,6 +25,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 	} else {
 		strPostData := r.FormValue("request")
+			fmt.Println("strPostData :", strPostData)
 		//var request common.RequestData
 
 		err := json.Unmarshal([]byte(strPostData), &request)
@@ -134,6 +135,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			code, ret = action.CreateImage(request)
 		}
+	case "image/rmi":
+		{
+			code, ret = action.ImageRMI(request)
+		}
 	case "reg/list":
 		{
 			// ret = action.ActionRegList()
@@ -145,6 +150,18 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	case "reg/search":
 		{
 			// ret = action.ActionRegSearch(r.Form["q"], r.Form["n"], r.Form["page"])
+		}
+	case "reg/tag":
+		{
+			code, ret = action.RegTag(request)
+		}
+	case "reg/push":
+		{
+			code, ret = action.RegPush(request)
+		}
+	case "reg/pull":
+		{
+			code, ret = action.RegPull(request)
 		}
 	case "reg/info":
 		{

@@ -62,8 +62,8 @@ func TransferFileSSH(strSrcFile string, strDestFile string) (ret int, err string
 	return execsh("transfer remote file faild error", "scp", strSrcFile, strDestFile)
 }
 
-func ExecRemoteCMD(strServerIP string, strCMD string, strPath string) (ret int, err string) {
-	return execsh("exec remote shell faild error", "ssh", strServerIP, strCMD, strPath)
+func ExecRemoteCMD(strServerIP string, strCMD string, cmds ...interface{}) (ret int, err string) {
+	return execsh("exec remote shell faild error", "ssh", strServerIP, strCMD, cmds)
 }
 
 func ExecRemoteChmod(strServerIP string, strPrivilege string, strFile string) (ret int, err string) {

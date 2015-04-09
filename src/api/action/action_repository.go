@@ -21,7 +21,9 @@ const (
 var logger *log.Logger
 
 func init() {
-	logger = common.Log()
+	if logger==nil{
+		logger = common.Log()
+	}
 }
 
 func search(url string) string {
@@ -117,4 +119,89 @@ func ActionAllInfo(request common.RequestData) (code int,result string) {
 
 	rets, _ := json.Marshal(repo)
 	return 0,string(rets)
+}
+
+func GetTag(params string) (strLocalTag string, strRemoteTag string) {
+	var req interface{}
+	err := json.Unmarshal([]byte(params), &req)
+	if err != nil {
+		return "", ""
+	}
+	data, _ := req.(map[string]interface{})
+	strLocalTag, ok := data["local_tag"].(string)
+	if !ok {
+		strLocalTag=""
+	}
+	strRemoteTag, ok = data["remote_tag"].(string)
+	if !ok {
+		strRemoteTag=""
+	}
+	return strLocalTag, strRemoteTag
+}
+
+func RegTag(request common.RequestData) (code int,result string) {
+	strLocalTag, strRemoteTag := GetTag(request.Params)
+	if len(strLocalTag)==0 || len(strRemoteTag)==0 {
+		return 1, "faild"
+	}
+	logger.Println("strLocalTag=", strLocalTag)
+	logger.Println("strRemoteTag=", strRemoteTag)
+
+	strCMD:=fmt.Sprintf("docker tag %s %s",strLocalTag,strRemoteTag)
+	ret, out := common.ExecRemoteCMD(request.ServerIP, strCMD)
+	logger.Println("out=", string(out))
+	if ret > 0 {
+		fmt.Println("docker tag up is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+	if strings.Contains(out,"No such id"){
+		code=1
+	}
+
+	return code, string(out)
+}
+
+func RegPush(request common.RequestData) (code int,result string) {
+	strLocalTag, _ := GetTag(request.Params)
+	if len(strLocalTag)==0{
+		return 1, "faild"
+	}
+	strCMD:=fmt.Sprintf("docker push %s",strLocalTag)
+	ret, out := common.ExecRemoteCMD(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker push  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+	}
+
+	return code, out
+}
+
+func RegPull(request common.RequestData) (code int,result string) {
+	strLocalTag, _ := GetTag(request.Params)
+	if len(strLocalTag)==0{
+		return 1, "faild"
+	}
+
+	strCMD:=fmt.Sprintf("docker pull %s",strLocalTag)
+	ret, out := common.ExecRemoteCMD(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker push  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+	}
+
+	return code, out
 }

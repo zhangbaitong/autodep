@@ -2,10 +2,10 @@ package action
 
 import (
 	"github.com/samalba/dockerclient"
-	"log"
 	"fmt"
 	"api/common"
 	"encoding/json"
+	"log"
 )
 
 func DisplayContainers(list []dockerclient.Container) {
@@ -55,7 +55,7 @@ func CreateContainer(request common.RequestData)(code int,result string) {
 	fmt.Println("containerName=", data["containerName"])
 	containerID, err := client.CreateContainer(containerConfig, data["containerName"])
      if err != nil {
-		log.Fatal("cannot create container: %s", err)
+		log.Println("cannot create container: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -81,7 +81,7 @@ func ListContainers(request common.RequestData) (code int,result string)  {
 
 	containers, err := client.ListContainers(true, false,"")
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -104,7 +104,7 @@ func InspectContainer(request common.RequestData)(code int,result string){
 
 	containerInfo, err := client.InspectContainer(strID)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -126,7 +126,7 @@ func ContainerChanges(request common.RequestData)(code int,result string)  {
 
 	changes, err := client.ContainerChanges(strID)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -148,7 +148,7 @@ func StopContainer(request common.RequestData) (code int,result string)  {
 	nTime:=30
 	err := client.StopContainer(strID,nTime)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -163,7 +163,7 @@ func RestartContainer(request common.RequestData) (code int,result string)  {
 
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
-		log.Fatal("cannot Restart Container ", )
+		logger.Println("cannot Restart Container ", )
 		code=1;result="faild"
 		return code,result
 	}
@@ -172,7 +172,7 @@ func RestartContainer(request common.RequestData) (code int,result string)  {
 	nTime:=30
 	err := client.RestartContainer(strID,nTime)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -187,7 +187,7 @@ func PauseContainer(request common.RequestData) (code int,result string)  {
 
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
-		log.Fatal("cannot get containers: ")
+		logger.Println("cannot get containers: ")
 		code=1;result="faild"
 		return code,result
 	}
@@ -195,7 +195,7 @@ func PauseContainer(request common.RequestData) (code int,result string)  {
 
 	err:= client.PauseContainer(strID)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -210,7 +210,7 @@ func UnpauseContainer(request common.RequestData) (code int,result string)  {
 
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
-		log.Fatal("cannot get containers:")
+		logger.Println("cannot get containers:")
 		code=1;result="faild"
 		return code,result
 	}
@@ -218,7 +218,7 @@ func UnpauseContainer(request common.RequestData) (code int,result string)  {
 
 	err := client.UnpauseContainer(strID)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -234,7 +234,7 @@ func RemoveContainer(request common.RequestData) (code int,result string)  {
 
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
-		log.Fatal("cannot get containers:")
+		logger.Println("cannot get containers:")
 		code=1;result="faild"
 		return code,result
 	}
@@ -242,7 +242,7 @@ func RemoveContainer(request common.RequestData) (code int,result string)  {
 
 	err := client.RemoveContainer(strID,true,true)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -257,7 +257,7 @@ func KillContainer(request common.RequestData) (code int,result string)  {
 
 	strID, ok := GetContainerID(request.Params)
 	if !ok {
-		log.Fatal("cannot get containers:")
+		logger.Println("cannot get containers:")
 		code=1;result="faild"
 		return code,result
 	}
@@ -265,7 +265,7 @@ func KillContainer(request common.RequestData) (code int,result string)  {
 
 	err := client.KillContainer(strID,"5")
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
@@ -284,14 +284,14 @@ func ContainerExec(request map[string]interface{}) string {
 	//获取项目名称
 	strID, ok := request["Params"].(string)
 	if !ok {
-		log.Fatal("cannot get containers: ")
+		logger.Println("cannot get containers: ")
 		return "faild"
 	}
 	//fmt.Println("strID=", strID)
 
 	err := client.Exec(strID)
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		return ""
 	}
 
@@ -307,7 +307,7 @@ func InfoContainer(request common.RequestData) (code int,result string)  {
 
 	Info, err := client.Info()
 	if err != nil {
-		log.Fatal("cannot get containers: %s", err)
+		logger.Println("cannot get containers: %s", err)
 		code=1;result="faild"
 		return code,result
 	}
