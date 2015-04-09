@@ -148,7 +148,7 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td id='project_name'>"+values[i].ProjectName+"</td><td id='machine_ip'>"+values[i].Machine_ip+"</td><td id='directory'>"+values[i].Directory+"</td><td id='fig_content'>"+values[i].Content+"</td><td><a href='#' class='container_details'>容器详情</a>|<a href='#'  class='btn_fig_content'>fig文件</a>|<a href='#'  class='btn_start'>启动</a>|<a href='#'  class='btn_recreate'>重建</a>|<a href='#'  class='btn_restart'>重启</a>|<a href='#'  class='btn_stop'>停止</a>|<a href='#'class='btn_rm'>删除</a></td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td id='fig_project_id'>"+values[i].ProjectID+"</td><td id='project_name'>"+values[i].ProjectName+"</td><td id='machine_ip'>"+values[i].Machine_ip+"</td><td id='directory'>"+values[i].Directory+"</td><td id='fig_content'>"+values[i].Content+"</td><td><a href='#' class='container_details'>容器详情</a>|<a href='#'  class='btn_start'>启动</a>|<a href='#'  class='btn_recreate'>重建</a>|<a href='#'  class='btn_restart'>重启</a>|<a href='#'  class='btn_stop'>停止</a>|<a href='#'class='btn_rm'>删除</a>|<a href='#'  class='btn_fig_content'>fig文件</a>|<a href='#'  class='update_fig_content'>修改fig文件</a></td></tr>";
 														
                            } 
                            $("#query_content").append(tr);
@@ -208,6 +208,12 @@
           });
 
 
+          $(".update_fig_content").click(function(){
+              var fig_project_id =$(this).parent().parent().find("#fig_project_id").html();
+              var machine=$("#machine_value").val();
+              window.location.href ="update_fig_content.html?id="+fig_project_id+"&machine="+machine;
+          });
+
           
      }
 
@@ -243,8 +249,6 @@
           if(class_name!="container_details"){
               $("#show").css("display","block");
           }
-
-
 
 
             //通过ajax请求后台服务
@@ -297,10 +301,6 @@
             } 
 
 
-  
-
-
-
 		//定义镜像打包事件
         function query_machines(){
 
@@ -311,14 +311,12 @@
              params.is_use=0;
              params.remark="";
 			 
-			 var data={};
-			 data.Version="1.0";
-		     data.ServerIP="127.0.0.1";
-			 data.Port=4243;
-			 data.Method="SearchMachine";
-			 data.Params=JSON.stringify(params);
-
-
+      			 var data={};
+      			 data.Version="1.0";
+      		   data.ServerIP="127.0.0.1";
+      			 data.Port=4243;
+      			 data.Method="SearchMachine";
+      			 data.Params=JSON.stringify(params);
 
             //通过ajax请求后台服务
               $.ajax({
@@ -340,7 +338,6 @@
                         
                         var values=$.parseJSON(data.Data);     
                         
-                        console.log(values[0]);
                         
                         if(values){
                            var tr="";       

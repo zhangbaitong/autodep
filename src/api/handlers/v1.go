@@ -47,6 +47,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			code, ret = action.GetProjectInfo(request)
 		}
+	case "fig/getinfobyid":
+		{
+			code, ret = action.GetInfoById(request)
+		}
 	case "fig/ps":
 		{
 			code, ret = action.FigPS(request)
@@ -70,6 +74,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	case "fig/recreate":
 		{
 			code, ret = action.FigRecreate(request)
+		}
+	case "fig/template":
+		{
+			code, ret = action.GetFigTemplate(request)
 		}
 	case "container/create":
 		{

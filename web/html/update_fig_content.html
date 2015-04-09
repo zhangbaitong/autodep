@@ -1,0 +1,519 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link href="../css/style.css" rel="stylesheet">
+<link href="../css/update_fig_content.css" rel="stylesheet">
+</head>
+<body>
+	 <div class="port" id="port_template">
+         <label class="control-label"></label>
+         <input type="text" class="form-control ports">
+         <a href="#" class="bth add_port">增加</a>
+         <a href="#" class="bth del_port">删除</a>
+     </div>
+     
+    <div  class="link" id="link_template">
+        <label class="control-label"></label>
+        <input type="text" class="form-control links">
+        <a href="#"  class="bth add_link">增加</a>
+        <a href="#" class="bth del_link">删除</a>
+    </div>
+    
+    <div  class="volume" id="volume_template">
+        <label class="control-label"></label>
+        <input type="text" class="form-control volumes"> 
+         <a href="#" class="bth add_volume">增加</a>
+         <a href="#" class="bth del_volume">删除</a>
+    </div>
+   
+   
+   <div class="server" id="server_template">
+       <div class="server_header">
+             <div class="server_title">
+                <label class="control-label-title">服务名称：</label>
+                <input type="radio" name="template" class="form-redio"  value="nginx"> nginx
+                <input type="radio" name="template" class="form-redio"  value="gearman"> gearman
+                <input type="radio" name="template" class="form-redio"  value="zeromq"> zeromq
+                <input type="radio" name="template" class="form-redio"  value="nodejs"> nodejs
+                <input type="radio" name="template" class="form-redio"  value="mysql"> mysql
+                <input type="radio" name="template" class="form-redio"  value="redis"> redis       
+                <a href="#"  class="bth add_server">增加</a>
+                <a href="#"  class="bth del_server">删除</a>
+            </div>
+        </div>      
+    </div>
+
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-inner">
+            
+		</div>
+   </div>
+   
+   <div class="ch-container">
+
+       	 <div class="row">
+       	      <div class="col-sm-2 col-lg-2">
+       	            <div class="sidebar-nav">
+       	                <div class="nav-canvas">
+       	                    <ul class="nav nav-pills nav-stacked main-menu">
+                                <li class="nav-header">Home</li>
+                                <li class="create_image"><a class="ajax-link" href="../index.html"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
+                                <li class="query_images"><a class="ajax-link" href="./query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
+                                <li><a class="query_repository_images" href="./query_repository_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 仓库镜像查询</span></a></li>
+                                <li><a class="query_machine_images" href="./query_machines_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
+                                <li><a class="query_machine_containers" href="./query_machine_container.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器容器查询</span></a></li>
+								<li><a class="ajax-link" href="./create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
+                <li><a class="fig_project_manager" href="./fig_project_manager.html"><i class="glyphicon glyphicon-edit"></i><span> fig项目管理</span></a></li>
+								<li ><a class="query_machines" href="./query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
+							    <li><a class="register_machine" href="./register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
+							</ul>
+						</div>
+					</div>
+			  </div>
+	  
+			  <div id="content" class="col-lg-10 col-sm-10">
+			         <div>
+					    <ul class="breadcrumb">
+					        <li>
+					            <a href="#">Home </a>
+					        </li>
+					        <li>
+					            <a href="#"> /  修改Fig文件</a>
+					        </li>
+					        <span  class="back">
+					            <a href="#"  class="btn_back">返回</a>
+					        </span>
+					    </ul>
+					</div>
+					  <div class="row2">
+                         <div class="box col-md-12">
+                             <div class="box-inner">
+                                 <div class="box-header well" data-original-title="">
+                                      <h2><i class="glyphicon glyphicon-edit"></i>修改fig文件</h2>
+                                 </div> 
+                                 <div class="box-content">
+                                        <form  id="form_server" action="#">
+	                                         <div class="machine">   
+											     <label class="control-label-title title1">服务器：</label>
+											     <input type="text" class="machine_value" id="machine_value" readonly> 
+											 </div>
+                                        </form>
+                                         <div class="form-btn">
+                                            <button class="btn" id="update_fig">修改fig文件</button>
+                                        </div>
+										<div class="clear"></div>
+                                 </div> 
+                             </div>
+                         </div>
+		                </div>
+		              </div>
+
+			  </div>
+			  
+			  <div class="clear"></div>
+		 </div>   	
+   </div>
+
+
+ <div id="show" style="display:none;width:100%;height:100%;padding-top:7%;background:rgba(0, 0, 0, 0.0) none repeat scroll 0 0 !important;position: fixed;top: 0;">
+        <div style="width:400px;height:100px;line-height:100px;text-align:center;margin:0 auto;background-color:#00f;font-size:25px;">
+                    操作正在进行，请稍后...
+        </div>    
+    </div>
+
+</body>
+</html>
+
+<script src="../lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    var flag=0;
+    var fig_project_id=getQueryString("id");
+
+    (function($){
+          $("#machine_value").val(getQueryString("machine"));
+          $("#update_fig").click(function(){
+          		update_fig();
+          });
+          $(".btn_back").click(function(){
+          		window.location.href="fig_project_manager.html";
+          });
+		   queryFigParam(fig_project_id);
+    })(jQuery);    
+    
+
+    function queryFigParam(fig_project_id){
+    	     var params={};
+             params.fig_project_id=fig_project_id;
+       
+             var data={};
+             data.Version="1.0";
+             data.ServerIP="127.0.0.1";
+             data.Port=4243;
+             data.Method="SearchFigParam";
+             data.Params=JSON.stringify(params);
+ 
+
+              //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/fig/getinfobyid",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                      request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+
+                       var label_name={"image":"镜像名称：","ports":"端口映射：","links":"连接的服务：","volumes":"挂载卷：","command":"启动命令："};
+
+                        var value=$.parseJSON(data.Data);
+                        if(value){
+                        	var fig_param=$.parseJSON(value[0].Param);
+                        	var str='<div class="machine">'+'\n';
+                        		str+='	<label class="control-label-title title1">项目名：</label>'+'\n';
+                        		str+='  <input type="text" class="form-control  project_name" readonly  value="'+fig_param.project_name+'"><span class="tip">*请先填写项目名称</span>'+'\n';
+                        		str+='</div>'+'\n';
+
+                             for(var j=0;j<fig_param.servers.length;j++,flag++){
+                             	var template=fig_param.servers[j];
+           		                    str+='<div class="server" >'+'\n';
+		       		                
+		       		                //处理server_name,server_header部分
+		           	  				str+='  <div class="server_header">'+'\n';
+									str+='  	<div class="server_title">'+'\n';
+									str+='  			<label class="control-label-title">服务名称</label>'+'\n';		
+									str+='				<input type="radio" name="template_'+j+'" class="form-redio"  value="nginx"'+(template["server_name"]=="nginx"?"checked":"")+'> nginx'+'\n';		
+									str+='				<input type="radio" name="template_'+j+'" class="form-redio"  value="gearman"'+(template["server_name"]=="gearman"?"checked":"")+'> gearman'+'\n';		
+									str+='				<input type="radio" name="template_'+j+'" class="form-redio"  value="zeromq"'+(template["server_name"]=="zeromq"?"checked":"")+'> zeromq'+'\n';		
+									str+='				<input type="radio" name="template_'+j+'" class="form-redio"  value="nodejs"'+(template["server_name"]=="nodejs"?"checked":"")+'> nodejs'+'\n';	
+								  	str+='				<input type="radio" name="template_'+j+'" class="form-redio"  value="mysql"'+(template["server_name"]=="mysql"?"checked":"")+'> mysql'+'\n';		
+									str+='				<input type="radio" name="template_'+j+'" class="form-redio"  value="redis"'+(template["server_name"]=="redis"?"checked":"")+'> redis'+'\n';	
+				  	  				str+='				<a href="#"  class="bth add_server">增加</a>'+'\n';		
+									str+='				<a href="#"  class="bth del_server">删除</a>'+'\n';	
+									str+='			</div>'+'\n';
+									str+='   </div>'+'\n';
+
+									//server_body部分
+ 									str+='   <div class="server_body">'+'\n';
+
+		                            for(var key in template){
+			                            	  if(key=="server_name")continue;
+			                            	  
+			                            	  str+='<div class="server_content">'+'\n';
+
+			                    			  if(typeof template[key] == "string"){
+			                    			  	  str+='<label class="control-label">'+label_name[key]+'</label>'+'\n';
+				                                  if(key=="command"){
+				                                      str+='<textarea class="form-control command">'+template[key]+'</textarea>'+'\n';
+				                                  }else{
+				                                      str+='<input type="text" class="form-control image" value="'+template[key]+'">'+'\n';
+				                                  }
+			                                  }else if(typeof template[key] == "object"){
+				                                       var temp=key.substr(0,key.length-1);
+					                                   for(var i=0,v=template[key];i<v.length;i++){
+					                                   			str+='<div  class="'+temp+'">'+'\n';
+						                                        if(i==0){
+						                                            str+='<label class="control-label">'+label_name[key]+'</label>'+'\n';
+						                                        }else if(i>0){
+						                                            str+='<label class="control-label"></label>'+'\n';
+						                                        }
+
+
+						                                        str+='<input type="text" class="form-control '+key+'" value="'+v[i]+'">'+'\n';
+						                                        str+='<a href="#" class="bth add_'+temp+'">增加</a>'+'\n';
+						                                        if(i>0){
+						                                          	str+='<a href="#" class="bth del_'+temp+'">删除</a>'+'\n';
+						                                        }
+					                                      	   str+='</div>'+'\n';
+				                                   	   }
+			                               	   }
+			                               	 str+='</div>'+'\n';
+		                              } 
+		                              str+='</div>'+'\n';
+		                              str+='</div>'+'\n'; 
+                                }  
+
+                                $("#form_server").append(str);    
+                                add_server();
+    			  				del_server();
+            					add("port");
+    			  				add("link");
+    			  				add("volume");
+
+                        }
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+    }
+
+  //查询模版
+      function query_template(radio){
+            var params={};
+             params.template_name=$(radio).val();
+             params.template_type="fig";
+
+       
+             var data={};
+             data.Version="1.0";
+             data.ServerIP="127.0.0.1";
+             data.Port=4243;
+             data.Method="SearchTemplate";
+             data.Params=JSON.stringify(params);
+
+             //var label_name=["image":"镜像名称：","ports":"端口映射：","links":"连接的服务：","volumes":"挂载卷：","command":"启动命令："];
+              var label_name={"image":"镜像名称：","ports":"端口映射：","links":"连接的服务：","volumes":"挂载卷：","command":"启动命令："};
+ 
+
+              //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/fig/template",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                      request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        //$("#query_content").children().remove();
+                        $(radio).parent().parent().parent().find(".server_body").remove();
+
+                        var value=$.parseJSON(data.Data)[0];     
+                        
+                        if(value){
+                            var template = $.parseJSON(value.Template_content.replaceAll("project_name",$(".project_name").val()));
+                            var str='<div class="server_body">'+'\n';
+                            for(var key in template){
+                                str+='<div class="server_content">'+'\n';
+                    
+                                if(typeof template[key] == "string"){
+                                  str+='<label class="control-label">'+label_name[key]+'</label>'+'\n';
+                                  if(key=="command"){
+                                      str+='<textarea class="form-control command">'+template[key]+'</textarea>'+'\n';
+                                  }else{
+                                      str+='<input type="text" class="form-control image" value="'+template[key]+'">'+'\n';
+                                  }
+                                }else if(typeof template[key] == "object"){
+                                   var temp=key.substr(0,key.length-1);
+                                   for(var i=0,v=template[key];i<v.length;i++){
+                                        if(i==0){
+                                            str+='<div  class="'+temp+'">'+'\n';
+                                            str+='<label class="control-label">'+label_name[key]+'</label>'+'\n';
+                                        }else if(i>0){
+                                            str+='<div  class="'+temp+'">'+'\n';
+                                            str+='<label class="control-label"></label>'+'\n';
+                                        }
+
+                                        str+='<input type="text" class="form-control '+key+'" value="'+v[i]+'">'+'\n';
+                                        str+='<a href="#" class="bth add_'+temp+'">增加</a>'+'\n';
+                                        if(i>0){
+                                          str+='<a href="#" class="bth del_'+temp+'">删除</a>'+'\n';
+                                        }
+                                       str+='</div>'+'\n';
+                                   }
+                                }
+ 
+                                str+='</div>'+'\n';
+                            }
+                            
+                           $(radio).parent().parent().parent().append(str);
+                            add("port");
+                            add("link");
+                            add("volume");
+                        }else{
+                          alert("template is not exist");
+                        }
+           
+                      console.log(str);
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+      }
+
+
+
+
+      //定义镜像打包事件
+    function update_fig(){
+		
+		var data={};
+		var servers_arr=[];
+		var servers=$(".server");
+   
+	    var project_name=$.trim($(".project_name").val());
+	    if(!project_name){
+	        alert("《项目名称》不能为空");
+	        return;
+	    }
+
+
+		for(var i=1,j=0;i<servers.length;i++,j++){
+  			var server={};
+
+  			server.server_name=$.trim($(servers[i]).find('input[name="template_"+i]:checked').val());
+        if(!server.server_name){
+            alert("第"+(i)+"部分《服务名称》不能为空");
+            return;
+        }
+  			
+  			server.image=$.trim($(servers[i]).find(".image").val());
+  			if(!server.image){
+            alert("第"+(i)+"部分《镜像名称》不能为空");
+            return;
+        }
+
+  			
+  		 var ports=$(servers[i]).find(".ports");
+  		 var ports_arr=[];
+  			for(var k=0;k<ports.length;k++){
+  				ports_arr[k]=$.trim($(ports[k]).val());
+  			}
+  			server.ports=ports_arr;
+  			
+  			
+  			var links=$(servers[i]).find(".links");
+        var links_arr=[];
+        for(var k=0;k<links.length;k++){
+            links_arr[k]=$.trim($(links[k]).val());
+        }
+  			server.links=links_arr;
+  			
+  			
+  			var volumes=$(servers[i]).find(".volumes");
+        var volumes_arr=[];
+        for(var k=0;k<volumes.length;k++){
+            volumes_arr[k]=$.trim($(volumes[k]).val());
+        }
+        server.volumes=volumes_arr;
+	
+
+        server.command=$.trim($(servers[i]).find(".command").val());
+  			servers_arr[j]=server;
+  		}
+  		
+
+          var params={};
+          params.project_name=$(".project_name").val();
+          params.servers=servers_arr;
+          params.fig_project_id=fig_project_id;
+                      
+      		
+      	  var machine=$("#machine_value").val().split(":");
+      	  data.Version="1.0";
+      	  data.ServerIP=machine[1];
+      	  data.Port=parseInt(machine[2]);
+      	  data.Method="create_fig";
+      	  data.Params=JSON.stringify(params);		
+
+             console.log(JSON.stringify(params));
+
+
+        //通过ajax请求后台服务
+          $.ajax({
+               url:"http://117.78.19.76:8099/v1/fig/create",
+               dataType:"json",
+               type: "post",
+               data:{
+		               request:JSON.stringify(data)
+		           },
+               success:function(data) {
+                  if(0==data.Code){
+                     alert("创建fig文件成功");
+                  }else{
+                     alert("创建fig文件失败"); 
+                  }
+               },          
+               error:function(XMLHttpRequest, textStatus, errorThrown){
+                   //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+               }
+            });
+        } 
+
+
+
+	function add_server(){	
+        $('input[name^=template]').unbind('click');       
+        $('input[name^=template]').click(function(){
+           query_template(this);
+        });
+
+
+        $(".add_server").unbind('click');
+        $(".add_server").click(function(){
+            var clone=$("#server_template").clone();
+            clone.find("input[name=template]").attr("name","template_"+(++flag));
+            $(clone).css("display","block");
+            $("#form_server").append($(clone));
+    			  
+            add_server();
+    			  del_server();
+            add("port");
+    			  add("link");
+    			  add("volume");
+    			  return false;
+        });
+	}     
+	
+	function del_server(){    
+	    $(".del_server").unbind('click');  
+          $(".del_server").click(function(){		
+    			var servers = $(".server");
+    			if(servers.length>2){
+    			      $(this).parent().parent().parent().remove();
+                 --flag;
+    			      return false;
+          }
+      });
+    }  
+	
+	
+	function add($element){
+        $(".add_"+$element).unbind('click');
+        $(".add_"+$element).click(function(){
+              var clone=$("#"+$element+"_template").clone();
+              $(clone).css("display","block");
+              $(this).parent().parent().append($(clone));
+              add($element);
+              del($element);
+              return false;
+        });
+    }
+    
+    function del($element){
+        $(".del_"+$element).unbind('click');  
+        $(".del_"+$element).click(function(){
+            var port = $("."+$element);
+            if(port.length>2){
+               $(this).parent().remove();
+               return false;
+            }
+        });
+    }
+
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    }
+
+
+  String.prototype.replaceAll = function(s1,s2){
+　　return this.replace(new RegExp(s1,"gm"),s2);
+　　} 
+</script>

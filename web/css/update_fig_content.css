@@ -1,4 +1,4 @@
-.fig_file {
+.fig_project_manager {
   color: #ffffff;
   background-color: #2fa4e7;
       margin-left: 8px;
@@ -20,12 +20,12 @@
 }
 
 .machine{
-	   margin-bottom:20px;
+     margin-bottom:20px;
 }
 
 
 .machine_value{
-	   width:70%;
+     width:70%;
     font-size: 16px;
     line-height: 15px;
     color: #555555;
@@ -36,14 +36,14 @@
 }
 
 .server{
-	margin-bottom:25px;
+  margin-bottom:25px;
 }
 
 .server_header{
-	height:45px;
-	line-height:45px;
-	padding-left:10px;
-    background-color:#F1F1F1;	
+  height:45px;
+  line-height:45px;
+  padding-left:10px;
+    background-color:#F1F1F1; 
 }
 
 .server_body{
@@ -51,36 +51,36 @@
 }
 
 .control-label-title{
-	font-size: 18px;
-	color:#317EAC;
-	font-weight: bold;
+  font-size: 18px;
+  color:#317EAC;
+  font-weight: bold;
 }
 
 .title1
 {
     width:100px;
-	display:inline-block;
-	text-align:right;	
+  display:inline-block;
+  text-align:right; 
 }
 
 .server_content{
-	margin: 12px 0;
+  margin: 12px 0;
 }
 
 .port,.link,.volume{
-	margin: 2px 0;
+  margin: 2px 0;
 }
 
 .control-label{
-	display:inline-block;
-	width:120px;
-	text-align:right;
-	font-weight: bold;
+  display:inline-block;
+  width:120px;
+  text-align:right;
+  font-weight: bold;
 }
 
 .form-control{
-	width:70%;
-	font-size: 16px;
+  width:70%;
+  font-size: 16px;
     line-height: 15px;
     color: #555555;
     border: 1px solid #cccccc;
@@ -90,17 +90,17 @@
 }
 
 .command{
-	height:100px;
+  height:100px;
 }
 
 .bth{
-	 color: #DD5600;
+   color: #DD5600;
      font-weight: bold;
-	 margin-left:10px;
+   margin-left:10px;
 }
 
 #server_template,#port_template,#link_template,#volume_template{
-	display:none;
+  display:none;
 }
 
 .form-btn {
@@ -131,3 +131,9 @@
 }
 
 
+.back{
+  float: right;
+  margin-right: 100px;
+  font-size: 18px;
+  font-weight: bold;
+}
