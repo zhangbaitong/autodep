@@ -155,6 +155,10 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 		{
 			code, ret = action.RegPull(request)
 		}
+	case "reg/delete":
+		{
+			code, ret = action.RegDelete(request)
+		}
 	case "reg/info":
 		{
 			code, ret = action.ActionAllInfo(request)

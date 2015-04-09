@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	_"net/http"
 )
 
 const (
@@ -148,7 +149,7 @@ func RegTag(request common.RequestData) (code int,result string) {
 	logger.Println("strRemoteTag=", strRemoteTag)
 
 	strCMD:=fmt.Sprintf("docker tag %s %s",strLocalTag,strRemoteTag)
-	ret, out := common.ExecRemoteCMD(request.ServerIP, strCMD)
+	ret, out := common.ExecRemoteDocker(request.ServerIP, strCMD)
 	logger.Println("out=", string(out))
 	if ret > 0 {
 		fmt.Println("docker tag up is error!")
@@ -169,7 +170,7 @@ func RegPush(request common.RequestData) (code int,result string) {
 		return 1, "faild"
 	}
 	strCMD:=fmt.Sprintf("docker push %s",strLocalTag)
-	ret, out := common.ExecRemoteCMD(request.ServerIP,strCMD)
+	ret, out := common.ExecRemoteDocker(request.ServerIP,strCMD)
 	if ret > 0 {
 		fmt.Println("exec docker push  is error!")
 		code = 1
@@ -191,7 +192,7 @@ func RegPull(request common.RequestData) (code int,result string) {
 	}
 
 	strCMD:=fmt.Sprintf("docker pull %s",strLocalTag)
-	ret, out := common.ExecRemoteCMD(request.ServerIP,strCMD)
+	ret, out := common.ExecRemoteDocker(request.ServerIP,strCMD)
 	if ret > 0 {
 		fmt.Println("exec docker push  is error!")
 		code = 1
@@ -204,4 +205,34 @@ func RegPull(request common.RequestData) (code int,result string) {
 	}
 
 	return code, out
+}
+
+func GetRepository(params string) (strRepository string, strTags string) {
+	var req interface{}
+	err := json.Unmarshal([]byte(params), &req)
+	if err != nil {
+		return "", ""
+	}
+	data, _ := req.(map[string]interface{})
+	strRepository, ok := data["repository"].(string)
+	if !ok {
+		strRepository=""
+	}
+	strTags, ok = data["tags"].(string)
+	if !ok {
+		strTags=""
+	}
+	return strRepository, strTags
+}
+
+func RegDelete(request common.RequestData) (code int,result string) {
+/*	
+	strRepository, strTags := GetRepository(request.Params)
+	if len(strRepository)==0 || len(strTags)==0 {
+		return 1, "faild"
+	}
+	strURL:=fmt.Sprintf("http://%s:%d/v1/repositories/library/%s/tags/%s",request.ServerIP,request.Port,strRepository,strTags)
+	req, err := http.NewRequest("DELETE", strURL, nil)
+*/	
+	return 0, ""
 }

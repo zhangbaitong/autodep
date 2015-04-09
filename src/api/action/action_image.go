@@ -211,7 +211,7 @@ func buildImage(strServerIP ,imageName, dockerfileDirectory string) (ret int, er
 	//return common.Execsh("build image error", "docker build -t  "+imageName+"  "+dockerfileDirectory)
 	//sh.Command("docker", "build", "-t", imageName, dockerfileDirectory).Run()
 	strCMD:=fmt.Sprintf("docker build -t %s %s",imageName,dockerfileDirectory)
-	ret, out := common.ExecRemoteCMD(strServerIP,strCMD)
+	ret, out := common.ExecRemoteDocker(strServerIP,strCMD)
 	if ret > 0 {
 		fmt.Println("exec docker push  is error!")
 		ret = 1
@@ -296,7 +296,7 @@ func ImageRMI(request common.RequestData) (code int,result string) {
 		return 1, "faild"
 	}
 	strCMD:=fmt.Sprintf("docker rmi %s",strLocalTag)
-	ret, out := common.ExecRemoteCMD(request.ServerIP,strCMD)
+	ret, out := common.ExecRemoteDocker(request.ServerIP,strCMD)
 	if ret > 0 {
 		fmt.Println("exec docker push  is error!")
 		code = 1
