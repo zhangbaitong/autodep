@@ -7,7 +7,8 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	_"net/http"
+	"net/http"
+	"io/ioutil"
 )
 
 const (
@@ -225,14 +226,22 @@ func GetRepository(params string) (strRepository string, strTags string) {
 	return strRepository, strTags
 }
 
-func RegDelete(request common.RequestData) (code int,result string) {
-/*	
+func RegDelete(request common.RequestData) (code int,result string) {	
 	strRepository, strTags := GetRepository(request.Params)
 	if len(strRepository)==0 || len(strTags)==0 {
 		return 1, "faild"
 	}
 	strURL:=fmt.Sprintf("http://%s:%d/v1/repositories/library/%s/tags/%s",request.ServerIP,request.Port,strRepository,strTags)
-	req, err := http.NewRequest("DELETE", strURL, nil)
-*/	
-	return 0, ""
+	resp, err := http.NewRequest("DELETE", strURL, nil)
+	if err != nil {
+		return 1,"faild"
+	}
+	
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 1,"faild"
+	}
+
+	return 0, string(body)
 }
