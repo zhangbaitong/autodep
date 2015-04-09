@@ -25,7 +25,7 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 	} else {
 		strPostData := r.FormValue("request")
-			fmt.Println("strPostData :", strPostData)
+		fmt.Println("strPostData :", strPostData)
 		//var request common.RequestData
 
 		err := json.Unmarshal([]byte(strPostData), &request)
@@ -178,6 +178,14 @@ func API_V1(w http.ResponseWriter, r *http.Request) {
 	case "machine/search":
 		{
 			ret = action.SearchMachine(request)
+		}
+	case "machine/del":
+		{
+			code, ret = action.DelMachine(request)
+		}
+	case "machine/update":
+		{
+			code, ret = action.UpdateMachine(request)
 		}
 	}
 	v1 := common.Response{Method: strMethod, Code: code, Messgae: "ok", Data: ret}

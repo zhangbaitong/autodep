@@ -180,7 +180,6 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 }
 
 func FigCreate(request common.RequestData) (code int, result string) {
-	fmt.Println("request.Params=", request.Params)
 	params := dealParams(request.ServerIP, request.Params)
 	//fmt.Println("params=",params)
 	ok, err := fig_transfer(request.ServerIP, params)

@@ -114,9 +114,14 @@
 	background:#fafafa;
 }
 
+.table .shortest
+{
+	width:50px;
+}
+
 .table .short
 {
-	width:60px;
+	width:75px;
 }
 
 .table .middle
@@ -127,4 +132,17 @@
 .table .long
 {
     width:250px;
+}
+
+
+.machine_id{
+	display: none;
+}
+
+
+.update_input{
+	width: 95%;
+	height:120%;
+	text-align:center;
+	border: 1px solid #dddddd;
 }

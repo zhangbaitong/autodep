@@ -14,6 +14,22 @@ const (
 	//dbName = "./autodep.db"
 )
 
+type Machine struct {
+	Machine_id   string
+	Machine_name string
+	Machine_ip   string
+	Docker_port  int
+	Is_use       int
+	Remark       string
+}
+
+type MachineSearch struct {
+	Machine_name string
+	Machine_ip   string
+	Docker_port  int
+	Is_use       int
+}
+
 func RegisterMachine(request common.RequestData) string {
 	var params Machine
 	jsonErr := json.Unmarshal([]byte(request.Params), &params)
@@ -85,7 +101,7 @@ func SearchMachine(request common.RequestData) string {
 		where += fmt.Sprintf(" and docker_port = %d ", params.Docker_port)
 	}
 
-	rows, err := db.Query("select machine_name, machine_ip, docker_port, is_use, remark from machines " + where)
+	rows, err := db.Query("select machine_id,machine_name, machine_ip, docker_port, is_use, remark from machines " + where)
 	if err != nil {
 		logger.Println(err)
 		return "faild"
@@ -94,7 +110,7 @@ func SearchMachine(request common.RequestData) string {
 	var machines []Machine = make([]Machine, 0)
 	for rows.Next() {
 		var m Machine
-		rows.Scan(&m.Machine_name, &m.Machine_ip, &m.Docker_port, &m.Is_use, &m.Remark)
+		rows.Scan(&m.Machine_id, &m.Machine_name, &m.Machine_ip, &m.Docker_port, &m.Is_use, &m.Remark)
 		machines = append(machines, m)
 	}
 
@@ -107,17 +123,82 @@ func SearchMachine(request common.RequestData) string {
 	return string(strMachines)
 }
 
-type Machine struct {
-	Machine_name string
-	Machine_ip   string
-	Docker_port  int
-	Is_use       int
-	Remark       string
+//删除服务器
+func DelMachine(request common.RequestData) (code int, result string) {
+	var m Machine
+	jsonErr := json.Unmarshal([]byte(request.Params), &m)
+	if jsonErr != nil {
+		logger.Println("json data decode faild :", jsonErr)
+		return 1, "json data decode faild"
+	}
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		logger.Println(err)
+		return 1, "open db error"
+	}
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		logger.Println(err)
+		return 1, "db  begin error"
+	}
+	stmt, err := tx.Prepare("delete from machines where machine_id=?")
+	if err != nil {
+		logger.Println(err)
+		return 1, "sql error"
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(m.Machine_id)
+
+	if err != nil {
+		logger.Println("参数1", err)
+		return 1, "excute sql error"
+	}
+
+	tx.Commit()
+
+	return 0, ""
 }
 
-type MachineSearch struct {
-	Machine_name string
-	Machine_ip   string
-	Docker_port  int
-	Is_use       int
+//更新服务器
+func UpdateMachine(request common.RequestData) (code int, result string) {
+	var m Machine
+	jsonErr := json.Unmarshal([]byte(request.Params), &m)
+	if jsonErr != nil {
+		logger.Println("json data decode faild :", jsonErr)
+		return 1, "json data decode faild"
+	}
+
+	db, err := sql.Open("sqlite3", dbName)
+	if err != nil {
+		logger.Println(err)
+		return 1, "open db error"
+	}
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		logger.Println(err)
+		return 1, "db  begin error"
+	}
+	stmt, err := tx.Prepare("update machines  set machine_name=?,machine_ip=?,docker_port=?,is_use=?,remark=?  where machine_id=?")
+	if err != nil {
+		logger.Println(err)
+		return 1, "sql error"
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(m.Machine_name, m.Machine_ip, m.Docker_port, m.Is_use, m.Remark, m.Machine_id)
+
+	if err != nil {
+		logger.Println("参数1", err)
+		return 1, "excute sql error"
+	}
+
+	tx.Commit()
+
+	return 0, ""
 }

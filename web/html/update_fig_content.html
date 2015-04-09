@@ -241,11 +241,13 @@
 
                                 $("#form_server").append(str);    
                                 add_server();
-    			  				del_server();
-            					add("port");
-    			  				add("link");
-    			  				add("volume");
-
+                			  				del_server();
+                        				add("port");
+                			  				add("link");
+                			  				add("volume");
+                                del("port");
+                                del("link");
+                                del("volume");
                         }
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){
