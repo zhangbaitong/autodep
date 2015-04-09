@@ -72,6 +72,7 @@ func project_count(strServerIP string,strProjectName string) nCount int {
 	for rows.Next() {
 		rows.Scan(&nCount)
 	}
+	fmt.Println("nCount=",nCount)
 
 	return nCount
 }
