@@ -417,7 +417,7 @@ func dealParams(strServerIp string, strParam string) (code int,map[string]interf
 		logger.Println("json data decode faild :", err)
 	}
 
-	nCount:=project_count(strServerIP,params.Project_name)
+	nCount:=project_count(strServerIp,params.Project_name)
 	if nCount>0 {
 		return 1, nil
 	}
