@@ -52,11 +52,11 @@ type UpdateFigStr struct {
 	Fig_project_id string
 }
 
-func project_count(strServerIP string,strProjectName string) nCount int {
+func project_count(strServerIP string,strProjectName string) (nCount int) {
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
 		logger.Println(err)
-		return 1, "faild"
+		return 0
 	}
 	defer db.Close()
 	strSql := fmt.Sprintf("select count(fig_project_id) from fig_project where machine_ip= '%s' and project_name = '%s' ", strServerIP,strProjectName)
@@ -64,7 +64,7 @@ func project_count(strServerIP string,strProjectName string) nCount int {
 	rows, err := db.Query(strSql)
 	if err != nil {
 		logger.Println(err)
-		return 1, "faild"
+		return 0
 	}
 	defer rows.Close()
 
@@ -181,7 +181,7 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 
 func FigCreate(request common.RequestData) (code int, result string) {
 	params := dealParams(request.ServerIP, request.Params)
-	//fmt.Println("params=",params)
+	fmt.Println("params=",params)
 	ok, err := fig_transfer(request.ServerIP, params)
 	code = 1
 	result = err
