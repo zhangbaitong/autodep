@@ -81,12 +81,13 @@
 											<table class="table table-bordered">
 												<thead>
 													<tr>
-														<th class="short">编号</th>
+														<th class="shortest">编号</th>
 														<th class="long">服务器名称</th>
 														<th class="middle">服务器IP</th>
 														<th class="middle">Docker端口</th>
-														<th class="middle">是否启用</th>
+														<th class="short">是否启用</th>
 														<th class="longer">备注</th>
+                            <th class="short">操作</th>
 													</tr>
 											    </thead>
 												<tbody class="table_body" id="query_content">
@@ -142,7 +143,7 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						request:JSON.stringify(data)
+						          request:JSON.stringify(data)
                     },
                    success:function(data) {
 
@@ -199,7 +200,7 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						request:JSON.stringify(data)
+						          request:JSON.stringify(data)
                     },
                    success:function(data) {
                       
@@ -217,9 +218,11 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].Machine_name+"</td><td>"+values[i].Machine_ip+"</td><td>"+values[i].Docker_port+"</td><td>"+values[i].Is_use+"</td><td>"+values[i].Remark+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td class='machine_id'>"+values[i].Machine_id+"</td><td class='update_content long' id='machine_name'>"+values[i].Machine_name+"</td><td class='update_content middle' id='machine_ip'>"+values[i].Machine_ip+"</td><td class='update_content middle' id='docker_port'>"+values[i].Docker_port+"</td><td class='update_content short' id='is_use'>"+values[i].Is_use+"</td><td class='update_content longer' id='remark'>"+values[i].Remark+"</td><td ><a href='#'  class='btn_update'>更新</a>|<a href='#'  class='btn_del'>删除</a></td></tr>";
                            } 
                            $("#query_content").append(tr);   
+
+                           register_click();
                         }
            
                    },          
@@ -228,4 +231,176 @@
                    }
                 });
             } 
+
+
+
+           // 注册click事件
+           function register_click(){
+              $(".btn_del").click(function(){
+                 del_machine(this);
+              });
+
+              $(".btn_update").click(function(){
+                 update_machine(this);
+              });
+
+              $(".btn_confirm").click(function(){
+                 update_confirm(this);
+              });
+              $(".btn_cancel").click(function(){
+                 update_cancel(this);
+              });
+
+           }
+
+
+           function del_machine(btn){
+             var params={};
+             params.machine_id= $(btn).parent().parent().find(".machine_id").html();
+       
+             var data={};
+             data.Version="1.0";
+             data.ServerIP="127.0.0.1";
+             data.Port=4243;
+             data.Method="DelMachine";
+             data.Params=JSON.stringify(params);  
+      
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/machine/del",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                      request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(data.Code==0){
+                           $(btn).parent().parent().remove();
+                           alert("删除成功");
+                        }else{
+                           alert("删除失败");
+                        }
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+           }
+
+
+
+           function update_machine(btn){
+ 
+              var items = $(btn).parent().parent().find(".update_content");
+              items.each(function(i){
+                $(items[i]).html("<input type='text'  class='update_input' value='"+$(items[i]).html()+"'/><input type='hidden' class='ori_value' value='"+$(items[i]).html()+"'> ");
+              });
+
+
+              $(btn).parent().html("<a href='#' class='btn_confirm'>确定</a>|<a href='#' class='btn_cancel'>取消</a>");
+
+              register_click();
+           }
+
+           function update_confirm(btn){
+
+              var machine_name=$(btn).parent().parent().find("#machine_name").find(".update_input").val();
+              if(!machine_name){
+                  alert("机器名称不能为空");
+                  return;
+              }
+              
+              var machine_ip = $(btn).parent().parent().find("#machine_ip").find(".update_input").val();
+              if(!machine_ip){
+                  alert("机器IP不能为空");
+                  return;
+              }
+                    
+              var docker_port =  $(btn).parent().parent().find("#docker_port").find(".update_input").val();
+              if(!docker_port){
+                  alert("Docker端口不能为空");
+                  return;
+              }
+              if(isNaN(docker_port)){
+                alert("Docker端口必须是数字");
+                        return;
+              }
+
+              var is_use=$(btn).parent().parent().find("#is_use").find(".update_input").val();
+              if(!is_use){
+                  alert("是否启动不能为空");
+                  return;
+              }
+              if(is_use!=0 && is_use!=1){
+                  alert("是否启动的值只能是1或者0");
+                  return;
+              }
+
+              var remark =$(btn).parent().parent().find("#remark").find(".update_input").val();
+
+
+             var params={};
+             params.machine_id= $(btn).parent().parent().find(".machine_id").html();
+             params.machine_name=machine_name;
+             params.machine_ip=machine_ip;
+             params.docker_port=parseInt(docker_port);
+             params.is_use=parseInt(is_use);
+             params.remark=remark;
+
+
+             var data={};
+             data.Version="1.0";
+             data.ServerIP="127.0.0.1";
+             data.Port=4243;
+             data.Method="UpdateMachine";
+             data.Params=JSON.stringify(params);  
+      
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/machine/update",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                      request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+                        if(data.Code==0){
+                            var items = $(btn).parent().parent().find(".update_content");
+                            items.each(function(i){
+                              $(items[i]).html($(items).find(".update_input").val());
+                            });
+
+
+                            $(btn).parent().html("<a href='#'  class='btn_update'>更新</a>|<a href='#'  class='btn_del'>删除</a>");
+
+                            register_click();
+                            alert("更新成功");
+                        }else{
+                           alert("更新失败");
+                        }
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+
+
+           }
+
+
+
+           function update_cancel(btn){
+              var items = $(btn).parent().parent().find(".update_content");
+              items.each(function(i){
+                $(items[i]).html($(items).find(".ori_value").val());
+              });
+
+
+              $(btn).parent().html("<a href='#'  class='btn_update'>更新</a>|<a href='#'  class='btn_del'>删除</a>");
+
+              register_click();
+           }
 </script>
