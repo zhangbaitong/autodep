@@ -60,7 +60,7 @@ func project_count(strServerIP string,strProjectName string) (nCount int) {
 	}
 	defer db.Close()
 	strSql := fmt.Sprintf("select count(fig_project_id) from fig_project where machine_ip= '%s' and project_name = '%s' ", strServerIP,strProjectName)
-	fmt.Println("strSql=",strSql)
+	//fmt.Println("strSql=",strSql)
 	rows, err := db.Query(strSql)
 	if err != nil {
 		logger.Println(err)
@@ -72,7 +72,7 @@ func project_count(strServerIP string,strProjectName string) (nCount int) {
 	for rows.Next() {
 		rows.Scan(&nCount)
 	}
-	fmt.Println("nCount=",nCount)
+	//fmt.Println("nCount=",nCount)
 
 	return nCount
 }
@@ -404,7 +404,7 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 //处理从前台传过来的函数
 func dealParams(strServerIp string, strParam string) (code int,result map[string]interface{}) {
 
-	fmt.Println("传来的参数：", strParam)
+	//fmt.Println("传来的参数：", strParam)
 
 	ret := map[string]interface{}{}
 	figData := ""
