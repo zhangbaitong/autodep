@@ -52,14 +52,14 @@ type UpdateFigStr struct {
 	Fig_project_id string
 }
 
-func project_count(strServerIP string,strProjectName string) (nCount int) {
+func project_count(strServerIP string, strProjectName string) (nCount int) {
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
 		logger.Println(err)
 		return 0
 	}
 	defer db.Close()
-	strSql := fmt.Sprintf("select count(fig_project_id) from fig_project where machine_ip= '%s' and project_name = '%s' ", strServerIP,strProjectName)
+	strSql := fmt.Sprintf("select count(fig_project_id) from fig_project where machine_ip= '%s' and project_name = '%s' ", strServerIP, strProjectName)
 	//fmt.Println("strSql=",strSql)
 	rows, err := db.Query(strSql)
 	if err != nil {
@@ -68,7 +68,7 @@ func project_count(strServerIP string,strProjectName string) (nCount int) {
 	}
 	defer rows.Close()
 
-	nCount=0
+	nCount = 0
 	for rows.Next() {
 		rows.Scan(&nCount)
 	}
@@ -77,16 +77,16 @@ func project_count(strServerIP string,strProjectName string) (nCount int) {
 	return nCount
 }
 
-func copy_template(strServerIP string,strOurce string,strProjectName string) (ok bool){
+func copy_template(strServerIP string, strOurce string, strProjectName string) (ok bool) {
 
-	strRemoteDir:="/data/"+strProjectName;
+	strRemoteDir := "/data/" + strProjectName
 	//strRemoteDir:="/home/tomzhao/"+strProjectName;
 	ret1, _ := common.ExecRemoteCMD(strServerIP, "mkdir -p", strRemoteDir)
 	if ret1 > 0 {
 		return false
 	}
 
-	strRemoteDir=strServerIP + ":" + strRemoteDir + "/." 
+	strRemoteDir = strServerIP + ":" + strRemoteDir + "/."
 	ret1, _ = common.TransferDirSSH(strOurce, strRemoteDir)
 	if ret1 > 0 {
 		return false
@@ -133,7 +133,7 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 		return false, "Create fig Remote Path faild!!!!"
 	}
 
-	copy_template(strServerIP,"../../template",strProjectName)
+	copy_template(strServerIP, "../../template/software", strProjectName)
 	//传输文件到远程目录
 	strRemoteFile := strServerIP + ":" + strRemoteDir + "/" + strFileName
 	ret1, _ = common.TransferFileSSH(strFileName, strRemoteFile)
@@ -193,8 +193,8 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 }
 
 func FigCreate(request common.RequestData) (code int, result string) {
-	ret,params := dealParams(request.ServerIP, request.Params)
-	if ret==1{
+	ret, params := dealParams(request.ServerIP, request.Params)
+	if ret == 1 {
 		return 1, "project was existed"
 	}
 	ok, err := fig_transfer(request.ServerIP, params)
@@ -417,8 +417,9 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 	}
 	return code, out
 }
+
 //处理从前台传过来的函数
-func dealParams(strServerIp string, strParam string) (code int,result map[string]interface{}) {
+func dealParams(strServerIp string, strParam string) (code int, result map[string]interface{}) {
 
 	//fmt.Println("传来的参数：", strParam)
 
@@ -433,11 +434,10 @@ func dealParams(strServerIp string, strParam string) (code int,result map[string
 		logger.Println("json data decode faild :", err)
 	}
 
-	nCount:=project_count(strServerIp,params.Project_name)
-	if nCount>0 {
+	nCount := project_count(strServerIp, params.Project_name)
+	if nCount > 0 {
 		return 1, nil
 	}
-
 
 	figDirectory := temp + "/" + params.Project_name
 	//servers := params["servers"].([]map[string]interface{})
@@ -495,7 +495,7 @@ func dealParams(strServerIp string, strParam string) (code int,result map[string
 	}
 	tx.Commit()
 
-	return 0,ret
+	return 0, ret
 }
 
 //处理fig.yml中的服务名格式
