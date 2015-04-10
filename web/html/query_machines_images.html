@@ -73,6 +73,7 @@
 													<tr>
 														<th class="short">编号</th>
 														<th class="long">镜像名称及标签</th>
+                            <th class="short">操作</th>
 													</tr>
 											    </thead>
 												<tbody class="table_body" id="query_content">
@@ -195,9 +196,11 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td>"+values[i].RepoTags+"</td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td  class='image_name'>"+values[i].RepoTags+"</td><td><a href='#'  class='btn_pull'>上传</a>|<a href='#'  class='btn_rmi'>删除</a></td></tr>";
                            } 
-                           $("#query_content").append(tr);   
+                           $("#query_content").append(tr);  
+
+                           btn_click(); 
                         }
            
                    },          
@@ -206,4 +209,93 @@
                    }
                 });
             } 
+
+
+
+                function btn_click(){
+              $(".btn_pull").click(function(){
+                image_pull(this);
+              });
+
+              $(".btn_rmi").click(function(){
+                image_del(this);
+              });
+
+            }
+            //拉取镜像
+
+            function image_pull(btn){
+                 var machine=$("#machine_value").val().split(":");
+                 var params={};
+                 params.local_tag="10.122.75.228:5000/"+$(btn).parent().parent().find(".image_name").html();
+
+                 var data={};
+                 data.Version="1.0";
+                 data.ServerIP=machine[1];
+                 data.Port=parseInt(machine[2]);
+                 data.Method="Image_push";
+                 data.Params=JSON.stringify(params);
+
+                //通过ajax请求后台服务
+                  $.ajax({
+                       url:"http://117.78.19.76:8099/v1/reg/pull",
+                       dataType:"json",
+                       type: "post",
+                       data:{
+                           request:JSON.stringify(data)
+                        },
+                       success:function(data) {
+
+                            if(0==data.Code){
+                               alert("上传镜像成功");
+                               return;
+                            }else{
+                             alert("上传镜像失败");
+                               return;
+                            }
+                       },          
+                       error:function(XMLHttpRequest, textStatus, errorThrown){
+                           //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                       }
+                    });
+            }
+
+
+            //删除镜像
+            function image_del(btn){
+               var params={};
+               params.local_tag="10.122.75.228:5000/"+$(btn).parent().parent().find(".image_name").html();
+
+
+               var machine=$("#machine_value").val().split(":");
+               var data={};
+               data.Version="1.0";
+               data.ServerIP=machine[1];
+               data.Port=parseInt(machine[2]);
+               data.Method="Image_rmi";
+               data.Params=JSON.stringify(params);
+
+                //通过ajax请求后台服务
+                  $.ajax({
+                       url:"http://117.78.19.76:8099/v1/image/rmi",
+                       dataType:"json",
+                       type: "post",
+                       data:{
+                            request:JSON.stringify(data)
+                        },
+                       success:function(data) {
+
+                            if(0==data.Code){
+                               alert("删除镜像成功");
+                               return;
+                            }else{
+                             alert("删除镜像失败");
+                               return;
+                            }
+                       },          
+                       error:function(XMLHttpRequest, textStatus, errorThrown){
+                           //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                       }
+                    });
+            }
 </script>
