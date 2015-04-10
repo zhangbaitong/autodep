@@ -156,10 +156,10 @@ func CreateImage(request common.RequestData) (code int, result string) {
 		return 1, "Transfer File faild!!!!"
 	}
 
-	result, out := buildImage(strServerIP,image.Image_name,strcodePathPrev)
-	if result>0 {
+	ret1, out := buildImage(strServerIP,image.Image_name,strcodePathPrev)
+	if ret1>0 {
 		code = 1
-		result = "build image err:" + buildErr
+		result = "build image err:" + out
 		return code, result
 	}
 	fmt.Println("build镜像成功")
