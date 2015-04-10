@@ -208,6 +208,124 @@ func RegPull(request common.RequestData) (code int,result string) {
 	return code, out
 }
 
+func GetImage(strLocalTag string) (strImage string, strTag string) {
+	var strName string
+	nPos:=strings.Index(strLocalTag,"/")
+	strName=common.SubstrAfter(strLocalTag,nPos)
+	nPos=strings.Index(strName,":")
+	strImage=common.SubstrBefore(strName,nPos)
+	strTag=common.SubstrAfter(strName,nPos)
+	return strImage,strTag
+}
+
+func RegPushOne(request common.RequestData) (code int,result string) {
+	strLocalTag, strRemoteTag := GetTag(request.Params)
+	if len(strLocalTag)==0 || len(strRemoteTag)==0 {
+		return 1, "faild"
+	}
+	logger.Println("strLocalTag=", strLocalTag)
+	logger.Println("strRemoteTag=", strRemoteTag)
+
+	strCMD:=fmt.Sprintf("docker tag %s %s",strLocalTag,strRemoteTag)
+	ret, out := common.ExecRemoteDocker(request.ServerIP, strCMD)
+	logger.Println("out=", string(out))
+	if ret > 0 {
+		fmt.Println("docker tag up is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+	if strings.Contains(out,"No such id"){
+		code=1
+	}
+
+	strCMD=fmt.Sprintf("docker push %s",strRemoteTag)
+	ret, out = common.ExecRemoteDocker(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker push  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+	}
+
+	strCMD=fmt.Sprintf("docker rmi %s ",strRemoteTag)
+	ret, out = common.ExecRemoteDocker(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker rmi  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+		return code, out
+	}
+	return code, out
+}
+
+func RegPullOne(request common.RequestData) (code int,result string) {
+	strLocalTag, _ := GetTag(request.Params)
+	logger.Println("strLocalTag=", strLocalTag)
+	if len(strLocalTag)==0{
+		return 1, "faild"
+	}
+
+	logger.Println("strLocalTag=", strLocalTag)
+	strCMD:=fmt.Sprintf("docker pull %s",strLocalTag)
+	ret, out := common.ExecRemoteDocker(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker pull  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+		return code, out
+	}
+
+	strImage,strTag:=GetImage(strLocalTag)
+	logger.Println("strImage=", strImage)
+	logger.Println("strTag=", strTag)
+
+	strCMD=fmt.Sprintf("docker tag %s %s:%s",strLocalTag,strImage,strTag)
+	ret, out = common.ExecRemoteDocker(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker tag  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+		return code, out
+	}
+
+
+	strCMD=fmt.Sprintf("docker rmi %s ",strLocalTag)
+	ret, out = common.ExecRemoteDocker(request.ServerIP,strCMD)
+	if ret > 0 {
+		fmt.Println("exec docker rmi  is error!")
+		code = 1
+	} else {
+		code = 0
+	}
+
+	if strings.Contains(out,"Error:"){
+		code=1
+		return code, out
+	}
+
+	return code, out
+}
+
 func GetRepository(params string) (strRepository string, strTags string) {
 	var req interface{}
 	err := json.Unmarshal([]byte(params), &req)
