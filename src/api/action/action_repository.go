@@ -234,7 +234,9 @@ func RegDelete(request common.RequestData) (code int,result string) {
 	logger.Println("strRepository=", strRepository)
 	logger.Println("strTags=", strTags)
 
-	strURL:=fmt.Sprintf("http://%s:%d/v1/repositories/library/%s/tags/%s",request.ServerIP,request.Port,strRepository,strTags)
+	//strURL:=fmt.Sprintf("http://%s:%d/v1/repositories/library/%s/tags/%s",request.ServerIP,request.Port,strRepository,strTags)
+	strURL:=fmt.Sprintf("http://%s:%d/v1/repositories/%s/tags/%s",request.ServerIP,request.Port,strRepository,strTags)
+	logger.Println("strURL=", strURL)
 	req, err := http.NewRequest("DELETE", strURL,nil)
 	if err != nil {
 		return 1,"faild"
@@ -250,12 +252,31 @@ func RegDelete(request common.RequestData) (code int,result string) {
 		return 1,"faild"
 	}
 
+	logger.Println("body=", string(body))
 	if resp.StatusCode == 404 {
 		return 1,"faild"
 	}
 	if resp.StatusCode >= 400 {
 		return 1,"faild"
 	}
+
+	strURL=fmt.Sprintf("http://%s:%d/v1/repositories/%s/",request.ServerIP,request.Port,strRepository)
+	logger.Println("strURL=", strURL)
+	req, err = http.NewRequest("DELETE", strURL,nil)
+	if err != nil {
+		return 1,"faild"
+	}
+
+	resp, err = http.DefaultClient.Do(req)	
+	if err != nil {
+		return 1,"faild"
+	}
+	defer resp.Body.Close()
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 1,"faild"
+	}
+	logger.Println("body=", string(body))
 
 	return 0, string(body)
 }
