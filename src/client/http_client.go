@@ -127,7 +127,27 @@ func GetImage(strLocalTag string) (strImage string, strTag string) {
 	return strImage, strTag
 }
 
+func copy_template(strServerIP string,strOurce string,strProjectName string) (ok bool){
+
+	//strRemoteDir:="/data/"+strProjectName;
+	strRemoteDir:="/home/tomzhao/"+strProjectName;
+	ret1, _ := common.ExecRemoteCMD(strServerIP, "mkdir -p", strRemoteDir)
+	if ret1 > 0 {
+		return false
+	}
+
+	strRemoteDir=strServerIP + ":" + strRemoteDir + "/." 
+	ret1, _ = common.TransferDirSSH(strOurce, strRemoteDir)
+	if ret1 > 0 {
+		return false
+	}
+	return true
+}
+
 func main() {
+	copy_template("117.78.19.76","../../template/software","TEST4444")
+	//copy_template("117.78.19.76","/home/tomzhao/autodep/template/software","TEST4444")
+	return
 	//strImage,strTag:=GetImage("10.122.75.228:5000/centostest:latest")
 	//fmt.Println("strImage=", strImage)
 	//fmt.Println("strTag=", strTag)

@@ -77,6 +77,23 @@ func project_count(strServerIP string,strProjectName string) (nCount int) {
 	return nCount
 }
 
+func copy_template(strServerIP string,strOurce string,strProjectName string) (ok bool){
+
+	strRemoteDir:="/data/"+strProjectName;
+	//strRemoteDir:="/home/tomzhao/"+strProjectName;
+	ret1, _ := common.ExecRemoteCMD(strServerIP, "mkdir -p", strRemoteDir)
+	if ret1 > 0 {
+		return false
+	}
+
+	strRemoteDir=strServerIP + ":" + strRemoteDir + "/." 
+	ret1, _ = common.TransferDirSSH(strOurce, strRemoteDir)
+	if ret1 > 0 {
+		return false
+	}
+	return true
+}
+
 func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, err string) {
 	var (
 		strRemoteDir string
@@ -87,9 +104,9 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	if !ok {
 		return false, "fig directory empty!!!!"
 	}
-	//str := strings.Split(strFigDirectory, "/")
 
-	//strProjectName := str[len(str)-1]
+	str := strings.Split(strFigDirectory, "/")
+	strProjectName := str[len(str)-1]
 
 	strFigData, ok := params["fig_data"].(string)
 	if !ok {
@@ -111,12 +128,12 @@ func fig_transfer(strServerIP string, params map[string]interface{}) (ret bool, 
 	//删除远程目录
 	_, _ = common.ExecRemoteRM(strServerIP, strRemoteDir)
 	//支持递归生成不存在目录
-	//TODO:需要改进
 	ret1, _ := common.ExecRemoteCMD(strServerIP, "mkdir -p", strRemoteDir)
 	if ret1 > 0 {
 		return false, "Create fig Remote Path faild!!!!"
 	}
 
+	copy_template(strServerIP,"../../template",strProjectName)
 	//传输文件到远程目录
 	strRemoteFile := strServerIP + ":" + strRemoteDir + "/" + strFileName
 	ret1, _ = common.TransferFileSSH(strFileName, strRemoteFile)
@@ -400,7 +417,6 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 	}
 	return code, out
 }
-
 //处理从前台传过来的函数
 func dealParams(strServerIp string, strParam string) (code int,result map[string]interface{}) {
 
@@ -421,6 +437,7 @@ func dealParams(strServerIp string, strParam string) (code int,result map[string
 	if nCount>0 {
 		return 1, nil
 	}
+
 
 	figDirectory := temp + "/" + params.Project_name
 	//servers := params["servers"].([]map[string]interface{})
