@@ -211,7 +211,7 @@
 
             function btn_click(){
             	$(".btn_push").click(function(){
-            		image_push(this);
+            		image_pull(this);
             	});
 
           		$(".btn_rmi").click(function(){
@@ -221,7 +221,7 @@
             }
             //拉取镜像
 
-            function image_push(btn){
+            function image_pull(btn){
 			var machine=$("#machine_value").val().split(":");
 
              var params={};
@@ -233,17 +233,17 @@
       		 var data={};
       		 data.Version="1.0";
       		 data.ServerIP=machine[1];
-  			 data.Port=parseInt(machine[2]);
-  			 data.Method="Image_push";
-  			 data.Params=JSON.stringify(params);
+  			   data.Port=parseInt(machine[2]);
+  			   data.Method="Image_push";
+  			   data.Params=JSON.stringify(params);
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/reg/push",
+                   url:"http://117.78.19.76:8099/v1/reg/pullone",
                    dataType:"json",
                    type: "post",
                    data:{
-						 request:JSON.stringify(data)
+						          request:JSON.stringify(data)
                     },
                    success:function(data) {
 
@@ -273,9 +273,9 @@
       		 var data={};
       		 data.Version="1.0";
       		 data.ServerIP="10.122.75.228";
-  			 data.Port=5000;
-  			 data.Method="Image_rmi";
-  			 data.Params=JSON.stringify(params);
+  			   data.Port=5000;
+  			   data.Method="Image_rmi";
+  			   data.Params=JSON.stringify(params);
 
             //通过ajax请求后台服务
               $.ajax({
@@ -283,7 +283,7 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						 request:JSON.stringify(data)
+						           request:JSON.stringify(data)
                     },
                    success:function(data) {
 

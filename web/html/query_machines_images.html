@@ -214,7 +214,7 @@
 
                 function btn_click(){
               $(".btn_pull").click(function(){
-                image_pull(this);
+                image_push(this);
               });
 
               $(".btn_rmi").click(function(){
@@ -224,10 +224,11 @@
             }
             //拉取镜像
 
-            function image_pull(btn){
+            function image_push(btn){
                  var machine=$("#machine_value").val().split(":");
                  var params={};
-                 params.local_tag="10.122.75.228:5000/"+$(btn).parent().parent().find(".image_name").html();
+                 params.local_tag=$(btn).parent().parent().find(".image_name").html();
+                 params.remote_tag="10.122.75.228:5000/"+$(btn).parent().parent().find(".image_name").html();
 
                  var data={};
                  data.Version="1.0";
@@ -238,7 +239,7 @@
 
                 //通过ajax请求后台服务
                   $.ajax({
-                       url:"http://117.78.19.76:8099/v1/reg/pull",
+                       url:"http://117.78.19.76:8099/v1/reg/pushone",
                        dataType:"json",
                        type: "post",
                        data:{
@@ -264,7 +265,7 @@
             //删除镜像
             function image_del(btn){
                var params={};
-               params.local_tag="10.122.75.228:5000/"+$(btn).parent().parent().find(".image_name").html();
+               params.local_tag=$(btn).parent().parent().find(".image_name").html();
 
 
                var machine=$("#machine_value").val().split(":");
