@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"api/common"
@@ -54,7 +54,7 @@ func httpPost() {
 	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"reg/pull",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
 	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"image/rmi",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
 	//post_data := RequestData{Version: "1.0", ServerIP: "10.122.75.228", Port: 5000, Method: "reg/delete", Params: "{\"repository\":\"centos\",\"tags\":\"latest\"}"}
-	post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"reg/pushone",Params:"{\"local_tag\":\"centos:latest\",\"remote_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
+	post_data := RequestData{Version: "1.0", ServerIP: "117.78.19.76", Port: 4243, Method: "reg/pushone", Params: "{\"local_tag\":\"centos:latest\",\"remote_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
 	//post_data:=RequestData{Version:"1.0",ServerIP:"117.78.19.76",Port:4243,Method:"reg/pullone",Params:"{\"local_tag\":\"10.122.75.228:5000/centostest:latest\"}"}
 	strPostData, _ := json.Marshal(post_data)
 	strTemp := "request=" + string(strPostData)
@@ -119,19 +119,19 @@ func httpDo() {
 
 func GetImage(strLocalTag string) (strImage string, strTag string) {
 	var strName string
-	nPos:=strings.Index(strLocalTag,"/")
-	strName=common.SubstrAfter(strLocalTag,nPos)
-	nPos=strings.Index(strName,":")
-	strImage=common.SubstrBefore(strName,nPos)
-	strTag=common.SubstrAfter(strName,nPos)
-	return strImage,strTag
+	nPos := strings.Index(strLocalTag, "/")
+	strName = common.SubstrAfter(strLocalTag, nPos)
+	nPos = strings.Index(strName, ":")
+	strImage = common.SubstrBefore(strName, nPos)
+	strTag = common.SubstrAfter(strName, nPos)
+	return strImage, strTag
 }
 
 func main() {
 	//strImage,strTag:=GetImage("10.122.75.228:5000/centostest:latest")
 	//fmt.Println("strImage=", strImage)
 	//fmt.Println("strTag=", strTag)
-	//return 
+	//return
 	//httpGet()
 	httpPost()
 	//httpPostForm()
