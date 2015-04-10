@@ -42,108 +42,29 @@ http {
 
     index   index.html index.htm;
 
-
-    server
-    {
-      listen 80;
-      server_name 127.0.0.1;
-      #server_name www.nvwayun.com;
-      index index.html index.htm index.php;
-      root /data/esp/code/nginx/V0.9.2.0/public;
-      #limit_conn crawler 20;
-
-      access_log  /var/log/nginx/esp.log;
-      location ~ .*\.(php|php5)?$
-      {
-        #fastcgi_pass unix:/tmp/php-cgi.sock;
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_index index.php;
-        include fcgi.conf;
-      }
-      location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
-      {
-        expires 30d;
-      }
-
-      location ~ .*\.(js|css)?$
-      {
-        expires 1h;
-      }
-    }
-
-
-
-    server
-    {
-      listen 8806;
-      #server_name 223.202.102.46;
-      server_name www.nvwayun.com;
-      index index.html index.htm index.php;
-      root /data/esp/code/nginx/eventbus/source;
-      #limit_conn crawler 20;
-
-      access_log  /var/log/nginx/esp.log;
-      location ~ .*\.(php|php5)?$
-      {
-        #fastcgi_pass unix:/tmp/php-cgi.sock;
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_index index.php;
-        include fcgi.conf;
-      }
-      location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
-      {
-        expires 30d;
-      }
-
-      location ~ .*\.(js|css)?$
-      {
-        expires 1h;
-      }
-    }
-
-
-    server{
-        listen 80;
-        server_name *.nvwayun.com;
-        location / {
-                #rewrite (.*) http://127.0.0.1:8080;
-                #rewrite (.*) http://10.123.224.233;
-                #proxy_set_header Host *.nvwayun.com;
-                #proxy_pass http://10.123.224.233/;
-
-                proxy_redirect off;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_pass http://172.17.0.12:80;
-        }
-       access_log  /var/log/nginx/proxy.log;
-    }
-
-
-    #server {
-     #   listen       80;
-     #   server_name  localhost;
-     #  root         /usr/share/nginx/html;
+    server {
+        listen       80;
+        server_name  localhost;
+        root         /usr/share/nginx/html;
 
         #charset koi8-r;
 
         #access_log  /var/log/nginx/host.access.log  main;
 
-     #   location / {
-     #   }
+        location / {
+        }
 
         # redirect server error pages to the static page /40x.html
         #
-        #error_page  404              /404.html;
-        #location = /40x.html {
-        #}
+        error_page  404              /404.html;
+        location = /40x.html {
+        }
 
         # redirect server error pages to the static page /50x.html
         #
-        #error_page   500 502 503 504  /50x.html;
-        #location = /50x.html {
-        #}
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+        }
 
         # proxy the PHP scripts to Apache listening on 127.0.0.1:80
         #
@@ -167,7 +88,7 @@ http {
         #location ~ /\.ht {
         #    deny  all;
         #}
-    #}
+    }
 
 
     # another virtual host using mix of IP-, name-, and port-based configuration
