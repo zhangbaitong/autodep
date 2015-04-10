@@ -90,6 +90,12 @@
 			  <div class="clear"></div>
 		 </div>   	
    </div>
+
+  <div id="show" style="display:none;width:100%;height:100%;padding-top:7%;background:rgba(0, 0, 0, 0.0) none repeat scroll 0 0 !important;position: fixed;top: 0;">
+        <div style="width:400px;height:100px;line-height:100px;text-align:center;margin:0 auto;background-color:#00f;font-size:25px;">
+                    操作进行中，请稍后...
+        </div>    
+    </div>
 </body>
 </html>
 
@@ -237,6 +243,8 @@
                  data.Method="Image_push";
                  data.Params=JSON.stringify(params);
 
+                 $("#show").css("display","block");
+
                 //通过ajax请求后台服务
                   $.ajax({
                        url:"http://117.78.19.76:8099/v1/reg/pushone",
@@ -246,6 +254,7 @@
                            request:JSON.stringify(data)
                         },
                        success:function(data) {
+                           $("#show").css("display","none");
 
                             if(0==data.Code){
                                alert("上传镜像成功");
@@ -276,6 +285,8 @@
                data.Method="Image_rmi";
                data.Params=JSON.stringify(params);
 
+                   $("#show").css("display","block");
+
                 //通过ajax请求后台服务
                   $.ajax({
                        url:"http://117.78.19.76:8099/v1/image/rmi",
@@ -286,7 +297,9 @@
                         },
                        success:function(data) {
 
+                           $("#show").css("display","none");
                             if(0==data.Code){
+                              $(btn).parent().parent().remove();
                                alert("删除镜像成功");
                                return;
                             }else{
