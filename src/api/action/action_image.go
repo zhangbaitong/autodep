@@ -156,8 +156,8 @@ func CreateImage(request common.RequestData) (code int, result string) {
 		return 1, "Transfer File faild!!!!"
 	}
 
-	_, buildErr := buildImage(strServerIP,image.Image_name,strcodePathPrev)
-	if buildErr != "" {
+	result, out := buildImage(strServerIP,image.Image_name,strcodePathPrev)
+	if result>0 {
 		code = 1
 		result = "build image err:" + buildErr
 		return code, result
@@ -170,7 +170,7 @@ func CreateImage(request common.RequestData) (code int, result string) {
 	}
 	fmt.Println("build镜像，增加数据成功")
 
-	return 0, "build镜像"
+	return 0, out
 }
 
 func saveImageToDb(params CreateImageStru) (code int, result string) {
@@ -213,7 +213,7 @@ func buildImage(strServerIP ,imageName, dockerfileDirectory string) (ret int, er
 	strCMD:=fmt.Sprintf("docker build -t %s %s",imageName,dockerfileDirectory)
 	ret, out := common.ExecRemoteDocker(strServerIP,strCMD)
 	if ret > 0 {
-		fmt.Println("exec docker push  is error!")
+		fmt.Println("exec docker build  is error!")
 		ret = 1
 	} else {
 		ret = 0
