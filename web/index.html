@@ -51,18 +51,27 @@
 						 	     <div class="box-header well" data-original-title="">
 						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 创建镜像</h2>
 								 </div>	
+
+
+
 								 <div class="box-content">
-								 	    <form class="form-inline" role="form" action="#">					 	    	
+								 	    <form class="form-inline" role="form" action="#">		
+
+                    <div class="form-group has-success has-feedback">   
+                        <label class="control-label">服务器：</label>
+                        <select class="form-control" id="machine_value"></select>
+                     </div>
+
 											<div class="form-group">
-                                                <label class="control-label" >镜像模版：</label>
-                                                <input type="radio" name="template" class="form-redio"  value="nginx"  checked="checked"> nginx
-                                                <input type="radio" name="template" class="form-redio"  value="gearman"> gearman
-                                                <input type="radio" name="template" class="form-redio"  value="zeromq"> zeromq
-                                                <!--
-                                                <input type="radio" name="template" class="form-redio"  value="mysql"> mysql
-                                                <input type="radio" name="template" class="form-redio"  value="redis"> redis    
-                                                -->                                             
-                                            </div>
+                          <label class="control-label" >镜像模版：</label>
+                          <input type="radio" name="template" class="form-redio"  value="nginx"  checked="checked"> nginx
+                          <input type="radio" name="template" class="form-redio"  value="gearman"> gearman
+                          <input type="radio" name="template" class="form-redio"  value="zeromq"> zeromq
+                          <!--
+                          <input type="radio" name="template" class="form-redio"  value="mysql"> mysql
+                          <input type="radio" name="template" class="form-redio"  value="redis"> redis    
+                          -->                                             
+                      </div>
 						                    <div class="form-group has-success has-feedback">
 						                        <label class="control-label" for="image_name">镜像名：</label>
 						                        <input type="text" class="form-control" id="image_name">
@@ -71,10 +80,15 @@
                                                 <label class="control-label" for="code_path">代码路径：</label>
                                                 <input type="text" class="form-control" id="code_path">
                                             </div>
+                             <div class="form-group has-success has-feedback">
+                                    <label class="control-label" for="remark">备注：</label>
+                                    <textarea   class="form-control" id="remark"></textarea>
+                             </div>
 						                </form>
 									    <div class="form-btn">
                                             <button class="btn" id="images_package">打包镜像</button>
                                         </div>
+                        <div class="clear"></div>
 								 </div>	
 							 </div>
 						 </div>
@@ -97,20 +111,23 @@
 <script type="text/javascript">
     
     (function($){
+        query_machines();
         //注册镜像打包事件
         $("#images_package").click(images_package);
-        
-        
-       //定义镜像打包事件
+   
+    })(jQuery);   
+
+
+         //定义镜像打包事件
         function images_package(){
    
             //校验参数
-			var template = $('input[name="template"]:checked').val();
+      var template = $('input[name="template"]:checked').val();
             if(!template){
                 alert("请选择基础镜像");
                 return;
             }
-			
+      
             var image_name = $("#image_name").val();
             if(!image_name){
                 alert("镜像名称不能为空");
@@ -125,22 +142,24 @@
             }
             
              $("#show").css("display","block");
-			
-			
-			 var params={};
+
+             var machine=$("#machine_value").val().split(":");
+      
+      
+       var params={};
              params.template=template;
              params.image_name=image_name;
              params.code_path=code_path;
              params.Creator="admin";
              params.remark="";
-			 
-			 var data={};
-			 data.Version="1.0";
-		     data.ServerIP="127.0.0.1";
-			 data.Port=4243;
-			 data.Method="SearchMachine";
-			 data.Params=JSON.stringify(params);
-			
+       
+       var data={};
+       data.Version="1.0";
+         data.ServerIP=machine[1];
+       data.Port=parseInt(machine[2]);
+       data.Method="SearchMachine";
+       data.Params=JSON.stringify(params);
+      
   
             //通过ajax请求后台服务
               $.ajax({
@@ -148,18 +167,18 @@
                    dataType:"json",
                    type: "post",
                    data:{
-						request:JSON.stringify(data)
+            request:JSON.stringify(data)
                     },
                    success:function(data) {
-					    
-						$("#show").css("display","none");
-					
+              
+            $("#show").css("display","none");
+          
                         if(0==data.Code){
                            alert("创建镜像成功");
                         }else{
-						   alert("创建镜像失败");	
-						}
-						
+               alert("创建镜像失败"); 
+            }
+            
 
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -167,6 +186,57 @@
                    }
                 });
             }
-   
-    })(jQuery);        
+
+      //定义镜像打包事件
+        function query_machines(){
+
+             var params={};
+             params.machine_name="";
+             params.machine_ip="";
+             params.docker_port=0;
+             params.is_use=0;
+             params.remark="";
+       
+             var data={};
+             data.Version="1.0";
+             data.ServerIP="127.0.0.1";
+             data.Port=4243;
+             data.Method="SearchMachine";
+             data.Params=JSON.stringify(params);
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+                            request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        $("#query_content").children().remove();
+                        
+                        var values=$.parseJSON(data.Data);     
+                        
+                        
+                        if(values){
+                           var tr="";       
+                           for(var i=0;i<values.length;i++){
+                 tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
+                           } 
+                           $("#machine_value").append(tr);   
+                        }
+           
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            }     
 </script>
