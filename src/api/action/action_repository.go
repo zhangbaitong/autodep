@@ -228,7 +228,7 @@ func GetRepository(params string) (strRepository string, strTags string) {
 
 func RegDelete(request common.RequestData) (code int,result string) {	
 	strRepository, strTags := GetRepository(request.Params)
-	if len(strRepository)==0 || len(strTags)==0 {
+	if len(strRepository)==0 {
 		return 1, "faild"
 	}
 	logger.Println("strRepository=", strRepository)
