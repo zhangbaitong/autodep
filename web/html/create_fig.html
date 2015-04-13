@@ -151,7 +151,13 @@
 
       //查询模版
       function query_template(radio){
-            var params={};
+            var project_name=$.trim($(".project_name").val());
+            if(!project_name){
+                alert("《项目名称》不能为空");
+                return;
+            }
+
+             var params={};
              params.template_name=$(radio).val();
              params.template_type="fig";
 
