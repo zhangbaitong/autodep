@@ -95,7 +95,7 @@ func copy_template(strServerIP string, strOurce string, strProjectName string) (
 	return true
 }
 
-func fig_transfer(strServerIP string,type_flag int, params map[string]interface{}) (ret bool, err string) {
+func fig_transfer(strServerIP string,type_flag string, params map[string]interface{}) (ret bool, err string) {
 	var (
 		strRemoteDir string
 		ok           bool
