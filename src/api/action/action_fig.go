@@ -134,7 +134,9 @@ func fig_transfer(strServerIP string,type_flag string, params map[string]interfa
 		return false, "Create fig Remote Path faild!!!!"
 	}
 
-	copy_template(strServerIP, "../../template/software", strProjectName)
+	if(type_flag=="0"){
+		copy_template(strServerIP, "../../template/software", strProjectName)
+	}
 	//传输文件到远程目录
 	strRemoteFile := strServerIP + ":" + strRemoteDir + "/" + strFileName
 	ret1, _ = common.TransferFileSSH(strFileName, strRemoteFile)
