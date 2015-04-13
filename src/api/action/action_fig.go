@@ -13,7 +13,7 @@ import (
 type FigParams struct {
 	Project_name   string
 	Fig_project_id string
-	type_flag	   string
+	Type_flag      string
 	Servers        []Server
 }
 
@@ -95,7 +95,7 @@ func copy_template(strServerIP string, strOurce string, strProjectName string) (
 	return true
 }
 
-func fig_transfer(strServerIP string,type_flag string, params map[string]interface{}) (ret bool, err string) {
+func fig_transfer(strServerIP string, type_flag string, params map[string]interface{}) (ret bool, err string) {
 	var (
 		strRemoteDir string
 		ok           bool
@@ -134,7 +134,7 @@ func fig_transfer(strServerIP string,type_flag string, params map[string]interfa
 		return false, "Create fig Remote Path faild!!!!"
 	}
 
-	if(type_flag=="0"){
+	if type_flag == "0" {
 		copy_template(strServerIP, "../../template/software", strProjectName)
 	}
 	//传输文件到远程目录
@@ -144,9 +144,9 @@ func fig_transfer(strServerIP string,type_flag string, params map[string]interfa
 		return false, "Transfer File faild!!!!"
 	}
 
-	if(type_flag=="1"){
-		return true, "ok"		
-	}
+	// if type_flag == "1" {
+	// 	return true, "ok"
+	// }
 	//创建启动文件
 	//mapCommands, ok := params["commands"].(map[string]interface{})
 	fmt.Println("commands=", params["commands"].([]map[string]string))
@@ -199,7 +199,7 @@ func fig_transfer(strServerIP string,type_flag string, params map[string]interfa
 }
 
 func FigCreate(request common.RequestData) (code int, result string) {
-	
+
 	var params FigParams
 	err_json := json.Unmarshal([]byte(request.Params), &params)
 	if err_json != nil {
@@ -207,13 +207,13 @@ func FigCreate(request common.RequestData) (code int, result string) {
 	}
 
 	nCount := project_count(request.ServerIP, params.Project_name)
-	if  nCount > 0  && params.type_flag=="0" {
+	if nCount > 0 && params.Type_flag == "0" {
 		return 1, "project was existed"
 	}
 
-	_, params_fig := dealParams(request.ServerIP,params,request.Params)
+	_, params_fig := dealParams(request.ServerIP, params, request.Params)
 
-	ok, err := fig_transfer(request.ServerIP,params.type_flag,params_fig)
+	ok, err := fig_transfer(request.ServerIP, params.Type_flag, params_fig)
 	code = 1
 	result = err
 	if ok {
@@ -435,7 +435,7 @@ func FigRecreate(request common.RequestData) (code int, result string) {
 }
 
 //处理从前台传过来的函数
-func dealParams(strServerIp string, params FigParams,strParam string) (code int, result map[string]interface{}) {
+func dealParams(strServerIp string, params FigParams, strParam string) (code int, result map[string]interface{}) {
 
 	//fmt.Println("传来的参数：", strParam)
 
@@ -443,18 +443,18 @@ func dealParams(strServerIp string, params FigParams,strParam string) (code int,
 	figData := ""
 	commands := []map[string]string{}
 	temp, _ := common.Config().String("fig", "figDirectory")
-/*
-	var params FigParams
-	err := json.Unmarshal([]byte(strParam), &params)
-	if err != nil {
-		logger.Println("json data decode faild :", err)
-	}
+	/*
+		var params FigParams
+		err := json.Unmarshal([]byte(strParam), &params)
+		if err != nil {
+			logger.Println("json data decode faild :", err)
+		}
 
-	nCount := project_count(strServerIp, params.Project_name)
-	if  nCount > 0  && params.force==0 {
-		return 1, nil
-	}
-*/
+		nCount := project_count(strServerIp, params.Project_name)
+		if  nCount > 0  && params.force==0 {
+			return 1, nil
+		}
+	*/
 	figDirectory := temp + "/" + params.Project_name
 	//servers := params["servers"].([]map[string]interface{})
 	servers := params.Servers
