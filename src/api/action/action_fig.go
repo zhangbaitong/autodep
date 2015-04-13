@@ -255,10 +255,6 @@ func GetProjectName(params string) (ret string, ok bool) {
 }
 
 func GetProjectInfo(request common.RequestData) (code int, result string) {
-	strProjectName, ok := GetProjectName(request.Params)
-	if !ok {
-		return 1, "faild"
-	}
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
@@ -266,7 +262,7 @@ func GetProjectInfo(request common.RequestData) (code int, result string) {
 		return 1, "faild"
 	}
 	defer db.Close()
-	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_param, fig_content, create_time from fig_project where project_name like '%%%s%%' ", strProjectName)
+	strSql := fmt.Sprintf("select fig_project_id, project_name,machine_ip, fig_directory, fig_param, fig_content, create_time from fig_project where machine_ip = '%s' ", request.ServerIP)
 	rows, err := db.Query(strSql)
 	if err != nil {
 		logger.Println(err)

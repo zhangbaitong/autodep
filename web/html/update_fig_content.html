@@ -132,7 +132,7 @@
     var fig_project_id=getQueryString("id");
 
     (function($){
-          $("#machine_value").val(getQueryString("machine"));
+          $("#machine_value").val(decodeURI(getQueryString("machine")));
           $("#update_fig").click(function(){
           		update_fig();
           });

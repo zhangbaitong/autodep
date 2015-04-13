@@ -211,7 +211,8 @@
           $(".update_fig_content").click(function(){
               var fig_project_id =$(this).parent().parent().find("#fig_project_id").html();
               var machine=$("#machine_value").val();
-              window.location.href ="update_fig_content.html?id="+fig_project_id+"&machine="+machine;
+              var t= encodeURI(encodeURI(machine));
+              window.location.href ="update_fig_content.html?id="+fig_project_id+"&machine="+t;
           });
 
           
