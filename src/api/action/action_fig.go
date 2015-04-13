@@ -210,9 +210,7 @@ func FigCreate(request common.RequestData) (code int, result string) {
 	}
 
 	ret, params_fig := dealParams(request.ServerIP,params,request.Params)
-	if ret == 1 {
-		return 1, "project was existed"
-	}
+
 	ok, err := fig_transfer(request.ServerIP,params.type_flag,params_fig)
 	code = 1
 	result = err
