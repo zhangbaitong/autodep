@@ -13,7 +13,7 @@ import (
 type FigParams struct {
 	Project_name   string
 	Fig_project_id string
-	type_flag	    int
+	type_flag	   string
 	Servers        []Server
 }
 
@@ -142,7 +142,7 @@ func fig_transfer(strServerIP string,type_flag int, params map[string]interface{
 		return false, "Transfer File faild!!!!"
 	}
 
-	if(type_flag==1){
+	if(type_flag=="1"){
 		return true, "ok"		
 	}
 	//创建启动文件
@@ -205,11 +205,11 @@ func FigCreate(request common.RequestData) (code int, result string) {
 	}
 
 	nCount := project_count(request.ServerIP, params.Project_name)
-	if  nCount > 0  && params.type_flag==0 {
+	if  nCount > 0  && params.type_flag=="0" {
 		return 1, "project was existed"
 	}
 
-	ret, params_fig := dealParams(request.ServerIP,params,request.Params)
+	_, params_fig := dealParams(request.ServerIP,params,request.Params)
 
 	ok, err := fig_transfer(request.ServerIP,params.type_flag,params_fig)
 	code = 1
