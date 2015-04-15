@@ -20,6 +20,11 @@ $ ./init_db.sh
 
 详情查看[ssh keygen create](./docs/sshkeygen.md)
 
+4.启动程序
+```
+go run src/api/main.go
+```
+
 #测试代码
 
 go test api/common -v(暂不提供)
