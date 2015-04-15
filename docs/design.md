@@ -35,5 +35,7 @@
 
 通过autodep同步测试环境项目到生产环境即可。
 
+![workflow](../workflow.png?raw=true "workflow")
+
 
 
