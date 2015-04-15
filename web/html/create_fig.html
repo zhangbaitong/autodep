@@ -131,6 +131,7 @@
 </html>
 
 <script src="../lib/jquery-1.7.1.min.js"></script>
+<script src="../js/common.js"></script>
 <script type="text/javascript">
     var flag=0;
     
@@ -153,6 +154,7 @@
       function query_template(radio){
             var project_name=$.trim($(".project_name").val());
             if(!project_name){
+                $(radio).attr("checked",false);
                 alert("《项目名称》不能为空");
                 return;
             }
@@ -175,7 +177,7 @@
 
               //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/fig/template",
+                   url:target_server+"v1/fig/template",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -266,7 +268,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   url:target_server+"v1/machine/search",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -435,7 +437,7 @@
 
         //通过ajax请求后台服务
           $.ajax({
-               url:"http://117.78.19.76:8099/v1/fig/create",
+               url:target_server+"v1/fig/create",
                dataType:"json",
                type: "post",
                data:{

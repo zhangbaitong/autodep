@@ -42,7 +42,7 @@
 					            <a href="#">Home </a>
 					        </li>
 					        <li>
-					            <a href="#"> /  服务器镜像列表</a>
+					            <a href="#"> /  fig项目管理</a>
 					        </li>
 					    </ul>
 					</div>
@@ -51,7 +51,7 @@
 						 <div class="box col-md-12">
 						 	 <div class="box-inner">
 						 	     <div class="box-header well" data-original-title="">
-						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 服务器镜像列表</h2>
+						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> fig项目管理</h2>
 								 </div>	
 
 								 <div class="box-content">
@@ -102,6 +102,7 @@
 </html>
 
 <script src="../lib/jquery-1.7.1.min.js"></script>
+<script src="../js/common.js"></script>
 <script type="text/javascript">
     
     (function($){
@@ -126,7 +127,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/fig/getinfo",
+                   url:target_server+"v1/fig/getinfo",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -148,7 +149,12 @@
                            var tr="";       
                            var num=1;
                            for(var i=0;i<values.length;i++){
-                             tr +="<tr><td>"+(num++)+"</td><td id='fig_project_id'>"+values[i].ProjectID+"</td><td id='project_name'>"+values[i].ProjectName+"</td><td id='machine_ip'>"+values[i].Machine_ip+"</td><td id='directory'>"+values[i].Directory+"</td><td id='fig_content'>"+values[i].Content+"</td><td><a href='#' class='container_details'>容器详情</a>|<a href='#'  class='btn_start'>启动</a>|<a href='#'  class='btn_recreate'>重建</a>|<a href='#'  class='btn_restart'>重启</a>|<a href='#'  class='btn_stop'>停止</a>|<a href='#'class='btn_rm'>删除</a>|<a href='#'  class='btn_fig_content'>fig文件</a>|<a href='#'  class='update_fig_content'>修改fig文件</a></td></tr>";
+                             tr +="<tr><td>"+(num++)+"</td><td id='fig_project_id'>"+values[i].ProjectID+"</td><td id='project_name'>"+values[i].ProjectName+"</td><td id='machine_ip'>"+values[i].Machine_ip+"</td><td id='directory'>"+values[i].Directory+"</td><td id='fig_content'>"+values[i].Content+"</td><td><a href='#' class='container_details'>容器详情</a>|<a href='#'  class='btn_recreate'>启动</a>|<a href='#'  class='btn_stop'>停止</a>|<a href='#'class='btn_rm'>删除</a>|<a href='#'  class='btn_fig_content'>查看fig文件</a>|<a href='#'  class='update_fig_content'>修改fig文件</a></td></tr>";
+
+
+                             /*
+<a href='#' class='container_details'>容器详情</a>|<a href='#'  class='btn_start'>启动</a>|<a href='#'  class='btn_recreate'>重建</a>|<a href='#'  class='btn_restart'>重启</a>|<a href='#'  class='btn_stop'>停止</a>|<a href='#'class='btn_rm'>删除</a>|<a href='#'  class='btn_fig_content'>fig文件</a>|<a href='#'  class='update_fig_content'>修改fig文件</a>
+                             */
 														
                            } 
                            $("#query_content").append(tr);
@@ -234,17 +240,17 @@
 
           var url="";
           if(class_name=="container_details"){
-            url="http://117.78.19.76:8099/v1/fig/ps";
+            url=target_server+"v1/fig/ps";
           }else if(class_name=="btn_recreate"){
-            url="http://117.78.19.76:8099/v1/fig/recreate";
+            url=target_server+"v1/fig/recreate";
           }else if(class_name=="btn_restart"){
-            url="http://117.78.19.76:8099/v1/fig/restart";
+            url=target_server+"v1/fig/restart";
           }else if(class_name=="btn_stop"){
-            url="http://117.78.19.76:8099/v1/fig/stop";
+            url=target_server+"v1/fig/stop";
           }else if(class_name=="btn_rm"){
-            url="http://117.78.19.76:8099/v1/fig/rm";
+            url=target_server+"v1/fig/rm";
           }else if(class_name=="btn_start"){
-            url="http://117.78.19.76:8099/v1/fig/start";
+            url=target_server+"v1/fig/start";
           }
 
           if(class_name!="container_details"){
@@ -265,35 +271,17 @@
                           $("#show").css("display","none");
                       }
 
+                        if(class_name=="container_details"){
+                              alert(data.Data);   
+                              return;
+                        }
                       
-                        if(data.Code>0){
-                           alert("查看服务器出错，请联系管理员");
-                           return;
+                        if(data.Code==0){
+                           alert("操作成功，请查看容器详情");
+                        }else{
+                           alert("操作失败，err："+data.Data);
                         }
                           
-
-                        if(data.Data=="" || data.Data.indexOf("Going to remove")>=0) {
-                            alert("操作成功，请查看容器详情");
-                        }else{
-                          if(class_name=="container_details"){
-                              alert(data.Data);   
-                          }else{
-                             alert("操作失败："+data.Data); 
-                          }
-                        }
-/*
-                       if(class_name=="container_details"){
-                           alert(data.Data);
-                        }else if(class_name=="btn_recreate"){
-                           
-                        }else if(class_name=="btn_restart"){
-                          url="http://117.78.19.76:8099/v1/fig/restart";
-                        }else if(class_name=="btn_stop"){
-                          url="http://117.78.19.76:8099/v1/fig/stop";
-                        }else if(class_name=="btn_rm"){
-                          url="http://117.78.19.76:8099/v1/fig/rm";
-                        }
-           */
                    },          
                    error:function(XMLHttpRequest, textStatus, errorThrown){
                        //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
@@ -321,7 +309,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   url:target_server+"v1/machine/search",
                    dataType:"json",
                    type: "post",
                    data:{

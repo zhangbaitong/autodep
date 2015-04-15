@@ -2,11 +2,12 @@ package common
 
 import (
 	"fmt"
-	"github.com/codeskyblue/go-sh"
+	//	"github.com/codeskyblue/go-sh"
 	"github.com/robfig/config"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func DisplayJson(obj_json map[string]interface{}) {
@@ -41,21 +42,33 @@ const (
 	SUCCESS_MSG string = "ok"
 )
 
-func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
-	session := sh.NewSession()
-	session.ShowCMD = true
-	out, err := session.Command(cmd, cmds...).Output()
+// func execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
+// 	session := sh.NewSession()
+// 	session.ShowCMD = true
+// 	out, err := session.Command(cmd, cmds...).Output()
+// 	fmt.Println("out=", string(out), "err=", err)
+// 	if err != nil {
+// 		Log().Println(msg, ":", err)
+// 		return FAILT, string(out)
+// 	}
+
+// 	return SUCCESS, string(out)
+// }
+
+func execsh(msg string, cmd string, cmds ...string) (ret int, errmsg string) {
+	sh := exec.Command(cmd, cmds...)
+	out, err := sh.CombinedOutput()
 	fmt.Println("out=", string(out), "err=", err)
 	if err != nil {
-		Log().Println(msg, ":", err)
+		Log().Println(msg, ":", string(out))
 		return FAILT, string(out)
 	}
 
 	return SUCCESS, string(out)
 }
 
-func Execsh(msg string, cmd string, cmds ...interface{}) (ret int, errmsg string) {
-	return execsh(msg, cmd, cmds)
+func Execsh(msg string, cmd string, cmds ...string) (ret int, errmsg string) {
+	return execsh(msg, cmd, cmds...)
 }
 
 func TransferFileSSH(strSrcFile string, strDestFile string) (ret int, err string) {
@@ -63,7 +76,7 @@ func TransferFileSSH(strSrcFile string, strDestFile string) (ret int, err string
 }
 
 func TransferDirSSH(strSrcFile string, strDestFile string) (ret int, err string) {
-	return execsh("transfer remote file faild error", "scp","-r", strSrcFile, strDestFile)
+	return execsh("transfer remote file faild error", "scp", "-r", strSrcFile, strDestFile)
 }
 
 func ExecRemoteDocker(strServerIP string, strCMD string) (ret int, err string) {

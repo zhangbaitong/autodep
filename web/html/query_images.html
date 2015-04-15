@@ -107,6 +107,7 @@
 </html>
 
 <script src="../lib/jquery-1.7.1.min.js"></script>
+<script src="../js/common.js"></script>
 <script type="text/javascript">
     
     (function($){
@@ -137,7 +138,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/createImage/list",
+                   url:target_server+"v1/createImage/list",
                    dataType:"json",
                    type: "post",
                    data:{

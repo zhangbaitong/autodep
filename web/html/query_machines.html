@@ -108,6 +108,7 @@
 </html>
 
 <script src="../lib/jquery-1.7.1.min.js"></script>
+<script src="../js/common.js"></script>
 <script type="text/javascript">
     
     (function($){
@@ -139,7 +140,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   url:target_server+"v1/machine/search",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -196,7 +197,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/search",
+                   url:target_server+"v1/machine/search",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -268,7 +269,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/del",
+                   url:target_server+"v1/machine/del",
                    dataType:"json",
                    type: "post",
                    data:{
@@ -360,7 +361,7 @@
 
             //通过ajax请求后台服务
               $.ajax({
-                   url:"http://117.78.19.76:8099/v1/machine/update",
+                   url:target_server+"v1/machine/update",
                    dataType:"json",
                    type: "post",
                    data:{

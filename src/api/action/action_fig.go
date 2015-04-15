@@ -352,7 +352,7 @@ func FigRm(request common.RequestData) (code int, result string) {
 		return 1, "fig directory empty!!!!"
 	}
 
-	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig rm  --force")
+	ret, out := common.ExecRemoteShell(request.ServerIP, " cd "+strFigDirectory+" && "+" fig stop"+" && "+" fig rm  --force")
 	if ret > 0 {
 		fmt.Println("exec fig up is error!")
 		code = 1
