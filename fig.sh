@@ -1,5 +1,6 @@
  #!/bin/sh
 
+
 function scandir() {
     local cur_dir workdir
     workdir=$1
