@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link href="../css/style.css" rel="stylesheet">
+<link href="../css/query_machines_performance.css" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-inner">
+            
+		</div>
+   </div>
+   
+   <div class="ch-container">
+
+       	 <div class="row">
+       	      <div class="col-sm-2 col-lg-2">
+       	            <div class="sidebar-nav">
+       	                <div class="nav-canvas">
+       	                    <ul class="nav nav-pills nav-stacked main-menu">
+                                <li class="nav-header">Home</li>
+                                <li class="create_image"><a class="ajax-link" href="http://117.78.19.76/"><i class="glyphicon glyphicon-home"></i><span> 创建镜像</span></a></li>
+                                <li class="query_images"><a class="ajax-link" href="http://117.78.19.76/html/query_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 镜像查询</span></a></li>
+                                <li><a class="query_repository_images" href="http://117.78.19.76/html/query_repository_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 仓库镜像查询</span></a></li>
+                                <li><a class="query_machine_images" href="http://117.78.19.76/html/query_machines_images.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器镜像查询</span></a></li>
+                                <li><a class="query_machine_containers" href="http://117.78.19.76/html/query_machine_container.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器容器查询</span></a></li>
+								<li><a class="ajax-link" href="http://117.78.19.76/html/create_fig.html"><i class="glyphicon glyphicon-edit"></i><span> 创建fig文件</span></a></li>
+                 <li><a class="fig_project_manager" href="http://117.78.19.76/html/fig_project_manager.html"><i class="glyphicon glyphicon-edit"></i><span> fig项目管理</span></a></li>
+								<li ><a class="query_machines" href="http://117.78.19.76/html/query_machines.html"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器查询</span></a></li>
+							    <li><a class="register_machine" href="http://117.78.19.76/html/register_machine.html"><i class="glyphicon glyphicon-eye-open"></i><span> 注册服务器</span></a></li>
+								<li><a class="machine_performance" href="#"><i class="glyphicon glyphicon-eye-open"></i><span> 服务器性能查询</span></a></li>
+							</ul>
+						</div>
+					</div>
+			  </div>
+	  
+			  <div id="content" class="col-lg-10 col-sm-10">
+			         <div>
+					    <ul class="breadcrumb">
+					        <li>
+					            <a href="#">Home </a>
+					        </li>
+					        <li>
+					            <a href="#"> /  服务器性能查询</a>
+					        </li>
+					    </ul>
+					</div>
+			
+					<div class="row2">
+						 <div class="box col-md-12">
+						 	 <div class="box-inner">
+						 	     <div class="box-header well" data-original-title="">
+						 	     	  <h2><i class="glyphicon glyphicon-edit"></i> 服务器性能查询</h2>
+								 </div>	
+
+								 <div class="box-content">
+	                                    <div class="query">
+											<div class="col-md-6">   
+											     <label class="control-label">服务器：</label>
+                                                  <select class="machine_value" id="machine_value">
+												  </select>
+											</div>
+											 <div class="col-md-7">
+                                                   <button class="btn" id="query_images">服务器性能查询</button>               
+                                            </div>
+											 <div class="clear"></div>
+	                                    </div>
+
+										<div id="table-content">
+                                                  <div class="performance"  ></div>      
+										</div>
+								 </div>	
+							 </div>
+						 </div>
+					</div>
+			  </div>
+			  
+			  <div class="clear"></div>
+		 </div>   	
+   </div>
+</body>
+</html>
+
+<script src="../lib/jquery-1.7.1.min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/socket.io.js"></script>
+<script type="text/javascript">
+	 var socket = io();
+	 var flag=0;
+     socket.on('news', function (data) {
+           $(".performance").html(data);
+     });	
+	 
+	 socket.on('disconnection',function(){
+	     flag=0;
+	 });
+	 
+	 socket.on('error',function(){
+         flag=0;
+     });
+	 
+	//查询服务器性能
+    function query_performance(){
+          var ip=$("#machine_value").val().split(":")[1];
+		  if(flag==0){
+		  	 socket.emit('monitoring', JSON.stringify({ machine_ip: ip,ssh_port:22}));
+			   flag=1;
+		  }else{
+		  	 socket.emit('monitorOther', JSON.stringify({ machine_ip: ip,ssh_port:22}));
+		  }
+   } 
+	 
+
+    (function($){
+        //注册镜像打包事件
+        $("#query_images").click(query_performance);
+			 query_machines();
+        })(jQuery);       
+		
+        //定义镜像打包事件
+        function query_machines(){
+
+             var params={};
+             params.machine_name="";
+             params.machine_ip="";
+             params.docker_port=0;
+             params.is_use=0;
+             params.remark="";
+			 
+			 var data={};
+			 data.Version="1.0";
+		     data.ServerIP="127.0.0.1";
+			 data.Port=4243;
+			 data.Method="SearchMachine";
+			 data.Params=JSON.stringify(params);
+
+
+
+            //通过ajax请求后台服务
+              $.ajax({
+                   url:target_server+"v1/machine/search",
+                   dataType:"json",
+                   type: "post",
+                   data:{
+						request:JSON.stringify(data)
+                    },
+                   success:function(data) {
+
+                        if(1==data.Code){
+                           alert("查看服务器出错，请联系管理员");
+                           return;
+                        }
+                        
+                        //删除上次加载的数据
+                        $("#query_content").children().remove();
+                        
+                        var values=$.parseJSON(data.Data);     
+                        
+                        console.log(values[0]);
+                        
+                        if(values){
+                           var tr="";       
+                           for(var i=0;i<values.length;i++){
+						   	 tr +="<option>"+values[i].Machine_name+":"+values[i].Machine_ip+":"+values[i].Docker_port+"</option>";
+                           } 
+                           $("#machine_value").append(tr);   
+                        }
+           
+                   },          
+                   error:function(XMLHttpRequest, textStatus, errorThrown){
+                       //alert("err:"+textStatus+",readyState:"+XMLHttpRequest.readyState+",errorThrown"+errorThrown);   
+                   }
+                });
+            } 
+
+</script>
