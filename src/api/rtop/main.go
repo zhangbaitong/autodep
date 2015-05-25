@@ -175,7 +175,8 @@ Memory:
 	)
 
 	if len(stats.FSInfos) > 0 {
-		fmt.Println("Filesystems:")
+		//fmt.Println("Filesystems:")
+		ret +="Filesystems:"+"\n"
 		for _, fs := range stats.FSInfos {
 			ret += fmt.Sprintf("    %s%8s%s: %s%s%s free of %s%s%s\n",
 				"", fs.MountPoint, "",
@@ -187,7 +188,8 @@ Memory:
 	}
 
 	if len(stats.NetIntf) > 0 {
-		fmt.Println("Network Interfaces:")
+		//fmt.Println("Network Interfaces:")
+		ret +="Network Interfaces:"+"\n"
 		keys := make([]string, 0, len(stats.NetIntf))
 		for intf := range stats.NetIntf {
 			keys = append(keys, intf)
