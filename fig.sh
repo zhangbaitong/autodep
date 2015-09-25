@@ -1,33 +1,54 @@
  #!/bin/sh
 
+#读取配置文件
+getKey(){ 
+   
+    section=$(echo $1 | cut -d '.' -f 1)    
+    key=$(echo $1 | cut -d '.' -f 2)    
+    sed -n "/\[$section\]/,/\[.*\]/{    
+     /^\[.*\]/d    
+     /^[ \t]*$/d    
+     /^$/d    
+     /^#.*$/d    
+     s/^[ \t]*$key[ \t]*=[ \t]*\(.*\)[ \t]*/\1/p    
+    }" /home/docker/fig/fig.ini    
+}
 
+
+#操作fig项目
 function scandir() {
-    local cur_dir workdir
+    local workdir onoff include
     workdir=$1
 
-    if [ ${workdir} = "/" ]
-    then
-        cur_dir=""
-    else
-        cur_dir=$(pwd)
-    fi
+    onoff=$(getKey "fig.on-off")
+    include=$(getKey "fig.include")
 
-    for dirlist in $(ls ${cur_dir})
-    do
-        if test -d ${dirlist}
-        then
-           cd ${dirlist}
-           if test -f "fig.yml"
-           then
-                case "$2" in
-                    start)  fig stop && fig rm --force && fig up -d ;;
-                     stop)  fig stop ;;
-                       rm)  fig stop && fig rm --force ;;
-                esac
-           fi
-           cd ..
-        fi
-   done
+    if test -d ${workdir}
+    then
+	    cd ${workdir}
+	    for dirlist in $(ls ${workdir})
+	    do
+            if  [ "${onoff}"="0" ] && [[ ! ",${include}," =~ ",${dirlist}," ]]
+	    then
+	         continue
+	    fi 
+
+	        if test -d ${dirlist}
+	        then
+	           cd ${dirlist}
+	           if test -f "fig.yml"
+	           then
+		        echo ${dirlist}
+	                case "$2" in
+	                    start) echo "start" &&  /usr/local/bin/fig stop && /usr/local/bin/fig rm --force && /usr/local/bin/fig up -d ;;
+	                     stop)  /usr/local/bin/fig stop ;;
+	                       rm)  /usr/local/bin/fig stop && /usr/local/bin/fig rm --force ;;
+	                esac
+	           fi
+	           cd ..
+	        fi
+	   done
+	fi
 }
 
 scandir $1 $2
